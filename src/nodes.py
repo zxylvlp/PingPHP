@@ -167,7 +167,9 @@ class Varible(BaseNode):
 		if self.nsContentName:
 			self.nsContentName.gen()
 			append('::')
-		if not val.isupper():
+		if isinstance(self.val, NsContentName):
+			self.val = self.val.val
+		if not self.val.isupper():
 			append('$')
 		super(Varible, self).gen()
 
@@ -183,7 +185,7 @@ class Assignable(BaseNode):
 			self.exp.gen()
 			append(']')
 		elif self.exp==None and self.id_!=None:
-			append(['.', id_])
+			append(['->', self.id_])
 
 class Assign(BaseNode):
 	def __init__(self, val, rightSide):
@@ -265,7 +267,7 @@ class If(WithTerminatorNode):
 		self.elseBlock = elseBlock
 	def gen(self):
 		super(If, self).gen()
-		if elseBlock:
+		if self.elseBlock:
 			append(' else {')
 			self.terminator.gen()
 			append('\n')
@@ -280,7 +282,7 @@ class IfBlock(WithTerminatorNode):
 	def gen(self):
 		if self.list_ != None:
 			self.list_.gen()
-			append([indentSpaces(), ' else if ('])
+			append(' else if (')
 		else:
 			append('if (')
 		super(IfBlock, self).gen()
@@ -486,7 +488,7 @@ class BinaryOperationNode(BaseNode):
 		self.exp2 = exp2
 	def gen(self):
 		self.exp1.gen()
-		append([' ', op, ' '])
+		append([' ', self.val, ' '])
 		self.exp2.gen()
 
 

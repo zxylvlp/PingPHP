@@ -69,8 +69,8 @@ Value and Assign:
 	ArrayLiteralContent : Expression
 			    | SimpleLiteral COLON Expression
 
-	Varible : INDENTIFIER
-		| Nscontentname SCOPEOP INDENTIFIER
+	Varible : NsContentName
+		| NsContentName SCOPEOP INDENTIFIER
 
 	Assignable : Varible
 		   | Assignable LBRACKET Expression RBRACKET
@@ -93,10 +93,10 @@ Param and Arg
 	Param : INDENTIFIER InitModifier
 
 Call
-	Call : Callable LPARENT ArgList RPARENT
+	Call : Callable ArgList RPARENT
 
-	Callable : NsContentName
-		 | Expression
+	Callable : NsContentName LPARENT 
+		 | Expression LPARENT 
 	
 Terminator
 	Terminator : INLINECOMMENT
@@ -205,6 +205,11 @@ Operation
 '''
 start = 'Root'
 
+precedence = (  
+    ('left','PLUS'),  
+    ('nonassoc','EQ'),  
+    )  
+
 def p_Root(p):
 	'''
 	Root : 
@@ -227,8 +232,7 @@ def p_Body(p):
 
 def p_Line(p):
 	'''
-	Line : Expression
-	     | CodeBlock
+	Line : CodeBlock
 	     | Statement
 	     | Embeded
 	'''
@@ -293,7 +297,7 @@ def p_Block(p):
 	'''
 	Block : INDENT Body OUTDENT
 	'''
-	p[0] = Block(p[1])
+	p[0] = Block(p[2])
 
 def p_InitModifier(p):
 	'''
@@ -361,7 +365,7 @@ def p_ArrayLiteralContent(p):
 
 def p_Varible(p):
 	'''
-	Varible : INDENTIFIER
+	Varible : NsContentName 
 		| NsContentName SCOPEOP INDENTIFIER
 	'''
 	if len(p)<3:
@@ -418,7 +422,7 @@ def p_ParamList(p):
 	elif len(p)==2:
 		p[0] = ParamList(None, p[1])
 	else:
-		p[0] = ParamList(p[1], p[2])
+		p[0] = ParamList(p[1], p[3])
 
 def p_Param(p):
 	'''
@@ -428,14 +432,14 @@ def p_Param(p):
 
 def p_Call(p):
 	'''
-	Call : Callable LPARENT ArgList RPARENT
+	Call : Callable ArgList RPARENT
 	'''
 	p[0] = Call(p[1], p[3])
 
 def p_Callable(p):
 	'''
-	Callable : NsContentName
-		 | Expression
+	Callable : NsContentName LPARENT 
+		 | Expression LPARENT 
 	'''
 	if len(p)==2:
 		p[0] = Callable(p[1])

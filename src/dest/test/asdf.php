@@ -10,10 +10,15 @@ class MyClass extends MyBaseClass implements MyIterfaceA, MyIterfaceB {//line1
         
         //我的单行注释
         
-        
-	public $c = 1;
+        public $c = 1;
 	
         public static function myMethod() {//line2
+                
+                $a = 2;//line2
+                
+                $this->a = 1;//line2
+                
+                return;//line2
         }
 }
 

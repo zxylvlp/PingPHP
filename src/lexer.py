@@ -99,7 +99,11 @@ t_DOT = r'\.'
 t_BACKSLASH = r'/'
 t_SLASH = r'\\'
 
-t_STATEMENT = r'(pass)|(break)|(return)'
+def t_STATEMENT(t):
+	r'(pass)|(break)|(continue)'
+	if t.value == 'pass':
+		t.value = ''
+	return t
 
 def t_INLINECOMMENT(t):
 	r'\#[^\#\n]*\n'
@@ -117,8 +121,9 @@ def t_INDENTIFIER(t):
 
 def t_NATIVEPHP(t):
 	r'<\?php((?!<\\?php)[\s\S])*\?>[ \t]*\n'
-	pos = t.value.rfind('?>')
-	t.value = t.value[5:pos]
+	t.value = t.value[6:].lstrip()
+	pos2 = t.value.rfind('?>')
+	t.value = t.value[0:pos2]
 	return t
 
 t_STRING = r'(\'(([^\'])|(\\\'))*\')|("(([^"\n])|(\\"))*")'
