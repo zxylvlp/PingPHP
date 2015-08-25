@@ -1,6 +1,7 @@
 '''PingPHP grammar file
 '''
 from nodes import *
+from lexer import *
 
 '''
 grammar:

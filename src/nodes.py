@@ -42,7 +42,7 @@ def popStr():
 
 def indentSpaces():
     global indentLevel
-    return ''.join(['        ' for i in xrange(0,indentLevel)])
+    return ''.join(['    ' for i in xrange(0,indentLevel)])
 
 ''' Node classes '''
 class BaseNode(object):
@@ -505,8 +505,8 @@ class NewOrClone(BaseNode):
         self.varible = varible
         self.newOrClone = newOrClone
     def gen(self):
-            append(self.newOrClone)
-            append(' ')
+        append(self.newOrClone)
+        append(' ')
         if self.argList:
             super(New, self).gen()
             append('(')
