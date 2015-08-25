@@ -70,7 +70,7 @@ tokens = [
 ] + map(lambda x:x.upper(), reserved) + commentAndNative + braces
 
 def t_DOCCOMMENT(t):
-	r'((\'\'\'((?!\'\'\')[\s\S])*\'\'\')|(\'{6,8})|("""((?!""")[\s|s])*""")|("{6,8}))[ \t]*\n'
+	r'((\'\'\'((?!\'\'\')[\s\S])*\'\'\')|(\'{6,8})|("""((?!""")[\s\S])*""")|("{6,8}))[ \t]*\n'
 	pos = t.value.rfind('"""')
 	if pos == -1:
 		pos = t.value.rfind('\'\'\'')
@@ -107,7 +107,7 @@ def t_STATEMENT(t):
 
 def t_INLINECOMMENT(t):
 	r'\#[^\#\n]*\n'
-	t.value = '//' + t.value[1:-1]
+	t.value = ' //' + t.value[1:-1]
 	return t
 
 # handle id and reversed
@@ -240,7 +240,7 @@ class PingLexer(object):
 		
 
 if __name__ == '__main__':
-	lexer.input(read('./test/asdf.ping'))
+	lexer.input(read('./test/BasicSyntax/comment.ping'))
 	tokList = token_list(lexer)
 	for item in change_token_list_new(tokList):
 		print item
