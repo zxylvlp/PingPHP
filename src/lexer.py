@@ -10,7 +10,7 @@ reserved = set([
     # class and interface
     'class', 'extends', 'implements',
     'public', 'private', 'protected',
-    'static', 'abstract',
+    'static', 'abstract', 'final',
     'interface',
 
     # ctrl flow
@@ -46,8 +46,8 @@ commentAndNative = [
 braces = [
     'LPARENT',
     'RPARENT',
-    'LBRACE',
-    'RBRACE',
+    #'LBRACE',
+    #'RBRACE',
     'LBRACKET',
     'RBRACKET'
 ]
@@ -74,7 +74,7 @@ math = [
 ]
 
 t_EXPONENT = r'\*\*'
-t_MATH1 = r'\*|/'
+t_MATH1 = r'\*|/|%'
 t_MATH2 = r'\+|-'
 t_INDECREMENT = r'(\+\+)|(--)'
 
@@ -129,8 +129,8 @@ t_TAB = r'\t'
 t_ASSIGN = r'((\+|-|\*|/|%|&|\||^|<<|>>)\s*)?='
 t_LPARENT = r'\('
 t_RPARENT = r'\)'
-t_LBRACE = r'\{'
-t_RBRACE = r'\}'
+#t_LBRACE = r'\{'
+#t_RBRACE = r'\}'
 t_LBRACKET = r'\['
 t_RBRACKET = r'\]'
 t_COMMA = r','

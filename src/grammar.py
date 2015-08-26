@@ -206,6 +206,8 @@ Operation
               | ULogic
               | BLogic
               | InstanceOf
+              | Ternary
+              | At
 
     BMath : Expression MATH1 Expression
           | Expression MATH2 Expression
@@ -236,6 +238,10 @@ Operation
     BLogic : Expression AND Expression
            | Expression OR Expression
 
+    Ternary : Expression IF Expression ELSE Expression
+
+    At : AT Expression
+
 '''
 
 start = 'Root'
@@ -257,7 +263,7 @@ precedence = [
     ('left', 'BITOR'),
     ('left', 'AND'),
     ('left', 'OR'),
-    ('left', 'IF'),
+    ('left', 'IF', 'ELSE'),
     ('right', 'ASSIGN'),
     ('left', 'COMMA')
 ]
@@ -383,7 +389,7 @@ def p_AssignRightSide(p):
     '''
     AssignRightSide : ASSIGN Expression
     '''
-    p[0] = AssignRightSide(p[2])
+    p[0] = AssignRightSide(p[1], p[2])
 
 
 def p_Value(p):
@@ -842,14 +848,16 @@ def p_Operation(p):
               | ULogic
               | BLogic
               | InstanceOf
-   '''
-   p[0] = Operation(p[1])
-
+              | Ternary
+              | At
+    '''
+    p[0] = Operation(p[1])
 
 def p_BMath(p):
     '''
     BMath : Expression MATH1 Expression
           | Expression MATH2 Expression
+          | Expression EXPONENT Expression
     '''
     p[0] = BMath(p[1], p[2], p[3])
 
@@ -872,10 +880,11 @@ def p_InDecrement(p):
     InDecrement : INDECREMENT Assignable 
                 | Assignable INDECREMENT
     '''
+    from helper import isString
     if isString(p[1]):
-        p[0] = Cast(p[1], p[2], False)
+        p[0] = InDecrement(p[1], p[2], False)
     else:
-        p[0] = Cast(p[2], p[1], True)
+        p[0] = InDecrement(p[2], p[1], True)
 
 def p_UBit(p):
     '''
@@ -928,6 +937,21 @@ def p_Compare(p):
     Compare : Expression COMPARE Expression
     '''
     p[0] = Compare(p[1], p[2], p[3])
+
+
+def p_Ternary(p):
+    '''
+    Ternary : Expression IF Expression ELSE Expression
+    '''
+    p[0] = Ternary(p[3], p[1], p[5])
+
+
+def p_At(p):
+    '''
+    At : AT Expression
+    '''
+    p[0] = At(p[1],p[2])
+
 
 
 def p_error(p):

@@ -26,7 +26,6 @@ def append(val):
 
 
 def finishOutput():
-    outdent()
     global outputString
     # printObj(outputString)
     res = ''.join(outputString)
@@ -38,7 +37,6 @@ def initOutput():
     global outputString, indentLevel
     indentLevel = 0
     outputString = ['<?php\n']
-    indent()
 
 
 def popStr():
@@ -151,9 +149,15 @@ class InitModifier(BaseNode):
 
 
 class AssignRightSide(BaseNode):
+    def __init__(self, assign, exp):
+        super(AssignRightSide, self).__init__(assign)
+        self.exp = exp
+    
     def gen(self):
-        append(' = ')
+        append(' ')
         super(AssignRightSide, self).gen()
+        append(' ')
+        self.exp.gen()
 
 
 class Value(BaseNode):
@@ -666,6 +670,22 @@ class NewOrClone(BaseNode):
 
 class Compare(BinaryOperationNode):
     pass
+
+class Ternary(BaseNode):
+    def __init__(self, exp1, exp2, exp3):
+        super(Ternary, self).__init__(exp1)
+        self.exp2 = exp2
+        self.exp3 = exp3
+    def gen(self):
+        super(Ternary, self).gen()
+        append(' ? ')
+        self.exp2.gen()
+        append(' : ')
+        self.exp3.gen()
+
+class At(UnaryOperationNode):
+    pass
+
 
 
 if __name__ == '__main__':
