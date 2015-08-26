@@ -17,6 +17,10 @@ class MyClass extends MyBaseClass implements MyIterfaceA, MyIterfaceB:#line1
 		a = 2#line2
 
 		this.a = 1#line2
+
+		a = a + 1
+
+		a = -1 * a
 	
 		return a#line2
 

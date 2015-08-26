@@ -18,6 +18,10 @@
             
             $this->a = 1; //line2
             
+            $a = $a + 1;
+            
+            $a = -1 * $a;
+            
             return; //line2
         }
     }

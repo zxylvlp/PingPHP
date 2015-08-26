@@ -43,6 +43,7 @@ grammar:
                | Assign
                | Operation
                | Call
+               | LPARENT Expression RPARENT
 
     Block : INDENT Body OUTDENT
 
@@ -194,29 +195,74 @@ FuncDef
                       | GlobalVaribleList COMMA INDENTIFIER
 
 Operation
-    Operation : Math
+    Operation : UMath
+              | BMath
               | NewOrClone
               | Compare
+              | Cast
+              | InDecrement
+              | UBit
+              | BBit
+              | ULogic
+              | BLogic
+              | InstanceOf
 
+    BMath : Expression MATH1 Expression
+          | Expression MATH2 Expression
 
-
-    Math : Expression PLUS Expression
+    UMath : MATH2 Expression %prec UMATH
 
     NewOrClone : NEW NsContentName LPARENT ArgList RPARENT
                | NEW Varible
                | CLONE Varible
 
-    Compare : Expression EQ Expression
+    Compare : Expression COMPARE Expression
 
+    Cast : CAST Expression
+
+    InDecrement : INDECREMENT Assignable 
+                | Assignable INDECREMENT
+
+    UBit : BITNOT Expression
+
+    BBit : Expression SHIFT Expression
+         | Expression ANDOP Expression
+         | Expression BITOR Expression
+         | Expression BITXOR Expression
+
+    InstanceOf : Expression INSTANCEOF NsContentName
+
+    ULogic : NOT Expression
+    BLogic : Expression AND Expression
+           | Expression OR Expression
 
 '''
 
 start = 'Root'
 
-precedence = (
-    ('left', 'PLUS'),
-    ('nonassoc', 'EQ'),
-)
+precedence = [
+    ('nonassoc', 'CLONE', 'NEW'),
+    ('left', 'LBRACKET'),
+    ('right', 'EXPONENT'),
+    ('right', 'INDECREMENT', 'BITNOT', 'CAST', 'AT'),
+    ('nonassoc', 'INSTANCEOF'),
+    ('right', 'NOT'),
+    ('right', 'UMATH'),
+    ('left', 'MATH1'),
+    ('left', 'MATH2'),
+    ('left', 'SHIFT'),
+    ('nonassoc', 'COMPARE'),
+    ('left', 'ANDOP'),
+    ('left', 'BITXOR'),
+    ('left', 'BITOR'),
+    ('left', 'AND'),
+    ('left', 'OR'),
+    ('left', 'IF'),
+    ('right', 'ASSIGN'),
+    ('left', 'COMMA')
+]
+
+precedence.reverse()
 
 
 def p_Root(p):
@@ -253,9 +299,9 @@ def p_Line(p):
 def p_Embeded(p):
     '''
     Embeded : DOCCOMMENT
-        | NATIVEPHP
-        | EMPTYLINE
-        | INLINECOMMENT
+            | NATIVEPHP
+            | EMPTYLINE
+            | INLINECOMMENT
 
     '''
     p[0] = Embeded(p[1])
@@ -271,12 +317,12 @@ def p_Statement(p):
 def p_StatementWithoutTerminator(p):
     '''
     StatementWithoutTerminator : Expression
-                   | STATEMENT
-                   | Return
-                   | Namespace
-                   | UseNamespace
-                   | GlobalDec
-                   | ConstDefWithoutTerminator
+                               | STATEMENT
+                               | Return
+                               | Namespace
+                               | UseNamespace
+                               | GlobalDec
+                               | ConstDefWithoutTerminator
     '''
     p[0] = StatementWithoutTerminator(p[1])
 
@@ -293,10 +339,10 @@ def p_JustStrStatementWithTerminator(p):
 def p_CodeBlock(p):
     '''
     CodeBlock : If
-          | For
-          | FuncDef
-          | Class
-          | Interface
+              | For
+              | FuncDef
+              | Class
+              | Interface
     '''
     p[0] = CodeBlock(p[1])
 
@@ -304,11 +350,15 @@ def p_CodeBlock(p):
 def p_Expression(p):
     '''
     Expression : Value
-           | Assign
-           | Operation
-           | Call
+               | Assign
+               | Operation
+               | Call
+               | LPARENT Expression RPARENT
     '''
-    p[0] = Expression(p[1])
+    if len(p)==2:
+        p[0] = Expression(p[1])
+    else:
+        p[0] = Expression(p[2])
 
 
 def p_Block(p):
@@ -321,7 +371,7 @@ def p_Block(p):
 def p_InitModifier(p):
     '''
     InitModifier :
-             | AssignRightSide
+                 | AssignRightSide
     '''
     if len(p) < 2:
         p[0] = InitModifier(None)
@@ -347,7 +397,7 @@ def p_Value(p):
 def p_Literal(p):
     '''
     Literal : SimpleLiteral
-        | ArrayLiteral
+            | ArrayLiteral
     '''
     p[0] = Literal(p[1])
 
@@ -355,7 +405,7 @@ def p_Literal(p):
 def p_SimpleLiteral(p):
     '''
     SimpleLiteral : NUMBER
-              | STRING
+                  | STRING
     '''
     p[0] = SimpleLiteral(p[1])
 
@@ -371,7 +421,7 @@ def p_ArrayLiteralContentList(p):
     '''
 
     ArrayLiteralContentList : ArrayLiteralContent
-                | ArrayLiteralContentList COMMA ArrayLiteralContent
+                            | ArrayLiteralContentList COMMA ArrayLiteralContent
     '''
     if len(p) < 3:
         p[0] = ArrayLiteralContentList(None, p[1])
@@ -393,7 +443,7 @@ def p_ArrayLiteralContent(p):
 def p_Varible(p):
     '''
     Varible : NsContentName
-        | NsContentName SCOPEOP INDENTIFIER
+            | NsContentName SCOPEOP INDENTIFIER
     '''
     if len(p) < 3:
         p[0] = Varible(None, p[1])
@@ -404,8 +454,8 @@ def p_Varible(p):
 def p_Assignable(p):
     '''
     Assignable : Varible
-           | Assignable LBRACKET Expression RBRACKET
-           | Assignable DOT INDENTIFIER
+               | Assignable LBRACKET Expression RBRACKET
+               | Assignable DOT INDENTIFIER
     '''
     if len(p) == 2:
         p[0] = Assignable(p[1], None, None)
@@ -425,8 +475,8 @@ def p_Assign(p):
 def p_ArgList(p):
     '''
     ArgList :
-        | Arg
-        | ArgList COMMA Arg
+            | Arg
+            | ArgList COMMA Arg
     '''
     if len(p) == 1:
         p[0] = ArgList(None, None)
@@ -446,8 +496,8 @@ def p_Arg(p):
 def p_ParamList(p):
     '''
     ParamList :
-          | Param
-          | ParamList COMMA Param
+              | Param
+              | ParamList COMMA Param
     '''
     if len(p) == 1:
         p[0] = ParamList(None, None)
@@ -474,7 +524,7 @@ def p_Call(p):
 def p_Callable(p):
     '''
     Callable : NsContentName LPARENT
-         | Expression LPARENT
+             | Expression LPARENT
     '''
     if len(p) == 2:
         p[0] = Callable(p[1])
@@ -485,7 +535,7 @@ def p_Callable(p):
 def p_Terminator(p):
     '''
     Terminator : INLINECOMMENT
-           | TERMINATOR
+               | TERMINATOR
     '''
     p[0] = Terminator(p[1])
 
@@ -507,8 +557,8 @@ def p_UseNamespace(p):
 def p_NsContentName(p):
     '''
     NsContentName : INDENTIFIER
-              | BACKSLASH INDENTIFIER
-              | NsContentName BACKSLASH INDENTIFIER
+                  | BACKSLASH INDENTIFIER
+                  | NsContentName BACKSLASH INDENTIFIER
     '''
     if len(p) == 2:
         p[0] = NsContentName(None, p[1])
@@ -521,7 +571,7 @@ def p_NsContentName(p):
 def p_NsContentNameList(p):
     '''
     NsContentNameList : NsContentName
-              | NsContentNameList COMMA NsContentName
+                      | NsContentNameList COMMA NsContentName
     '''
     if len(p) == 2:
         p[0] = NsContentNameList(None, p[1])
@@ -532,7 +582,7 @@ def p_NsContentNameList(p):
 def p_NsContentNameAsId(p):
     '''
     NsContentNameAsId : NsContentName
-              | NsContentName AS INDENTIFIER
+                      | NsContentName AS INDENTIFIER
     '''
     if len(p) == 2:
         p[0] = NsContentNameAsId(p[1])
@@ -543,7 +593,7 @@ def p_NsContentNameAsId(p):
 def p_NsContentNameAsIdList(p):
     '''
     NsContentNameAsIdList : NsContentNameAsId
-                  | NsContentNameAsIdList COMMA NsContentNameAsId
+                          | NsContentNameAsIdList COMMA NsContentNameAsId
     '''
     if len(p) == 2:
         p[0] = NsContentNameAsIdList(None, p[1])
@@ -601,7 +651,7 @@ def p_ClassContent(p):
 def p_InClassDefList(p):
     '''
     InClassDefList : InClassDef
-               | InClassDefList InClassDef
+                   | InClassDefList InClassDef
     '''
     if len(p) < 3:
         p[0] = InClassDefList(None, p[1])
@@ -612,10 +662,10 @@ def p_InClassDefList(p):
 def p_InClassDef(p):
     '''
     InClassDef : Embeded
-           | JustStrStatementWithTerminator
-           | DataMemberDef
-           | ConstDef
-           | MemberFuncDef
+               | JustStrStatementWithTerminator
+               | DataMemberDef
+               | ConstDef
+               | MemberFuncDef
     '''
     p[0] = InClassDef(p[1])
 
@@ -637,7 +687,7 @@ def p_InterfaceContent(p):
 def p_InterfaceDefList(p):
     '''
     InterfaceDefList : InterfaceDef
-             | InterfaceDefList InterfaceDef
+                     | InterfaceDefList InterfaceDef
     '''
     if len(p) < 3:
         p[0] = InterfaceDefList(None, p[1])
@@ -648,9 +698,9 @@ def p_InterfaceDefList(p):
 def p_InterfaceDef(p):
     '''
     InterfaceDef : Embeded
-             | JustStrStatementWithTerminator
-             | ConstDef
-             | MemberFuncDec
+                 | JustStrStatementWithTerminator
+                 | ConstDef
+                 | MemberFuncDec
     '''
     p[0] = InterfaceDef(p[1])
 
@@ -658,7 +708,7 @@ def p_InterfaceDef(p):
 def p_ExtendsModifier(p):
     '''
     ExtendsModifier :
-            | EXTENDS NsContentName
+                    | EXTENDS NsContentName
     '''
     if len(p) > 1:
         p[0] = ExtendsModifier(p[2])
@@ -669,7 +719,7 @@ def p_ExtendsModifier(p):
 def p_ImplementsModifier(p):
     '''
     ImplementsModifier :
-               | IMPLEMENTS NsContentNameList
+                       | IMPLEMENTS NsContentNameList
     '''
     if len(p) > 1:
         p[0] = ImplementsModifier(p[2])
@@ -680,9 +730,9 @@ def p_ImplementsModifier(p):
 def p_AccessModifier(p):
     '''
     AccessModifier :
-               | PUBLIC
-               | PRIVATE
-               | PROTECTED
+                   | PUBLIC
+                   | PRIVATE
+                   | PROTECTED
     '''
     if len(p) > 1:
         p[0] = AccessModifier(p[1])
@@ -693,7 +743,7 @@ def p_AccessModifier(p):
 def p_StaticModifier(p):
     '''
     StaticModifier :
-               | STATIC
+                   | STATIC
     '''
     if len(p) > 1:
         p[0] = StaticModifier(p[1])
@@ -756,7 +806,7 @@ def p_Return(p):
            | RETURN
     '''
     if len(p) > 3:
-        p[0] - Retrun(p[2])
+        p[0] = Return(p[2])
     else:
         p[0] = Return(None)
 
@@ -771,7 +821,7 @@ def p_GlobalDec(p):
 def p_GlobalVaribleList(p):
     '''
     GlobalVaribleList : INDENTIFIER
-              | GlobalVaribleList COMMA INDENTIFIER
+                      | GlobalVaribleList COMMA INDENTIFIER
     '''
     if len(p) > 2:
         p[0] = GlobalVaribleList(p[1], p[3])
@@ -781,25 +831,91 @@ def p_GlobalVaribleList(p):
 
 def p_Operation(p):
     '''
-    Operation : Math
-          | NewOrClone
-          | Compare
-    '''
-    p[0] = Operation(p[1])
+    Operation : UMath
+              | BMath
+              | NewOrClone
+              | Compare
+              | Cast
+              | InDecrement
+              | UBit
+              | BBit
+              | ULogic
+              | BLogic
+              | InstanceOf
+   '''
+   p[0] = Operation(p[1])
 
 
-def p_Math(p):
+def p_BMath(p):
     '''
-    Math : Expression PLUS Expression
+    BMath : Expression MATH1 Expression
+          | Expression MATH2 Expression
     '''
-    p[0] = Operation(p[1], p[2], p[3])
+    p[0] = BMath(p[1], p[2], p[3])
 
+def p_UMath(p):
+    '''
+    UMath : MATH2 Expression %prec UMATH
+    '''
+    p[0] = UMath(p[1], p[2])
+
+
+def p_Cast(p):
+    '''
+    Cast : CAST Expression
+    '''
+    p[0] = Cast(p[1], p[2])
+
+
+def p_InDecrement(p):
+    '''
+    InDecrement : INDECREMENT Assignable 
+                | Assignable INDECREMENT
+    '''
+    if isString(p[1]):
+        p[0] = Cast(p[1], p[2], False)
+    else:
+        p[0] = Cast(p[2], p[1], True)
+
+def p_UBit(p):
+    '''
+    UBit : BITNOT Expression
+    '''
+    p[0] =  UBit(p[1], p[2])
+
+def p_BBit(p):
+    '''
+    BBit : Expression SHIFT Expression
+         | Expression ANDOP Expression
+         | Expression BITOR Expression
+         | Expression BITXOR Expression
+    '''
+    p[0] = BBit(p[1], p[2], p[3])
+
+def p_InstanceOf(p):
+    '''
+    InstanceOf : Expression INSTANCEOF NsContentName
+    '''
+    p[0] = InstanceOf(p[1], p[2], p[3])
+
+def p_ULogic(p):
+    '''
+    ULogic : NOT Expression
+    '''
+    p[0] = ULogic(p[1], p[2])
+
+def p_BLogic(p):
+    '''
+    BLogic : Expression AND Expression
+           | Expression OR Expression
+    '''
+    p[0] = BLogic(p[1], p[2], p[3])
 
 def p_NewOrClone(p):
     '''
     NewOrClone : NEW NsContentName LPARENT ArgList RPARENT
-        | NEW Varible
-        | CLONE Varible
+               | NEW Varible
+               | CLONE Varible
     '''
     if len(p) > 3:
         p[0] = NewOrClone(p[1], p[2], p[4], None)
@@ -809,7 +925,7 @@ def p_NewOrClone(p):
 
 def p_Compare(p):
     '''
-    Compare : Expression EQ Expression
+    Compare : Expression COMPARE Expression
     '''
     p[0] = Compare(p[1], p[2], p[3])
 
