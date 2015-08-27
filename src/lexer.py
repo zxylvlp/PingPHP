@@ -26,7 +26,9 @@ reserved = set([
 
     'not', 'or', 'and',
 
-    'const', 'global'
+    'const', 'global',
+
+    'try', 'catch', 'finally', 'throw'
 
 ])
 
@@ -148,13 +150,13 @@ def t_STATEMENT(t):
 
 def t_INLINECOMMENT(t):
     r'\#[^\#\n]*\n'
-    t.value = ' //' + t.value[1:-1]
+    t.value = '//' + t.value[1:-1]
     return t
 
 
 # handle id and reversed
 def t_INDENTIFIER(t):
-    r'\$?[_a-zA-Z][_a-zA-Z0-9]*'
+    r'(\$?[_a-zA-Z][_a-zA-Z0-9]*)|(__[A-Z_]+__)'
     if t.value in reserved:
         t.type = t.value.upper()
         if t.value in reservedMap:

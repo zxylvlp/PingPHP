@@ -1,0 +1,3 @@
+def foo(&var):
+    var =& $GLOBALS["baz"]
+foo(bar)

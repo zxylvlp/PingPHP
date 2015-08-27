@@ -18,7 +18,7 @@ def projectName():
 
 
 def read(path):
-    file_obj = open(path, 'r')
+    file_obj = open(path, 'rU')
     result = ''
     try:
         result = file_obj.read()

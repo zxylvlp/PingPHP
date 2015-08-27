@@ -43,6 +43,10 @@ def popStr():
     global outputString
     outputString.pop()
 
+def lastStr():
+    global outputString
+    return outputString[-1]
+
 
 def indentSpaces():
     global indentLevel
@@ -139,7 +143,7 @@ class Statement(WithTerminatorNode):
         super(Statement, self).gen()
 
         if not self.val.val=='':
-            append(';')
+            append('; ')
         self.terminator.gen()
 
 
@@ -309,9 +313,14 @@ class Call(BaseNode):
 
     def gen(self):
         super(Call, self).gen()
-        append('(')
+        last = lastStr()
+        if last == 'echo':
+            append(' ')
+        else:
+            append('(')
         self.args.gen()
-        append(')')
+        if not last == 'echo':
+            append(')')
 
 
 class Callable(BaseNode):
@@ -410,11 +419,55 @@ class For(WithTerminatorNode):
         append(' as ')
         append(['$', self.id1])
         self.id2 and append([' => $', self.id2])
-        append(') {')
+        append(') { ')
         self.terminator.gen()
         append('\n')
         self.block.gen()
         append([indentSpaces(), '}'])
+
+
+class Try(WithTerminatorNode):
+    def __init__(self, tryTerm, tryBlock, catch, finTerm, finBlock):
+        super(Try, self).__init__(tryBlock, tryTerm)
+        self.catch = catch
+        self.finTerm = finTerm
+        self.finBlock = finBlock
+    def gen(self):
+        append('try { ')
+        self.terminator.gen()
+        append('\n')
+        super(Try, self).gen()
+        append([indentSpaces(), '} '])
+        self.catch.gen()
+        if self.finTerm:
+            append('finally { ')
+            self.finTerm.gen()
+            append('\n')
+            self.finBlock.gen()
+            append([indentSpaces(), '}'])
+
+class Catch(WithTerminatorNode):
+    def __init__(self, catch, className, var, terminator, block):
+        super(Catch, self).__init__(var, terminator)
+        self.catch = catch
+        self.className = className
+        self.block = block
+    def gen(self):
+        if self.catch:
+            self.catch.gen()
+            append('catch (')
+            self.className.gen()
+            append(' ')
+            super(Catch, self).gen()
+            append(') { ')
+            self.terminator.gen()
+            append('\n')
+            self.block.gen()
+            append([indentSpaces(), '} '])
+
+
+
+
 
 
 class Class(WithTerminatorNode):
@@ -505,20 +558,22 @@ class AccessModifier(JustStrModifier):
 class StaticModifier(JustStrModifier):
     pass
 
-class RefModifier(JustStrModifier):
+class RefModifier(BaseNode):
     pass
-
+    
 
 class MemberFuncDecWithoutTerminator(BaseNode):
-    def __init__(self, access, static, id_, paramList):
+    def __init__(self, access, static, ref, id_, paramList):
         super(MemberFuncDecWithoutTerminator, self).__init__(id_)
         self.access = access
         self.static = static
+        self.ref = ref
         self.paramList = paramList
 
     def gen(self):
         self.access.gen()
         self.static.gen()
+        self.ref.gen()
         append('function ')
         super(MemberFuncDecWithoutTerminator, self).gen()
         append('(')
@@ -529,7 +584,7 @@ class MemberFuncDecWithoutTerminator(BaseNode):
 class MemberFuncDec(WithTerminatorNode):
     def gen(self):
         super(MemberFuncDec, self).gen()
-        append(';')
+        append('; ')
         self.terminator.gen()
 
 
@@ -560,7 +615,7 @@ class DataMemberDef(WithTerminatorNode):
         append('$')
         super(DataMemberDef, self).gen()
         self.init.gen()
-        append(';')
+        append('; ')
         self.terminator.gen()
 
 
@@ -598,7 +653,7 @@ class ConstDefWithoutTerminator(BaseNode):
 class ConstDef(WithTerminatorNode):
     def gen(self):
         super(ConstDef, self).gen()
-        append(';')
+        append('; ')
         self.terminator.gen()
 
 
@@ -607,6 +662,11 @@ class Return(BaseNode):
         append('return')
         self.val and append(' ')
         super(Return, self).gen()
+
+class Throw(BaseNode):
+    def gen(self):
+        append('throw ')
+        super(Throw, self).gen()
 
 
 class GlobalDec(BaseNode):

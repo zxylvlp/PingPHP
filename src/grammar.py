@@ -30,11 +30,13 @@ grammar:
                                | UseNamespace
                                | GlobalDec
                                | ConstDefWithoutTerminator
+                               | Throw
 
     JustStrStatementWithTerminator : STATEMENT Terminator
 
     CodeBlock : If
               | For
+              | Try
               | FuncDef
               | Class
               | Interface
@@ -130,6 +132,13 @@ If
 For
     For : FOR INDENTIFIER IN Expression COLON Terminator Block
 
+Try
+    Try : TRY COLON Terminator Block Catch
+        | TRY COLON Terminator Block Catch FINALLY COLON Terminator Block
+
+    Catch : 
+          | CATCH NsContentName Varible COLON Terminator Block
+
 Class and Interface
     Class : CLASS INDENTIFIER ExtendsModifier ImplementsModifier COLON Terminator ClassContent
 
@@ -173,7 +182,7 @@ Class and Interface
     RefModifier :
                 | ANDOP
 
-    MemberFuncDecWithoutTerminator: AccessModifier StaticModifier INDENTIFIER LPARENT ParamList RPARENT
+    MemberFuncDecWithoutTerminator: AccessModifier StaticModifier RefModifier INDENTIFIER LPARENT ParamList RPARENT
 
     MemberFuncDec : MemberFuncDecWithoutTerminator Terminator
 
@@ -191,6 +200,8 @@ FuncDef
 
     Return : RETURN Expression
            | RETURN
+
+    Throw : THROW Expression
 
     GlobalDec : GLOBAL GlobalVaribleList
 
@@ -336,6 +347,7 @@ def p_StatementWithoutTerminator(p):
                                | UseNamespace
                                | GlobalDec
                                | ConstDefWithoutTerminator
+                               | Throw
     '''
     p[0] = StatementWithoutTerminator(p[1])
 
@@ -351,6 +363,7 @@ def p_CodeBlock(p):
     '''
     CodeBlock : If
               | For
+              | Try
               | FuncDef
               | Class
               | Interface
@@ -647,6 +660,27 @@ def p_For(p):
         p[0] = For(p[2], p[4], p[6], p[8], p[9])
 
 
+def p_Try(p):
+    '''
+    Try : TRY COLON Terminator Block Catch
+        | TRY COLON Terminator Block Catch FINALLY COLON Terminator Block
+    '''
+    if len(p) <= 6:
+        p[0] = Try(p[3], p[4], p[5], None, None)
+    else:
+        p[0] = Try(p[3], p[4], p[5], p[8], p[9])
+
+def p_Catch(p):
+    '''
+    Catch : 
+          | Catch CATCH NsContentName Varible COLON Terminator Block
+    '''
+    if len(p) <= 1:
+        p[0] = Catch(None, None, None, None, None)
+    else:
+        p[0] = Catch(p[1], p[3], p[4], p[6], p[7])
+
+
 def p_Class(p):
     '''
     Class : CLASS INDENTIFIER ExtendsModifier ImplementsModifier COLON Terminator ClassContent
@@ -765,7 +799,7 @@ def p_StaticModifier(p):
 
 def p_RefModifier(p):
     '''
-    RefModifier :
+    RefModifier : 
                 | ANDOP
     '''
     if len(p)<2:
@@ -777,9 +811,9 @@ def p_RefModifier(p):
 
 def p_MemberFuncDecWithoutTerminator(p):
     '''
-    MemberFuncDecWithoutTerminator : AccessModifier StaticModifier INDENTIFIER LPARENT ParamList RPARENT
+    MemberFuncDecWithoutTerminator : AccessModifier StaticModifier RefModifier INDENTIFIER LPARENT ParamList RPARENT
     '''
-    p[0] = MemberFuncDecWithoutTerminator(p[1], p[2], p[3], p[5])
+    p[0] = MemberFuncDecWithoutTerminator(p[1], p[2], p[3], p[4], p[6])
 
 
 def p_MemberFuncDec(p):
@@ -798,9 +832,9 @@ def p_MemberFuncDef(p):
 
 def p_DataMemberDef(p):
     '''
-    DataMemberDef : AccessModifier StaticModifier INDENTIFIER InitModifier Terminator
+    DataMemberDef : AccessModifier StaticModifier RefModifier INDENTIFIER InitModifier Terminator
     '''
-    p[0] = DataMemberDef(p[1], p[2], p[3], p[4], p[5])
+    p[0] = DataMemberDef(p[1], p[2], p[4], p[5], p[6])
 
 
 def p_FuncDef(p):
@@ -829,10 +863,16 @@ def p_Return(p):
     Return : RETURN Expression
            | RETURN
     '''
-    if len(p) > 3:
+    if len(p) >= 3:
         p[0] = Return(p[2])
     else:
         p[0] = Return(None)
+
+def p_Throw(p):
+    '''
+    Throw : THROW Expression
+    '''
+    p[0] = Throw(p[2])
 
 
 def p_GlobalDec(p):

@@ -1,21 +1,21 @@
 <?php
 
-const A = 100;
+const A = 100; 
 
-const B = "PingPHP";
+const B = "PingPHP"; 
 
 
 function func($a, $b = 1) {
     
     if ($a == 1) {
-        $b = 11;
+        $b = 11; 
     } else if ($a == 2) {
-        $b = 22;
+        $b = 22; 
     } else {
-        $b = 33;
+        $b = 33; 
     }
     
-    return;
+    return $b; 
 }
 
 class MyClass extends BaseClass implements AInterface, BInterface {
