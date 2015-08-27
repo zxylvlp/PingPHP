@@ -154,7 +154,7 @@ def t_INLINECOMMENT(t):
 
 # handle id and reversed
 def t_INDENTIFIER(t):
-    r'[_a-zA-z][_a-zA-Z0-9]*'
+    r'\$?[_a-zA-Z][_a-zA-Z0-9]*'
     if t.value in reserved:
         t.type = t.value.upper()
         if t.value in reservedMap:
@@ -287,7 +287,12 @@ class PingLexer(object):
 
 
 if __name__ == '__main__':
-    lexer.input(read('./test/BasicSyntax/comment.ping'))
+    filename = './test/BasicSyntax/comment.ping'
+    import sys
+    print sys.argv
+    if len(sys.argv)>1:
+        filename = sys.argv[1]
+    lexer.input(read(filename))
     tokList = token_list(lexer)
     for item in change_token_list_new(tokList):
         print item

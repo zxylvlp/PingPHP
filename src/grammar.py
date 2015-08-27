@@ -92,7 +92,7 @@ Param and Arg
               | Param
               | ParamList COMMA Param
 
-    Param : INDENTIFIER InitModifier
+    Param : RefModifier INDENTIFIER InitModifier
 
 Call
     Call : Callable ArgList RPARENT
@@ -170,6 +170,9 @@ Class and Interface
     StaticModifier :
                    | STATIC
 
+    RefModifier :
+                | ANDOP
+
     MemberFuncDecWithoutTerminator: AccessModifier StaticModifier INDENTIFIER LPARENT ParamList RPARENT
 
     MemberFuncDec : MemberFuncDecWithoutTerminator Terminator
@@ -180,7 +183,7 @@ Class and Interface
     DataMemberDef : AccessModifier StaticModifier INDENTIFIER InitModifier Terminator
 
 FuncDef
-    FuncDef : DEF INDENTIFIER LPARENT ParamList RPARENT COLON Terminator Block
+    FuncDef : DEF RefModifier INDENTIFIER LPARENT ParamList RPARENT COLON Terminator Block
 
     ConstDef : ConstDefWithoutTerminator Terminator
 
@@ -208,6 +211,7 @@ Operation
               | InstanceOf
               | Ternary
               | At
+              | Ref
 
     BMath : Expression MATH1 Expression
           | Expression MATH2 Expression
@@ -242,6 +246,8 @@ Operation
 
     At : AT Expression
 
+    Ref : ANDOP Expression %prec REFOP
+
 '''
 
 start = 'Root'
@@ -259,6 +265,7 @@ precedence = [
     ('left', 'SHIFT'),
     ('nonassoc', 'COMPARE'),
     ('left', 'ANDOP'),
+    ('left', 'REFOP'),
     ('left', 'BITXOR'),
     ('left', 'BITOR'),
     ('left', 'AND'),
@@ -337,8 +344,6 @@ def p_JustStrStatementWithTerminator(p):
     '''
     JustStrStatementWithTerminator : STATEMENT Terminator
     '''
-    if p[1] == 'PASS':
-        p[1] = ''
     p[0] = JustStrStatementWithTerminator(p[1], p[2])
 
 
@@ -489,7 +494,7 @@ def p_ArgList(p):
     elif len(p) == 2:
         p[0] = ArgList(None, p[1])
     else:
-        p[0] = ArgList(p[1], p[2])
+        p[0] = ArgList(p[1], p[3])
 
 
 def p_Arg(p):
@@ -515,10 +520,12 @@ def p_ParamList(p):
 
 def p_Param(p):
     '''
-    Param : INDENTIFIER InitModifier
+    Param : RefModifier INDENTIFIER InitModifier
     '''
-    p[0] = Param(p[1], p[2])
-
+    if len(p)==2:
+        p[0] = Param(None, p[1], p[2])
+    else:
+        p[0] = Param(p[1], p[2], p[3])
 
 def p_Call(p):
     '''
@@ -634,7 +641,7 @@ def p_For(p):
     For : FOR INDENTIFIER IN Expression COLON Terminator Block
     For : FOR INDENTIFIER COMMA INDENTIFIER IN Expression COLON Terminator Block
     '''
-    if p[3] == 'IN':
+    if p[3] == 'in':
         p[0] = For(p[2], None, p[4], p[6], p[7])
     else:
         p[0] = For(p[2], p[4], p[6], p[8], p[9])
@@ -756,6 +763,17 @@ def p_StaticModifier(p):
     else:
         p[0] = StaticModifier(None)
 
+def p_RefModifier(p):
+    '''
+    RefModifier :
+                | ANDOP
+    '''
+    if len(p)<2:
+        p[0] = RefModifier(None)
+    else:
+        p[0] = RefModifier(p[1])
+
+
 
 def p_MemberFuncDecWithoutTerminator(p):
     '''
@@ -787,9 +805,9 @@ def p_DataMemberDef(p):
 
 def p_FuncDef(p):
     '''
-    FuncDef : DEF INDENTIFIER LPARENT ParamList RPARENT COLON Terminator Block
+    FuncDef : DEF RefModifier INDENTIFIER LPARENT ParamList RPARENT COLON Terminator Block
     '''
-    p[0] = FuncDef(p[2], p[4], p[7], p[8])
+    p[0] = FuncDef(p[2], p[3], p[5], p[8], p[9])
 
 
 def p_ConstDefWithoutTerminator(p):
@@ -850,6 +868,7 @@ def p_Operation(p):
               | InstanceOf
               | Ternary
               | At
+              | Ref
     '''
     p[0] = Operation(p[1])
 
@@ -951,6 +970,12 @@ def p_At(p):
     At : AT Expression
     '''
     p[0] = At(p[1],p[2])
+
+def p_Ref(p):
+    '''
+    Ref : ANDOP Expression %prec REFOP
+    '''
+    p[0] = Ref(p[1],p[2])
 
 
 

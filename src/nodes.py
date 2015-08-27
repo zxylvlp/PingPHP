@@ -70,6 +70,32 @@ class WithTerminatorNode(BaseNode):
         super(WithTerminatorNode, self).__init__(val)
         self.terminator = terminator
 
+class UnaryOperationNode(BaseNode):
+    def __init__(self, op, exp):
+        super(UnaryOperationNode, self).__init__(op)
+        self.exp = exp
+
+    def gen(self):
+        super(UnaryOperationNode, self).gen()
+        self.exp.gen()
+
+class UnaryOperationWithSpaceNode(UnaryOperationNode):
+    def gen(self):
+        super(UnaryOperationWithSpaceNode, self).gen()
+        append(' ')
+        self.exp.gen()
+
+class BinaryOperationNode(BaseNode):
+    def __init__(self, exp1, op, exp2):
+        super(BinaryOperationNode, self).__init__(op)
+        self.exp1 = exp1
+        self.exp2 = exp2
+
+    def gen(self):
+        self.exp1.gen()
+        append([' ', self.val, ' '])
+        self.exp2.gen()
+
 
 class Root(BaseNode):
     def gen(self):
@@ -111,7 +137,9 @@ class Statement(WithTerminatorNode):
 
     def gen(self):
         super(Statement, self).gen()
-        append(';')
+
+        if not self.val.val=='':
+            append(';')
         self.terminator.gen()
 
 
@@ -262,11 +290,13 @@ class ParamList(CommaList):
 
 
 class Param(BaseNode):
-    def __init__(self, val, init):
+    def __init__(self, ref, val, init):
+        self.ref = ref
         super(Param, self).__init__(val)
         self.init = init
 
     def gen(self):
+        self.ref.gen()
         append('$')
         super(Param, self).gen()
         self.init.gen()
@@ -475,6 +505,9 @@ class AccessModifier(JustStrModifier):
 class StaticModifier(JustStrModifier):
     pass
 
+class RefModifier(JustStrModifier):
+    pass
+
 
 class MemberFuncDecWithoutTerminator(BaseNode):
     def __init__(self, access, static, id_, paramList):
@@ -532,13 +565,15 @@ class DataMemberDef(WithTerminatorNode):
 
 
 class FuncDef(WithTerminatorNode):
-    def __init__(self, id_, paramList, terminator, block):
+    def __init__(self,init, id_, paramList, terminator, block):
+        self.init = init
         super(FuncDef, self).__init__(id_, terminator)
         self.paramList = paramList
         self.block = block
 
     def gen(self):
         append('function ')
+        self.init.gen()
         super(FuncDef, self).gen()
         append('(')
         self.paramList.gen()
@@ -581,37 +616,16 @@ class GlobalDec(BaseNode):
 
 
 class GlobalVaribleList(CommaList):
-    pass
-
+    def gen(self):
+        if self.list_ != None:
+            self.list_.gen()
+            append(', ')
+        append('$')
+        super(CommaList, self).gen()
 
 class Operation(BaseNode):
     pass
 
-
-class UnaryOperationNode(BaseNode):
-    def __init__(self, op, exp):
-        super(UnaryOperationNode, self).__init__(op)
-        self.exp = exp
-
-    def gen(self):
-        append(self.val)
-        self.exp.gen()
-
-class UnaryOperationWithSpaceNode(UnaryOperationNode):
-    def gen(self):
-        append([self.val, ' '])
-        self.exp.gen()
-
-class BinaryOperationNode(BaseNode):
-    def __init__(self, exp1, op, exp2):
-        super(BinaryOperationNode, self).__init__(op)
-        self.exp1 = exp1
-        self.exp2 = exp2
-
-    def gen(self):
-        self.exp1.gen()
-        append([' ', self.val, ' '])
-        self.exp2.gen()
 
 class UMath(UnaryOperationNode):
     pass
@@ -686,6 +700,8 @@ class Ternary(BaseNode):
 class At(UnaryOperationNode):
     pass
 
+class Ref(UnaryOperationNode):
+    pass
 
 
 if __name__ == '__main__':
