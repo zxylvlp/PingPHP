@@ -36,12 +36,17 @@ def finishOutput():
 def initOutput():
     global outputString, indentLevel
     indentLevel = 0
-    outputString = ['<?php\n']
+    outputString = ['<?php', '\n']
 
 
 def popStr():
     global outputString
     outputString.pop()
+
+def popStrToLastNewLine():
+    while lastStr() != '\n':
+        popStr()
+    popStr()
 
 def lastStr():
     global outputString
@@ -144,7 +149,10 @@ class Statement(WithTerminatorNode):
 
         if not self.val.val=='':
             append('; ')
-        self.terminator.gen()
+            self.terminator.gen()
+        else:
+            popStrToLastNewLine()
+            
 
 
 class StatementWithoutTerminator(BaseNode):
@@ -152,7 +160,13 @@ class StatementWithoutTerminator(BaseNode):
 
 
 class JustStrStatementWithTerminator(WithTerminatorNode):
-    pass
+    def gen(self):
+        if not self.val=='':
+            append('; ')
+            self.terminator.gen()
+        else:
+            popStrToLastNewLine()
+         
 
 
 class CodeBlock(BaseNode):
@@ -404,6 +418,68 @@ class IfBlock(WithTerminatorNode):
         append('\n')
         self.block.gen()
         append([indentSpaces(), '}'])
+
+class Switch(WithTerminatorNode):
+    def __init__(self, exp, terminator, caseList):
+        super(Switch, self).__init__(exp, terminator)
+        self.caseList = caseList
+    def gen(self):
+        append('switch (')
+        super(Switch, self).gen()
+        append(') { ')
+        self.terminator.gen()
+        append('\n')
+        indent()
+        self.caseList.gen()
+        outdent()
+        append([indentSpaces(), '}'])
+
+
+class CaseList(BaseNode):
+    def __init__(self, list_, case_):
+        super(CaseList, self).__init__(case_)
+        self.list_ = list_
+    def gen(self):
+        if self.list_:
+            self.list_.gen()
+        super(CaseList, self).gen()
+
+class ValueList(BaseNode):
+    def __init__(self, list_, value):
+        super(ValueList, self).__init__(value)
+        self.list_ = list_
+
+class Case(WithTerminatorNode):
+    def __init__(self, case, valueList, terminator, block):
+        super(Case, self).__init__(case, terminator)
+        self.valueList = valueList
+        self.block = block
+    def gen(self):
+        if self.val == 'case':
+            valueList = []
+            while(self.valueList):
+                valueList.append(self.valueList.val)
+                self.valueList = self.valueList.list_
+            valueList.reverse()
+            for value in valueList:
+                append([indentSpaces(), 'case '])
+                value.gen()
+                append([' : ', '\n'])
+            popStr()
+            self.terminator.gen()
+            append('\n')
+            self.block.gen()
+            indent()
+            append([indentSpaces(), 'break; ', '\n'])
+            outdent()
+        else:
+            append([indentSpaces(), 'default : '])
+            self.terminator.gen()
+            append('\n')
+            self.block.gen()
+
+
+
 
 
 class For(WithTerminatorNode):

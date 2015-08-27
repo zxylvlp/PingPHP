@@ -26,7 +26,6 @@ echo "Hello World\n";
 
 
 class MyException extends Exception {
-    
 }
 
 class Test {

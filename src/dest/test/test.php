@@ -20,7 +20,6 @@ function func($a, $b = 1) {
 
 class MyClass extends BaseClass implements AInterface, BInterface {
     
-    
 }
 
 

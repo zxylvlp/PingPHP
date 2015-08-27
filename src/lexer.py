@@ -16,6 +16,7 @@ reserved = set([
     # ctrl flow
     'if', 'elif', 'else',
     'for', 'in',
+    'switch', 'case', 'default',
 
     # function
     'def', 'return',

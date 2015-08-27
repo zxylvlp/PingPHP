@@ -2,7 +2,6 @@
 $a = &$b; 
 /****/
 function foo(&$var) {
-    
 }
 
 foo($a); // $a is "created" and assigned to null
@@ -38,7 +37,6 @@ echo "var2 is set to '$var2'\n"; // var2 is set to 'Example variable'
 $ref = 0; 
 $row = &$ref; 
 foreach (array(1, 2, 3) as $row) { 
-    // do something
 }
 echo $ref; // 3 - last element of the iterated array
 /****/

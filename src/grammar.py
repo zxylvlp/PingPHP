@@ -35,6 +35,7 @@ grammar:
     JustStrStatementWithTerminator : STATEMENT Terminator
 
     CodeBlock : If
+              | Switch
               | For
               | Try
               | FuncDef
@@ -128,6 +129,18 @@ If
 
     IfBlock : IF Expression COLON Terminator Block
             | IfBlock ELIF Expression COLON Terminator Block
+
+Switch
+    Switch : SWITCH Expression COLON Terminator INDENT CaseList OUTDENT
+
+    CaseList : Case
+             | CaseList Case
+
+    ValueList : Value
+              | ValueList COMMA Value
+
+    Case : CASE ValueList COLON Terminator Block
+         | DEFAULT COLON Terminator Block
 
 For
     For : FOR INDENTIFIER IN Expression COLON Terminator Block
@@ -362,6 +375,7 @@ def p_JustStrStatementWithTerminator(p):
 def p_CodeBlock(p):
     '''
     CodeBlock : If
+              | Switch
               | For
               | Try
               | FuncDef
@@ -647,6 +661,43 @@ def p_IfBlock(p):
         p[0] = IfBlock(None, p[2], p[4], p[5])
     else:
         p[0] = IfBlock(p[1], p[3], p[5], p[6])
+
+def p_Switch(p):
+    '''
+    Switch : SWITCH Expression COLON Terminator INDENT CaseList OUTDENT
+    '''
+    p[0] = Switch(p[2], p[4], p[6])
+
+def p_CaseList(p):
+    '''
+    CaseList : Case
+             | CaseList Case
+    '''
+    if len(p) <= 2:
+        p[0] = CaseList(None, p[1])
+    else:
+        p[0] = CaseList(p[1], p[2])
+
+def p_ValueList(p):
+    '''
+    ValueList : Value
+                | Value COMMA Value
+    '''
+    if len(p)<=2:
+        p[0] = ValueList(None, p[1])
+    else:
+        p[0] = ValueList(p[1], p[3])
+
+
+def p_Case(p):
+    '''
+    Case : CASE ValueList COLON Terminator Block
+         | DEFAULT COLON Terminator Block
+    '''
+    if p[1] == 'case':
+        p[0] = Case(p[1], p[2], p[4], p[5])
+    else:
+        p[0] = Case(p[1], None, p[3], p[4])
 
 
 def p_For(p):
