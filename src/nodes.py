@@ -503,6 +503,43 @@ class For(WithTerminatorNode):
         self.block.gen()
         append([indentSpaces(), '}'])
 
+class While(WithTerminatorNode):
+    def __init__(self, exp, terminator, block):
+        super(While, self).__init__(exp, terminator)
+        self.block = block
+    def gen(self):
+        append('while (')
+        super(While, self).gen()
+        append(') { ')
+        self.terminator.gen()
+        append('\n')
+        self.block.gen()
+        append([indentSpaces(), '}'])
+
+class DoWhile(WithTerminatorNode):
+    def __init__(self, term1, block, cmtOrEptList, exp, term2):
+        super(DoWhile, self).__init__(exp, term1)
+        self.block = block
+        self.term2 = term2
+        self.cmtOrEptList = cmtOrEptList
+    def gen(self):
+        append('do { ')
+        self.terminator.gen()
+        append('\n')
+        self.block.gen()
+        indent()
+        self.cmtOrEptList.gen()
+        outdent()
+        append([indentSpaces(), '} while('])
+        super(DoWhile, self).gen()
+        append('); ')
+        self.term2.gen()
+
+class CommentOrEmptyLineList(Body):
+    pass
+
+class CommentOrEmptyLine(Line):
+    pass
 
 class Try(WithTerminatorNode):
     def __init__(self, tryTerm, tryBlock, catch, finTerm, finBlock):

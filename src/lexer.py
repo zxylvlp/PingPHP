@@ -17,6 +17,7 @@ reserved = set([
     'if', 'elif', 'else',
     'for', 'in',
     'switch', 'case', 'default',
+    'while', 'do',
 
     # function
     'def', 'return',
@@ -230,7 +231,7 @@ def change_token_list_new(tok_list):
                 pre_space += 1
             elif tok.type == 'TAB':
                 pre_space += 8
-            elif tok.type in ['NEWLINE', 'INLINECOMMENT', 'DOCCOMMENT', 'NATIVEPHP']:
+            elif tok.type in ['NEWLINE', 'INLINECOMMENT', 'DOCCOMMENT']:
                 pre_space = 0
                 if tok.type == 'NEWLINE':
                     tok = make_lexToken('EMPTYLINE', '', tok.lineno, tok.lexpos)
@@ -290,7 +291,7 @@ class PingLexer(object):
 
 
 if __name__ == '__main__':
-    filename = './test/BasicSyntax/comment.ping'
+    filename = './test/ControlStructures/doWhile.ping'
     import sys
     print sys.argv
     if len(sys.argv)>1:

@@ -37,6 +37,8 @@ grammar:
     CodeBlock : If
               | Switch
               | For
+              | While
+              | DoWhile
               | Try
               | FuncDef
               | Class
@@ -149,6 +151,12 @@ Switch
 
 For
     For : FOR INDENTIFIER IN Expression COLON Terminator Block
+
+While
+    While : WHILE Expression COLON Terminator Block
+
+DoWhile
+    DoWhile : DO COLON Terminator Block WHILE Expression Terminator
 
 Try
     Try : TRY COLON Terminator Block Catch
@@ -382,6 +390,8 @@ def p_CodeBlock(p):
     CodeBlock : If
               | Switch
               | For
+              | While
+              | DoWhile
               | Try
               | FuncDef
               | Class
@@ -731,6 +741,36 @@ def p_For(p):
     else:
         p[0] = For(p[2], p[4], p[6], p[8], p[9])
 
+def p_While(p):
+    '''
+    While : WHILE Expression COLON Terminator Block
+    '''
+    p[0] = While(p[2], p[4], p[5])
+
+
+def p_DoWhile(p):
+    '''
+    DoWhile : DO COLON Terminator Block CommentOrEmptyLineList WHILE Expression Terminator
+    '''
+    p[0] = DoWhile(p[3], p[4], p[5], p[7], p[8])
+
+def p_CommentOrEmptyLineList(p):
+    '''
+    CommentOrEmptyLineList : CommentOrEmptyLine
+                           | CommentOrEmptyLineList CommentOrEmptyLine 
+    '''
+    if len(p) <= 2:
+        p[0] = CommentOrEmptyLineList(None, p[1])
+    else:
+        p[0] = CommentOrEmptyLineList(p[1], p[2])
+
+def p_CommentOrEmptyLine(p):
+    '''
+    CommentOrEmptyLine : EMPTYLINE
+                       | DOCCOMMENT
+                       | INLINECOMMENT
+    '''
+    p[0] = CommentOrEmptyLine(p[1])
 
 def p_Try(p):
     '''
