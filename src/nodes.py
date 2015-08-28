@@ -420,29 +420,29 @@ class IfBlock(WithTerminatorNode):
         append([indentSpaces(), '}'])
 
 class Switch(WithTerminatorNode):
-    def __init__(self, exp, terminator, caseList):
+    def __init__(self, exp, terminator, content):
         super(Switch, self).__init__(exp, terminator)
-        self.caseList = caseList
+        self.content = content
     def gen(self):
         append('switch (')
         super(Switch, self).gen()
         append(') { ')
         self.terminator.gen()
         append('\n')
-        indent()
-        self.caseList.gen()
-        outdent()
+        self.content.gen()
         append([indentSpaces(), '}'])
 
+class SwitchContent(Block):
+    pass
 
-class CaseList(BaseNode):
-    def __init__(self, list_, case_):
-        super(CaseList, self).__init__(case_)
-        self.list_ = list_
-    def gen(self):
-        if self.list_:
-            self.list_.gen()
-        super(CaseList, self).gen()
+
+class InSwitchDefList(Body):
+    pass
+
+
+class InSwitchDef(Line):
+    pass
+
 
 class ValueList(BaseNode):
     def __init__(self, list_, value):
@@ -461,6 +461,7 @@ class Case(WithTerminatorNode):
                 valueList.append(self.valueList.val)
                 self.valueList = self.valueList.list_
             valueList.reverse()
+            popStr()
             for value in valueList:
                 append([indentSpaces(), 'case '])
                 value.gen()
@@ -473,10 +474,11 @@ class Case(WithTerminatorNode):
             append([indentSpaces(), 'break; ', '\n'])
             outdent()
         else:
-            append([indentSpaces(), 'default : '])
+            append('default : ')
             self.terminator.gen()
             append('\n')
             self.block.gen()
+        popStr()
 
 
 

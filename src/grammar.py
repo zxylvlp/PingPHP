@@ -131,10 +131,15 @@ If
             | IfBlock ELIF Expression COLON Terminator Block
 
 Switch
-    Switch : SWITCH Expression COLON Terminator INDENT CaseList OUTDENT
+    Switch : SWITCH Expression COLON Terminator SwitchContent
 
-    CaseList : Case
-             | CaseList Case
+    SwitchContent : INDENT InSwitchDefList OUTDENT
+
+    InSwitchDefList : InSwitchDef
+                    | InSwitchDefList InSwitchDef
+
+    InSwitchDef : Case
+                | Embeded
 
     ValueList : Value
               | ValueList COMMA Value
@@ -662,21 +667,37 @@ def p_IfBlock(p):
     else:
         p[0] = IfBlock(p[1], p[3], p[5], p[6])
 
+
 def p_Switch(p):
     '''
-    Switch : SWITCH Expression COLON Terminator INDENT CaseList OUTDENT
+    Switch : SWITCH Expression COLON Terminator SwitchContent
     '''
-    p[0] = Switch(p[2], p[4], p[6])
+    p[0] = Switch(p[2], p[4], p[5])
 
-def p_CaseList(p):
+
+def p_SwitchContent(p):
     '''
-    CaseList : Case
-             | CaseList Case
+    SwitchContent : INDENT InSwitchDefList OUTDENT
     '''
+    p[0] = SwitchContent(p[2])
+
+
+def p_InSwitchDefList(p):
+    '''
+    InSwitchDefList : InSwitchDef
+                    | InSwitchDefList InSwitchDef
+   '''
     if len(p) <= 2:
-        p[0] = CaseList(None, p[1])
+        p[0] = InSwitchDefList(None, p[1])
     else:
-        p[0] = CaseList(p[1], p[2])
+        p[0] = InSwitchDefList(p[1], p[2])
+
+def p_InSwitchDef(p):
+    '''
+    InSwitchDef : Case
+                | Embeded
+    '''
+    p[0] = InSwitchDef(p[1])
 
 def p_ValueList(p):
     '''
