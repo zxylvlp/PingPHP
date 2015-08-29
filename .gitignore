@@ -2,6 +2,7 @@
 *.result
 *.out
 parsetab.*
+src/test.php
 
 # C extensions
 *.so

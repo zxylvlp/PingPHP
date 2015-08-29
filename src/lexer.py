@@ -30,7 +30,9 @@ reserved = set([
 
     'const', 'global',
 
-    'try', 'catch', 'finally', 'throw'
+    'try', 'catch', 'finally', 'throw',
+
+    'yield'
 
 ])
 

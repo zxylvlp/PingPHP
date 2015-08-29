@@ -485,9 +485,11 @@ class Case(WithTerminatorNode):
 
 
 class For(WithTerminatorNode):
-    def __init__(self, id1, id2, exp, terminator, block):
+    def __init__(self, id1Ref, id1, id2Ref, id2, exp, terminator, block):
         super(For, self).__init__(exp, terminator)
+        self.id1Ref = id1Ref
         self.id1 = id1
+        self.id2Ref = id2Ref
         self.id2 = id2
         self.block = block
 
@@ -495,8 +497,12 @@ class For(WithTerminatorNode):
         append('foreach (')
         super(For, self).gen()
         append(' as ')
+        self.id1Ref.gen()
         append(['$', self.id1])
-        self.id2 and append([' => $', self.id2])
+        if self.id2:
+            append(' => ')
+            self.id2Ref.gen()
+            append(['$', self.id2])
         append(') { ')
         self.terminator.gen()
         append('\n')
@@ -782,6 +788,17 @@ class Throw(BaseNode):
     def gen(self):
         append('throw ')
         super(Throw, self).gen()
+
+class Yield(BaseNode):
+    def __init__(self, exp1, exp2):
+        super(Yield, self).__init__(exp1)
+        self.exp2 = exp2
+    def gen(self):
+        append('yield ')
+        super(Yield, self).gen()
+        if self.exp2:
+            append(' => ')
+            self.exp2.gen()
 
 
 class GlobalDec(BaseNode):

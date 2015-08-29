@@ -31,6 +31,7 @@ grammar:
                                | GlobalDec
                                | ConstDefWithoutTerminator
                                | Throw
+                               | Yield
 
     JustStrStatementWithTerminator : STATEMENT Terminator
 
@@ -150,7 +151,9 @@ Switch
          | DEFAULT COLON Terminator Block
 
 For
-    For : FOR INDENTIFIER IN Expression COLON Terminator Block
+    For : FOR RefModifier INDENTIFIER IN Expression COLON Terminator Block
+    For : FOR RefModifier INDENTIFIER COMMA RefModifier INDENTIFIER IN Expression COLON Terminator Block
+ 
 
 While
     While : WHILE Expression COLON Terminator Block
@@ -228,6 +231,10 @@ FuncDef
            | RETURN
 
     Throw : THROW Expression
+
+    Yield : YIELD
+          | YIELD Expression
+          | YIELD Expression COMMA Expression
 
     GlobalDec : GLOBAL GlobalVaribleList
 
@@ -374,6 +381,7 @@ def p_StatementWithoutTerminator(p):
                                | GlobalDec
                                | ConstDefWithoutTerminator
                                | Throw
+                               | Yield
     '''
     p[0] = StatementWithoutTerminator(p[1])
 
@@ -733,13 +741,13 @@ def p_Case(p):
 
 def p_For(p):
     '''
-    For : FOR INDENTIFIER IN Expression COLON Terminator Block
-    For : FOR INDENTIFIER COMMA INDENTIFIER IN Expression COLON Terminator Block
+    For : FOR RefModifier INDENTIFIER IN Expression COLON Terminator Block
+    For : FOR RefModifier INDENTIFIER COMMA RefModifier INDENTIFIER IN Expression COLON Terminator Block
     '''
-    if p[3] == 'in':
-        p[0] = For(p[2], None, p[4], p[6], p[7])
+    if p[4] == 'in':
+        p[0] = For(p[2], p[3], None, None, p[5], p[7], p[8])
     else:
-        p[0] = For(p[2], p[4], p[6], p[8], p[9])
+        p[0] = For(p[2], p[3], p[5], p[6], p[8], p[10], p[11])
 
 def p_While(p):
     '''
@@ -980,11 +988,26 @@ def p_Return(p):
     else:
         p[0] = Return(None)
 
+
 def p_Throw(p):
     '''
     Throw : THROW Expression
     '''
     p[0] = Throw(p[2])
+
+
+def p_Yield(p):
+    '''
+    Yield : YIELD
+          | YIELD Expression
+          | YIELD Expression COMMA Expression
+    '''
+    if len(p) == 2:
+        p[0] = Yield(None, None)
+    elif len(p) == 3:
+        p[0] = Yield(p[2], None)
+    else:
+        p[0] = Yield(p[2], p[4])
 
 
 def p_GlobalDec(p):
