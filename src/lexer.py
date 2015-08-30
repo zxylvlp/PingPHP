@@ -4,8 +4,6 @@
 from ply import lex
 from helper import *
 
-fileStrCache = ''
-
 reserved = set([
     # namespace
     'namespace', 'use', 'as',
@@ -197,8 +195,12 @@ t_NUMBER = r'0|([1-9][0-9]*)|(0b[01]+)|(0[0-7]+)|(0[xX][0-9a-fA-F]+)|(true)|(fal
 
 t_COLON = r':'
 
+
 def t_error(t):
-    logging.error("Lexical error in %d,%d\n%s", t.lineno, linePos(t) , errorMsg(t))
+
+    from helper import linePos
+    from helper import errorMsg
+    logging.error("Lexical error in %d,%d \n%s\a", t.lineno, linePos(t) , errorMsg(t))
     raise Exception()
 
 
@@ -283,8 +285,8 @@ lexer = lex.lex()
 
 class PingLexer(object):
     def __init__(self, inputStr):
-        global fileStrCache
-        fileStrCache = inputStr
+        global lexer
+        lexer = lex.lex()
         lexer.lineno = 1
         lexer.input(inputStr)
         self.tokList = token_list(lexer)
@@ -313,6 +315,7 @@ class PingLexer(object):
 if __name__ == '__main__':
     filename = './test/ControlStructures/doWhile.ping'
     initLogging()
+    '''
     import sys
     print sys.argv
     if len(sys.argv)>1:
@@ -321,3 +324,4 @@ if __name__ == '__main__':
     tokList = token_list(lexer)
     for item in change_token_list_new(tokList):
         print item
+    '''

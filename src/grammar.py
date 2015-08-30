@@ -1152,7 +1152,6 @@ def p_Ref(p):
     '''
     p[0] = Ref(p[1],p[2])
 
-
-
 def p_error(p):
     print p
+    raise Exception

@@ -11,10 +11,15 @@ from grammar import *
 
 configObj = None
 filesSet = None
-
+fileStrCache = ''
 
 def projectName():
     return "PingPHP"
+
+def printStack(e):
+    if not configObj['debug']:
+        return
+    raise e
 
 
 def read(path):
@@ -121,12 +126,21 @@ def mapSrcToDest(src):
 def initLogging():
     logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s',
                         datefmt='%Y-%m-%d %H:%M:%S')
-    
+
+def linePos(t):
+    lineStart = fileStrCache[:t.lexpos].rfind('\n') + 1
+    return t.lexpos - lineStart
+
+def errorMsg(t):
+    lineStart = fileStrCache[:t.lexpos].rfind('\n') + 1
+    return fileStrCache[lineStart:t.lexpos] + '`ERROR`' + t.value
+   
 def transFiles():
     try:
         for file_ in files():
             doTrans(file_)
-    except Exception:
+    except Exception as e:
+        printStack(e)
         exit(1)
 
 def transFilesNoExit():
@@ -134,21 +148,14 @@ def transFilesNoExit():
         for file_ in files():
             doTrans(file_)
     except Exception:
-        pass
-
-def linePos(t):
-    global fileStrCache
-    lineStart = fileStrCache[:t.lexpos].rfind('\n') + 1
-    return t.lexpos - lineStart
-
-def errorMsg(t):
-    lineStart = fileStrCache[:t.lexpos].rfind('\n') + 1
-    return fileStrCache[lineStart:t.lexpos] + '`ERROR`' + t.value
+        printStack(e)
 
 def doTrans(path):
     dest = mapSrcToDest(path)
     logging.info("Translating %s: %s to %s", 'file', path, dest)
-    pLexer = PingLexer(read(path))
+    global fileStrCache
+    fileStrCache = read(path)
+    pLexer = PingLexer(fileStrCache)
     # print pLexer.token()
     # print pLexer.tokList
     parser = yacc.yacc()

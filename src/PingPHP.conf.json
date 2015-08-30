@@ -1,4 +1,5 @@
 {
+    "debug": true, 
     "ignoreFiles": [
         "test1/*"
     ], 
