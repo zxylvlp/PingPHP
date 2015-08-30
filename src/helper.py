@@ -119,15 +119,31 @@ def mapSrcToDest(src):
 
 
 def initLogging():
-    logging.basicConfig(level=logging.INFO,
-                        format='%(asctime)s - %(message)s',
+    logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s',
                         datefmt='%Y-%m-%d %H:%M:%S')
-
-
+    
 def transFiles():
-    for file_ in files():
-        doTrans(file_)
+    try:
+        for file_ in files():
+            doTrans(file_)
+    except Exception:
+        exit(1)
 
+def transFilesNoExit():
+    try:
+        for file_ in files():
+            doTrans(file_)
+    except Exception:
+        pass
+
+def linePos(t):
+    global fileStrCache
+    lineStart = fileStrCache[:t.lexpos].rfind('\n') + 1
+    return t.lexpos - lineStart
+
+def errorMsg(t):
+    lineStart = fileStrCache[:t.lexpos].rfind('\n') + 1
+    return fileStrCache[lineStart:t.lexpos] + '`ERROR`' + t.value
 
 def doTrans(path):
     dest = mapSrcToDest(path)

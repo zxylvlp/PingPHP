@@ -4,6 +4,8 @@
 from ply import lex
 from helper import *
 
+fileStrCache = ''
+
 reserved = set([
     # namespace
     'namespace', 'use', 'as',
@@ -85,8 +87,8 @@ t_MATH2 = r'\+|-'
 t_INDECREMENT = r'(\+\+)|(--)'
 
 slash = [
-    'SLASH',
-    'BACKSLASH'
+    'BACKSLASH',
+    'FOLDLINE'
 ]
 
 numAndStr = [
@@ -117,6 +119,9 @@ tokens = [
 
 ] + map(lambda x: x.upper(), reserved) + commentAndNative + braces + bit + math + slash + numAndStr + inOutdent
 
+def lineNoInc(t, n=1):
+    t.lexer.lineno += n
+
 t_CAST = r'\([ \t]*((int)|(float)|(string)|(array)|(object)|(bool))[ \t]*\)'
 t_AT = r'@'
 t_COMPARE = r'([=!]=[=]?)|(<>)|(>=?)|(<=?)        '
@@ -127,6 +132,7 @@ def t_DOCCOMMENT(t):
     if pos == -1:
         pos = t.value.rfind('\'\'\'')
     t.value = '/**' + t.value[3:pos] + '**/'
+    lineNoInc(t, t.value.count('\n') + 1)
     return t
 
 t_SCOPEOP = r'::'
@@ -142,7 +148,6 @@ t_RBRACKET = r'\]'
 t_COMMA = r','
 t_DOT = r'\.'
 t_BACKSLASH = r'/'
-t_SLASH = r'\\'
 
 
 def t_STATEMENT(t):
@@ -151,10 +156,15 @@ def t_STATEMENT(t):
         t.value = ''
     return t
 
+def t_FOLDLINE(t):
+    r'\\\n'
+    lineNoInc(t)
+
 
 def t_INLINECOMMENT(t):
     r'\#[^\#\n]*\n'
     t.value = '//' + t.value[1:-1]
+    lineNoInc(t)
     return t
 
 
@@ -173,23 +183,28 @@ def t_NATIVEPHP(t):
     t.value = t.value[6:].lstrip()
     pos2 = t.value.rfind('?>')
     t.value = t.value[0:pos2]
+    lineNoInc(t, t.value.count('\n') + 1)
     return t
 
 
-t_STRING = r'(\'(([^\'])|(\\\'))*\')|("(([^"\n])|(\\"))*")'
+def t_STRING(t):
+    r'(\'(([^\'])|(\\\'))*\')|("(([^"\n])|(\\"))*")'
+    lineNoInc(t, t.value.count('\n'))
+    return t
+ 
 
 t_NUMBER = r'0|([1-9][0-9]*)|(0b[01]+)|(0[0-7]+)|(0[xX][0-9a-fA-F]+)|(true)|(false)|(null)|(([0-9]*\.[0-9]+)|([0-9]+\.[0-9]*))|(([0-9]+|(([0-9]*\.[0-9]+)|([0-9]+\.[0-9]*)))[eE][+-]?[0-9]+)'
 
 t_COLON = r':'
 
-
 def t_error(t):
-    print t
+    logging.error("Lexical error in %d,%d\n%s", t.lineno, linePos(t) , errorMsg(t))
+    raise Exception()
 
 
 def t_NEWLINE(t):
     r'\n'
-    t.lexer.lineno += 1
+    lineNoInc(t) 
     return t
 
 
@@ -268,6 +283,9 @@ lexer = lex.lex()
 
 class PingLexer(object):
     def __init__(self, inputStr):
+        global fileStrCache
+        fileStrCache = inputStr
+        lexer.lineno = 1
         lexer.input(inputStr)
         self.tokList = token_list(lexer)
         self.tokList = change_token_list_new(self.tokList)
@@ -294,6 +312,7 @@ class PingLexer(object):
 
 if __name__ == '__main__':
     filename = './test/ControlStructures/doWhile.ping'
+    initLogging()
     import sys
     print sys.argv
     if len(sys.argv)>1:
