@@ -153,7 +153,14 @@ class Statement(WithTerminatorNode):
         else:
             popStrToLastNewLine()
             
-
+class LambdaAssignStatement(BaseNode):
+    def __init__(self, val, lambda_):
+        super(LambdaAssignStatement, self).__init__(val)
+        self.lambda_ = lambda_
+    def gen(self):
+        super(LambdaAssignStatement, self).gen()
+        append(' = ')
+        self.lambda_.gen()
 
 class StatementWithoutTerminator(BaseNode):
     pass
@@ -339,6 +346,32 @@ class Call(BaseNode):
 
 class Callable(BaseNode):
     pass
+
+class Lambda(WithTerminatorNode):
+    def __init__(self, paramList, use, terminator, block):
+        super(Lambda, self).__init__(paramList, terminator)
+        self.use = use
+        self.block = block
+    def gen(self):
+        append('function (')
+        super(Lambda, self).gen()
+        append(') ')
+        self.use.gen()
+        append('{ ')
+        self.terminator.gen()
+        append('\n')
+        self.block.gen()
+        append([indentSpaces(), '}'])
+
+class UseModifier(BaseNode):
+    def __init__(self, paramList):
+        super(UseModifier, self).__init__(paramList)
+    def gen(self):
+        if not self.val:
+            return
+        append('use (')
+        super(UseModifier, self).gen()
+        append(')')
 
 
 class Terminator(BaseNode):

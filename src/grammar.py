@@ -2,6 +2,7 @@
 '''
 from nodes import *
 from lexer import *
+import logging
 
 '''
 grammar:
@@ -50,6 +51,7 @@ grammar:
                | Operation
                | Call
                | LPARENT Expression RPARENT
+               | Lambda
 
     Block : INDENT Body OUTDENT
 
@@ -105,6 +107,11 @@ Call
 
     Callable : NsContentName LPARENT
              | Expression LPARENT
+
+Lambda
+    Lambda : LAMBDA LPARENT ParamList RPARENT UseModifier COLON Terminator Block
+    UseModifier : 
+                | USE LPARENT ParamList RPARENT
 
 Terminator
     Terminator : INLINECOMMENT
@@ -367,8 +374,19 @@ def p_Embeded(p):
 def p_Statement(p):
     '''
     Statement : StatementWithoutTerminator Terminator
+              | LambdaAssignStatement
     '''
-    p[0] = Statement(p[1], p[2])
+    if len(p) < 3:
+        term = Terminator('')
+    else:
+        term = p[2]
+    p[0] = Statement(p[1], term)
+
+def p_LambdaAssignStatement(p):
+    '''
+    LambdaAssignStatement : Assignable ASSIGN Lambda
+    '''
+    p[0] = LambdaAssignStatement(p[1], p[3])
 
 
 def p_StatementWithoutTerminator(p):
@@ -415,6 +433,7 @@ def p_Expression(p):
                | Operation
                | Call
                | LPARENT Expression RPARENT
+               | Lambda
     '''
     if len(p)==2:
         p[0] = Expression(p[1])
@@ -593,6 +612,21 @@ def p_Callable(p):
         p[0] = Callable(p[1])
     else:
         p[0] = Callable(p[1])
+
+def p_Lambda(p):
+    '''
+    Lambda : LAMBDA LPARENT ParamList RPARENT UseModifier COLON Terminator Block
+    '''
+    p[0] = Lambda(p[3], p[5], p[7], p[8])
+def p_UseModifier(p):
+    '''
+    UseModifier : 
+                | USE LPARENT ParamList RPARENT
+    '''
+    if len(p) <= 1:
+        p[0] = UseModifier(None)
+    else:
+        p[0] = UseModifier(p[3])
 
 
 def p_Terminator(p):
@@ -1153,5 +1187,5 @@ def p_Ref(p):
     p[0] = Ref(p[1],p[2])
 
 def p_error(p):
-    print p
-    raise Exception
+    from helper import errorMsg
+    errorMsg("Grammar", p)

@@ -1,0 +1,10 @@
+echo(preg_replace_callback('~-([a-z])~', lambda(match):
+    return strtoupper(match[1])
+, 'hello-world'))
+# 输出 helloWorld
+
+greet = lambda(name):
+    printf("Hello %s\r\n", $name)
+
+$greet('World')
+$greet('PHP')

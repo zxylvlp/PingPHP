@@ -8,6 +8,7 @@ import logging
 from ply import yacc
 from lexer import PingLexer
 from grammar import *
+import traceback
 
 configObj = None
 filesSet = None
@@ -19,8 +20,7 @@ def projectName():
 def printStack(e):
     if not configObj['debug']:
         return
-    raise e
-
+    print traceback.format_exc()
 
 def read(path):
     file_obj = open(path, 'rU')
@@ -127,14 +127,14 @@ def initLogging():
     logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s',
                         datefmt='%Y-%m-%d %H:%M:%S')
 
-def linePos(t):
+def errorMsg(errorType, t):
     lineStart = fileStrCache[:t.lexpos].rfind('\n') + 1
-    return t.lexpos - lineStart
+    linePos = t.lexpos - lineStart
+    errorContent = fileStrCache[lineStart:t.lexpos] + '`ERROR`' + t.value
+    logging.error(errorType + " error in %d,%d \n%s\a", t.lineno, linePos , errorContent)
+    raise Exception
 
-def errorMsg(t):
-    lineStart = fileStrCache[:t.lexpos].rfind('\n') + 1
-    return fileStrCache[lineStart:t.lexpos] + '`ERROR`' + t.value
-   
+
 def transFiles():
     try:
         for file_ in files():
@@ -147,7 +147,7 @@ def transFilesNoExit():
     try:
         for file_ in files():
             doTrans(file_)
-    except Exception:
+    except Exception as e:
         printStack(e)
 
 def doTrans(path):

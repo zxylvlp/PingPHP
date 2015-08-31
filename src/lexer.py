@@ -32,7 +32,9 @@ reserved = set([
 
     'try', 'catch', 'finally', 'throw',
 
-    'yield'
+    'yield',
+
+    'lambda'
 
 ])
 
@@ -197,11 +199,8 @@ t_COLON = r':'
 
 
 def t_error(t):
-
-    from helper import linePos
     from helper import errorMsg
-    logging.error("Lexical error in %d,%d \n%s\a", t.lineno, linePos(t) , errorMsg(t))
-    raise Exception()
+    errorMsg('Lexical', t)
 
 
 def t_NEWLINE(t):
@@ -280,14 +279,10 @@ def change_token_list_new(tok_list):
     return result_tok_list[1:-1]
 
 
-lexer = lex.lex()
-
 
 class PingLexer(object):
     def __init__(self, inputStr):
-        global lexer
         lexer = lex.lex()
-        lexer.lineno = 1
         lexer.input(inputStr)
         self.tokList = token_list(lexer)
         self.tokList = change_token_list_new(self.tokList)
@@ -313,15 +308,14 @@ class PingLexer(object):
 
 
 if __name__ == '__main__':
-    filename = './test/ControlStructures/doWhile.ping'
+    filename = './test/Functions/anonymous.ping'
     initLogging()
-    '''
     import sys
     print sys.argv
     if len(sys.argv)>1:
         filename = sys.argv[1]
+    lexer = lex.lex()
     lexer.input(read(filename))
     tokList = token_list(lexer)
     for item in change_token_list_new(tokList):
         print item
-    '''
