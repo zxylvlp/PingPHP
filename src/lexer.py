@@ -179,10 +179,11 @@ def t_INDENTIFIER(t):
 
 
 def t_NATIVEPHP(t):
-    r'<\?php((?!<\\?php)[\s\S])*\?>[ \t]*\n'
+    r'<\?php((?!<\?php)[\s\S])*\?>[ \t]*\n'
     t.value = t.value[6:].lstrip()
     pos2 = t.value.rfind('?>')
-    t.value = t.value[0:pos2]
+    t.value = t.value[0:pos2].rstrip()
+    #print t.value
     lineNoInc(t, t.value.count('\n') + 1)
     return t
 
@@ -193,7 +194,7 @@ def t_STRING(t):
     return t
  
 
-t_NUMBER = r'0|([1-9][0-9]*)|(0b[01]+)|(0[0-7]+)|(0[xX][0-9a-fA-F]+)|(true)|(false)|(null)|(([0-9]*\.[0-9]+)|([0-9]+\.[0-9]*))|(([0-9]+|(([0-9]*\.[0-9]+)|([0-9]+\.[0-9]*)))[eE][+-]?[0-9]+)'
+t_NUMBER = r'(([0-9]+|(([0-9]*\.[0-9]+)|([0-9]+\.[0-9]*)))[eE][+-]?[0-9]+)|(([0-9]*\.[0-9]+)|([0-9]+\.[0-9]*))|([1-9][0-9]*)|(0b[01]+)|(0[0-7]+)|(0[xX][0-9a-fA-F]+)|(true)|(false)|(null)|0'
 
 t_COLON = r':'
 

@@ -23,6 +23,7 @@ grammar:
             | INLINECOMMENT
 
     Statement : StatementWithoutTerminator Terminator
+              | LambdaAssignStatement
 
     StatementWithoutTerminator : Expression
                                | STATEMENT
@@ -109,9 +110,9 @@ Call
              | Expression LPARENT
 
 Lambda
-    Lambda : LAMBDA LPARENT ParamList RPARENT UseModifier COLON Terminator Block
+    Lambda : LAMBDA ParamList UseModifier COLON Terminator Block
     UseModifier : 
-                | USE LPARENT ParamList RPARENT
+                | USE ParamList
 
 Terminator
     Terminator : INLINECOMMENT
@@ -615,18 +616,18 @@ def p_Callable(p):
 
 def p_Lambda(p):
     '''
-    Lambda : LAMBDA LPARENT ParamList RPARENT UseModifier COLON Terminator Block
+    Lambda : LAMBDA ParamList UseModifier COLON Terminator Block
     '''
-    p[0] = Lambda(p[3], p[5], p[7], p[8])
+    p[0] = Lambda(p[2], p[3], p[5], p[6])
 def p_UseModifier(p):
     '''
     UseModifier : 
-                | USE LPARENT ParamList RPARENT
+                | USE ParamList
     '''
     if len(p) <= 1:
         p[0] = UseModifier(None)
     else:
-        p[0] = UseModifier(p[3])
+        p[0] = UseModifier(p[2])
 
 
 def p_Terminator(p):
