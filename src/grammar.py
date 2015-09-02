@@ -101,7 +101,11 @@ Param and Arg
               | Param
               | ParamList COMMA Param
 
-    Param : RefModifier INDENTIFIER InitModifier
+    Param : RefModifier INDENTIFIER TypeModifier InitModifier
+
+    TypeModifier : 
+                 | COLON NsContentName
+    
 
 Call
     Call : Callable ArgList RPARENT
@@ -590,12 +594,20 @@ def p_ParamList(p):
 
 def p_Param(p):
     '''
-    Param : RefModifier INDENTIFIER InitModifier
+    Param : RefModifier INDENTIFIER TypeModifier InitModifier
     '''
-    if len(p)==2:
-        p[0] = Param(None, p[1], p[2])
+    p[0] = Param(p[1], p[2], p[3], p[4])
+
+def p_TypeModifier(p):
+    '''
+    TypeModifier : 
+                 | COLON NsContentName
+    '''
+    if len(p) <= 1:
+        p[0] = TypeModifier(None)
     else:
-        p[0] = Param(p[1], p[2], p[3])
+        p[0] = TypeModifier(p[2])
+
 
 def p_Call(p):
     '''
@@ -616,18 +628,18 @@ def p_Callable(p):
 
 def p_Lambda(p):
     '''
-    Lambda : LAMBDA ParamList UseModifier COLON Terminator Block
+    Lambda : LAMBDA LPARENT ParamList RPARENT UseModifier COLON Terminator Block
     '''
-    p[0] = Lambda(p[2], p[3], p[5], p[6])
+    p[0] = Lambda(p[3], p[5], p[7], p[8])
 def p_UseModifier(p):
     '''
     UseModifier : 
-                | USE ParamList
+                | USE LPARENT ParamList RPARENT
     '''
     if len(p) <= 1:
         p[0] = UseModifier(None)
     else:
-        p[0] = UseModifier(p[2])
+        p[0] = UseModifier(p[3])
 
 
 def p_Terminator(p):

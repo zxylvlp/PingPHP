@@ -1,9 +1,9 @@
-echo(preg_replace_callback('~-([a-z])~', lambda match:
+echo(preg_replace_callback('~-([a-z])~', lambda(match):
     return strtoupper(match[1])
 , 'hello-world'))
 # 输出 helloWorld
 
-greet = lambda name:
+greet = lambda(name):
     printf("Hello %s\r\n", name)
 
 $greet('World')
@@ -13,13 +13,13 @@ $greet('PHP')
 message = 'hello'
 
 # 没有 "use"
-example = lambda:
+example = lambda():
     var_dump(message)
 
 echo($example())
 
 # 继承 $message
-example = lambda use message:
+example = lambda() use(message):
     var_dump(message)
 
 echo($example())
@@ -33,7 +33,7 @@ echo($example())
 message = 'hello'
 
 # Inherit by-reference
-example = lambda use &message:
+example = lambda() use(&message):
     var_dump(message)
 
 echo($example())
@@ -44,7 +44,7 @@ message = 'world'
 echo($example())
 
 # Closures can also accept regular arguments
-example = lambda arg use message:
+example = lambda(arg) use(message):
     var_dump("{$arg} {$message}")
 
 $example("hello")
@@ -69,7 +69,7 @@ class Cart:
     
     public getTotal(tax):
         total = 0.00
-        callback = lambda quantity, product use tax, &total:
+        callback = lambda(quantity, product) use (tax, &total):
 			<?php
             $pricePerItem = constant(__CLASS__ . "::PRICE_" .
             strtoupper($product));

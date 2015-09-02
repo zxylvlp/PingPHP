@@ -315,17 +315,23 @@ class ParamList(CommaList):
 
 
 class Param(BaseNode):
-    def __init__(self, ref, val, init):
+    def __init__(self, ref, val, type_, init):
         self.ref = ref
         super(Param, self).__init__(val)
+        self.type_ = type_
         self.init = init
 
     def gen(self):
+        self.type_.gen()
         self.ref.gen()
         append('$')
         super(Param, self).gen()
         self.init.gen()
 
+class TypeModifier(BaseNode):
+    def gen(self):
+        super(TypeModifier, self).gen()
+        self.val and append(' ')
 
 class Call(BaseNode):
     def __init__(self, val, args):

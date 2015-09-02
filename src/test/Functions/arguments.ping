@@ -1,0 +1,125 @@
+def takes_array(input):
+    echo ("$input[0] + $input[1] = ", input[0]+input[1])
+
+''''''
+
+def add_some_extra(&string):
+    string = join('', [string, 'and something extra.'])
+
+str = 'This is a string, '
+add_some_extra(str)
+echo(str)    # outputs 'This is a string, and something extra.'
+
+''''''
+
+def makecoffee(type = "cappuccino"):
+    return "Making a cup of $type.\n"
+
+echo(makecoffee())
+echo(makecoffee(null))
+echo(makecoffee("espresso"))
+
+''''''
+
+def makecoffee(types = array("cappuccino"), coffeeMaker = NULL):
+    device = "hands" if is_null(coffeeMaker) else coffeeMaker
+    return join("", ["Making a cup of ", join(", ", $types) ," with $device.\n"])
+
+echo(makecoffee())
+echo(makecoffee(array("cappuccino", "lavazza"), "teapot"))
+
+''''''
+
+def makeyogurt(type = "acidophilus", flavour):
+    return "Making a bowl of $type $flavour.\n"
+
+echo(makeyogurt("raspberry"))   # won't work as expected
+
+''''''
+
+def makeyogurt(flavour, type = "acidophilus"):
+    return "Making a bowl of $type $flavour.\n"
+
+echo(makeyogurt("raspberry"))   # works as expected
+
+''''''
+
+class C:
+	pass
+class D extends C:
+	pass
+
+# This doesn't extend C.
+class E:
+	pass
+
+def f(c:C):
+    echo(join("", [get_class(c), "\n"]))
+
+f(new C())
+f(new D())
+f(new E())
+
+''''''
+
+interface I:
+	public f()
+
+class C implements I:
+	public f():
+		pass
+
+# This doesn't implement I.
+class E:
+	pass
+
+def f(i:I):
+    echo(join("", [get_class(i), "\n"]))
+
+f(new C())
+f(new E())
+
+''''''
+
+class C:
+	pass
+
+def f(c:C = null):
+    var_dump(c)
+
+f(new C())
+f(null)
+
+''''''
+
+declare(strict_types=1)
+
+def sum(a:int, b:int):
+    return a + b
+
+var_dump(sum(1, 2))
+var_dump(sum(1.5, 2.5))
+
+''''''
+
+def sum(a:int, b:int):
+    return a + b
+
+var_dump(sum(1, 2))
+
+# These will be coerced to integers: note the output below!
+var_dump(sum(1.5, 2.5))
+
+''''''
+
+declare(strict_types=1)
+
+def sum(a:int, b:int):
+    return a + b
+
+try:
+    var_dump(sum(1, 2))
+    var_dump(sum(1.5, 2.5))
+catch TypeError e:
+    echo(join("", ['Error: ', e.getMessage()]))
+
