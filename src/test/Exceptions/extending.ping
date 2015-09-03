@@ -45,10 +45,10 @@ class TestException:
 # 例子 1
 try:
     o = new TestException(TestException::THROW_CUSTOM)
-catch MyException e: # 捕获异常
+catch (e:MyException): # 捕获异常
     echo("Caught my exception\n", e)
     e.customFunction()
-catch Exception e:        # 被忽略
+catch (e:Exception):        # 被忽略
     echo("Caught Default Exception\n", e)
 
 # Continue execution
@@ -59,11 +59,11 @@ echo("\n\n")
 # 例子 2
 try:
     o = new TestException(TestException::THROW_DEFAULT)
-catch MyException e:      #  不能匹配异常的种类，被忽略
+catch (e:MyException):      #  不能匹配异常的种类，被忽略
 
     echo("Caught my exception\n", e)
     e.customFunction()
-catch Exception e:        # 捕获异常
+catch (e:Exception):        # 捕获异常
     echo("Caught Default Exception\n", e)
 
 # 执行后续代码
@@ -74,7 +74,7 @@ echo("\n\n")
 # 例子 3
 try: 
     o = new TestException(TestException::THROW_CUSTOM)
-catch Exception e:        # 捕获异常
+catch (e:Exception):        # 捕获异常
     echo("Default Exception caught\n", e)
 
 # 执行后续代码
@@ -85,7 +85,7 @@ echo("\n\n")
 # 例子 4
 try:
     o = new TestException()
-catch Exception e:         # 没有异常，被忽略
+catch (e:Exception):         # 没有异常，被忽略
     echo("Default Exception caught\n", e)
 
 # 执行后续代码

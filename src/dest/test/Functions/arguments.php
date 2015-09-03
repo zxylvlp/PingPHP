@@ -27,7 +27,7 @@ echo makecoffee("espresso");
 
 function makecoffee($types = array("cappuccino"), $coffeeMaker = NULL) {
     $device = is_null($coffeeMaker) ? "hands" : $coffeeMaker; 
-    return join("", ["Making a cup of ", join(", ", $$types), " with $device.\n"]); 
+    return join("", ["Making a cup of ", join(", ", $types), " with $device.\n"]); 
 }
 
 echo makecoffee(); 
@@ -139,3 +139,54 @@ try {
     echo join("", ['Error: ', $e->getMessage()]); 
 } 
 
+/****/
+
+function sum(...$numbers) {
+    $acc = 0; 
+    foreach ($numbers as $n) { 
+        $acc += $n; 
+    }
+    return $acc; 
+}
+
+echo sum(1, 2, 3, 4); 
+
+/****/
+
+function add($a, $b) {
+    return $a + $b; 
+}
+
+echo add(...[1, 2]), "\n"; 
+
+$a = [1, 2]; 
+echo add(...$a); 
+
+/****/
+
+function total_intervals($unit, DateInterval ...$intervals) {
+    $time = 0; 
+    foreach ($intervals as $interval) { 
+        $time += $interval->unit; 
+    }
+    return $time; 
+}
+
+$a = new DateInterval('P1D'); 
+$b = new DateInterval('P2D'); 
+echo total_intervals('d', $a, $b), ' days'; 
+
+// This will fail, since null isn't a DateInterval object.
+echo total_intervals('d', $null); 
+
+/****/
+
+function sum() {
+    $acc = 0; 
+    foreach (func_get_args() as $n) { 
+        $acc += $n; 
+    }
+    return $acc; 
+}
+
+echo sum(1, 2, 3, 4); 

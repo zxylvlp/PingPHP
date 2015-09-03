@@ -23,7 +23,7 @@ echo(makecoffee("espresso"))
 
 def makecoffee(types = array("cappuccino"), coffeeMaker = NULL):
     device = "hands" if is_null(coffeeMaker) else coffeeMaker
-    return join("", ["Making a cup of ", join(", ", $types) ," with $device.\n"])
+    return join("", ["Making a cup of ", join(", ", types) ," with $device.\n"])
 
 echo(makecoffee())
 echo(makecoffee(array("cappuccino", "lavazza"), "teapot"))
@@ -120,6 +120,50 @@ def sum(a:int, b:int):
 try:
     var_dump(sum(1, 2))
     var_dump(sum(1.5, 2.5))
-catch TypeError e:
+catch (e:TypeError):
     echo(join("", ['Error: ', e.getMessage()]))
 
+''''''
+
+def sum(numbers...):
+    acc = 0
+    for n in numbers:
+        acc += n
+    return acc
+
+echo(sum(1, 2, 3, 4))
+
+''''''
+
+def add(a, b):
+    return a + b
+
+echo(add([1, 2]...), "\n")
+
+a = [1, 2]
+echo(add(a...))
+
+''''''
+
+def total_intervals(unit, intervals...:DateInterval):
+    time = 0
+    for interval in intervals:
+        time += interval.unit
+    return time
+
+a = new DateInterval('P1D')
+b = new DateInterval('P2D')
+echo(total_intervals('d', a, b), ' days')
+
+# This will fail, since null isn't a DateInterval object.
+echo(total_intervals('d', null))
+
+''''''
+
+def sum():
+    acc = 0
+    for n in func_get_args():
+        acc += n
+    return acc
+
+echo(sum(1, 2, 3, 4))

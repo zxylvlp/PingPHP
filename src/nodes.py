@@ -298,7 +298,12 @@ class Assign(BaseNode):
         self.rightSide = rightSide
 
     def gen(self):
-        super(Assign, self).gen()
+        if isinstance(self.val, ArrayLiteral):
+            append('list(')
+            self.val.val.gen()
+            append(')')
+        else:
+            super(Assign, self).gen()
         self.rightSide.gen()
 
 
@@ -307,22 +312,31 @@ class ArgList(CommaList):
 
 
 class Arg(BaseNode):
-    pass
+    def __init__(self, exp, threeDot):
+        self.threeDot = threeDot
+        super(Arg, self).__init__(exp)
+    def gen(self):
+        self.threeDot and self.threeDot.gen()
+        super(Arg, self).gen()
 
 
 class ParamList(CommaList):
     pass
 
+class ThreeDotModifier(BaseNode):
+    pass
 
 class Param(BaseNode):
-    def __init__(self, ref, val, type_, init):
+    def __init__(self, ref, val, threeDot, type_, init):
         self.ref = ref
         super(Param, self).__init__(val)
+        self.threeDot = threeDot
         self.type_ = type_
         self.init = init
 
     def gen(self):
         self.type_.gen()
+        self.threeDot.gen()
         self.ref.gen()
         append('$')
         super(Param, self).gen()
@@ -607,7 +621,7 @@ class Try(WithTerminatorNode):
             append([indentSpaces(), '}'])
 
 class Catch(WithTerminatorNode):
-    def __init__(self, catch, className, var, terminator, block):
+    def __init__(self, catch, var, className, terminator, block):
         super(Catch, self).__init__(var, terminator)
         self.catch = catch
         self.className = className
@@ -740,21 +754,34 @@ class MemberFuncDecWithoutTerminator(BaseNode):
         self.paramList.gen()
         append(')')
 
-
 class MemberFuncDec(WithTerminatorNode):
+    def __init__(self, func, returnType, terminator):
+        super(MemberFuncDec, self).__init__(func, terminator)
+        self.returnType = returnType
+
     def gen(self):
         super(MemberFuncDec, self).gen()
+        self.returnType.gen()
         append('; ')
         self.terminator.gen()
 
+class ReturnTypeModifierForDec(BaseNode):
+    def gen(self):
+        if not self.val:
+            return
+        append(': ')
+        super(ReturnTypeModifierForDec, self).gen()
+        append(' ')
 
 class MemberFuncDef(WithTerminatorNode):
-    def __init__(self, val, terminator, block):
+    def __init__(self, val, returnType, terminator, block):
         super(MemberFuncDef, self).__init__(val, terminator)
         self.block = block
+        self.returnType = returnType
 
     def gen(self):
         super(MemberFuncDef, self).gen()
+        self.returnType.gen()
         append(' {')
         self.terminator.gen()
         append('\n')
@@ -778,21 +805,30 @@ class DataMemberDef(WithTerminatorNode):
         append('; ')
         self.terminator.gen()
 
+class ReturnTypeModifier(BaseNode):
+    def gen(self):
+        if self.val:
+            append(': ')
+            self.val.gen()
+            
 
 class FuncDef(WithTerminatorNode):
-    def __init__(self,init, id_, paramList, terminator, block):
-        self.init = init
+    def __init__(self, ref, id_, paramList, returnType, terminator, block):
+        self.ref = ref
         super(FuncDef, self).__init__(id_, terminator)
         self.paramList = paramList
+        self.returnType = returnType
         self.block = block
 
     def gen(self):
         append('function ')
-        self.init.gen()
+        self.ref.gen()
         super(FuncDef, self).gen()
         append('(')
         self.paramList.gen()
-        append(') {')
+        append(')')
+        self.returnType.gen()
+        append(' {')
         self.terminator.gen()
         append('\n')
         self.block.gen()

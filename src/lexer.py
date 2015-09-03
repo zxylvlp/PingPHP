@@ -87,7 +87,7 @@ t_MATH2 = r'\+|-'
 t_INDECREMENT = r'(\+\+)|(--)'
 
 slash = [
-    'BACKSLASH',
+    'SLASH',
     'FOLDLINE'
 ]
 
@@ -109,6 +109,7 @@ tokens = [
     'SCOPEOP',
     'INDENTIFIER',
     'COMMA',
+    'THREEDOT',
     'DOT',
     'COLON',
     'SPACE',
@@ -146,8 +147,9 @@ t_RPARENT = r'\)'
 t_LBRACKET = r'\['
 t_RBRACKET = r'\]'
 t_COMMA = r','
+t_THREEDOT = r'\.\.\.'
 t_DOT = r'\.'
-t_BACKSLASH = r'/'
+t_SLASH = r'\\'
 
 
 def t_STATEMENT(t):

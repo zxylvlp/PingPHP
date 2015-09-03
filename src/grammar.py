@@ -88,6 +88,7 @@ Value and Assign:
                | Assignable DOT INDENTIFIER
 
     Assign : Assignable AssignRightSide
+           | ArrayLiteral AssignRightSide
 
 
 Param and Arg
@@ -95,13 +96,13 @@ Param and Arg
             | Arg
             | ArgList COMMA Arg
 
-    Arg : Expression
+    Arg : Expression ThreeDotModifier
 
     ParamList :
               | Param
               | ParamList COMMA Param
 
-    Param : RefModifier INDENTIFIER TypeModifier InitModifier
+    Param : RefModifier INDENTIFIER ThreeDotModifier TypeModifier InitModifier
 
     TypeModifier : 
                  | COLON NsContentName
@@ -177,8 +178,8 @@ Try
     Try : TRY COLON Terminator Block Catch
         | TRY COLON Terminator Block Catch FINALLY COLON Terminator Block
 
-    Catch : 
-          | CATCH NsContentName Varible COLON Terminator Block
+Catch : 
+          | Catch CATCH LPARENT Varible COLON NsContentName RPARENT COLON Terminator Block
 
 Class and Interface
     Class : CLASS INDENTIFIER ExtendsModifier ImplementsModifier COLON Terminator ClassContent
@@ -225,15 +226,21 @@ Class and Interface
 
     MemberFuncDecWithoutTerminator: AccessModifier StaticModifier RefModifier INDENTIFIER LPARENT ParamList RPARENT
 
-    MemberFuncDec : MemberFuncDecWithoutTerminator Terminator
+    MemberFuncDec : MemberFuncDecWithoutTerminator ReturnTypeModifierForDec Terminator
 
-    MemberFuncDef : MemberFuncDecWithoutTerminator COLON Terminator Block
+    ReturnTypeModifierForDec : 
+                             | COLON NsContentName
 
+    MemberFuncDef : MemberFuncDecWithoutTerminator COLON ReturnTypeModifier Terminator Block
 
-    DataMemberDef : AccessModifier StaticModifier INDENTIFIER InitModifier Terminator
+    DataMemberDef : AccessModifier StaticModifier RefModifier INDENTIFIER InitModifier Terminator
 
 FuncDef
-    FuncDef : DEF RefModifier INDENTIFIER LPARENT ParamList RPARENT COLON Terminator Block
+
+    ReturnTypeModifier : 
+                       | NsContentName
+
+    FuncDef : DEF RefModifier INDENTIFIER LPARENT ParamList RPARENT COLON ReturnTypeModifier Terminator Block
 
     ConstDef : ConstDefWithoutTerminator Terminator
 
@@ -504,7 +511,6 @@ def p_ArrayLiteral(p):
 
 def p_ArrayLiteralContentList(p):
     '''
-
     ArrayLiteralContentList : ArrayLiteralContent
                             | ArrayLiteralContentList COMMA ArrayLiteralContent
     '''
@@ -553,6 +559,7 @@ def p_Assignable(p):
 def p_Assign(p):
     '''
     Assign : Assignable AssignRightSide
+           | ArrayLiteral AssignRightSide
     '''
     p[0] = Assign(p[1], p[2])
 
@@ -573,9 +580,12 @@ def p_ArgList(p):
 
 def p_Arg(p):
     '''
-    Arg : Expression
+    Arg : Expression ThreeDotModifier
     '''
-    p[0] = Arg(p[1])
+    if len(p) <= 2:
+        p[0] = Arg(p[1], None)
+    else:
+        p[0] = Arg(p[1], p[2])
 
 
 def p_ParamList(p):
@@ -591,12 +601,22 @@ def p_ParamList(p):
     else:
         p[0] = ParamList(p[1], p[3])
 
+def p_ThreeDotModifier(p):
+    '''
+    ThreeDotModifier :
+                     | THREEDOT
+    '''
+    if len(p) <= 1:
+        p[0] = ThreeDotModifier(None)
+    else:
+        p[0] = ThreeDotModifier(p[1])
+
 
 def p_Param(p):
     '''
-    Param : RefModifier INDENTIFIER TypeModifier InitModifier
+    Param : RefModifier INDENTIFIER ThreeDotModifier TypeModifier InitModifier
     '''
-    p[0] = Param(p[1], p[2], p[3], p[4])
+    p[0] = Param(p[1], p[2], p[3], p[4], p[5])
 
 def p_TypeModifier(p):
     '''
@@ -631,6 +651,7 @@ def p_Lambda(p):
     Lambda : LAMBDA LPARENT ParamList RPARENT UseModifier COLON Terminator Block
     '''
     p[0] = Lambda(p[3], p[5], p[7], p[8])
+
 def p_UseModifier(p):
     '''
     UseModifier : 
@@ -667,15 +688,15 @@ def p_UseNamespace(p):
 def p_NsContentName(p):
     '''
     NsContentName : INDENTIFIER
-                  | BACKSLASH INDENTIFIER
-                  | NsContentName BACKSLASH INDENTIFIER
+                  | SLASH INDENTIFIER
+                  | NsContentName SLASH INDENTIFIER
     '''
     if len(p) == 2:
         p[0] = NsContentName(None, p[1])
     elif len(p) == 3:
         p[0] = NsContentName(None, p[1] + p[2])
     else:
-        p[0] = NsContentName(p[1], p[1] + p[2])
+        p[0] = NsContentName(p[1], p[2] + p[3])
 
 
 def p_NsContentNameList(p):
@@ -840,12 +861,12 @@ def p_Try(p):
 def p_Catch(p):
     '''
     Catch : 
-          | Catch CATCH NsContentName Varible COLON Terminator Block
+          | Catch CATCH LPARENT Varible COLON NsContentName RPARENT COLON Terminator Block
     '''
     if len(p) <= 1:
         p[0] = Catch(None, None, None, None, None)
     else:
-        p[0] = Catch(p[1], p[3], p[4], p[6], p[7])
+        p[0] = Catch(p[1], p[4], p[6], p[9], p[10])
 
 
 def p_Class(p):
@@ -985,16 +1006,26 @@ def p_MemberFuncDecWithoutTerminator(p):
 
 def p_MemberFuncDec(p):
     '''
-    MemberFuncDec : MemberFuncDecWithoutTerminator Terminator
+    MemberFuncDec : MemberFuncDecWithoutTerminator ReturnTypeModifierForDec Terminator
     '''
-    p[0] = MemberFuncDec(p[1], p[2])
+    p[0] = MemberFuncDec(p[1], p[2], p[3])
+
+def p_ReturnTypeModifierForDec(p):
+    '''
+    ReturnTypeModifierForDec : 
+                             | COLON NsContentName
+    '''
+    if len(p) <= 1:
+        p[0] = ReturnTypeModifierForDec(None)
+    else:
+        p[0] = ReturnTypeModifierForDec(p[2])
 
 
 def p_MemberFuncDef(p):
     '''
-    MemberFuncDef : MemberFuncDecWithoutTerminator COLON Terminator Block
+    MemberFuncDef : MemberFuncDecWithoutTerminator COLON ReturnTypeModifier Terminator Block
     '''
-    p[0] = MemberFuncDef(p[1], p[3], p[4])
+    p[0] = MemberFuncDef(p[1], p[3], p[4], p[5])
 
 
 def p_DataMemberDef(p):
@@ -1003,12 +1034,21 @@ def p_DataMemberDef(p):
     '''
     p[0] = DataMemberDef(p[1], p[2], p[4], p[5], p[6])
 
+def p_ReturnTypeModifier(p):
+    '''
+    ReturnTypeModifier : 
+                       | NsContentName
+    '''
+    if len(p) <= 1:
+        p[0] = ReturnTypeModifier(None)
+    else:
+        p[0] = ReturnTypeModifier(p[1])
 
 def p_FuncDef(p):
     '''
-    FuncDef : DEF RefModifier INDENTIFIER LPARENT ParamList RPARENT COLON Terminator Block
+    FuncDef : DEF RefModifier INDENTIFIER LPARENT ParamList RPARENT COLON ReturnTypeModifier Terminator Block
     '''
-    p[0] = FuncDef(p[2], p[3], p[5], p[8], p[9])
+    p[0] = FuncDef(p[2], p[3], p[5], p[8], p[9], p[10])
 
 
 def p_ConstDefWithoutTerminator(p):
