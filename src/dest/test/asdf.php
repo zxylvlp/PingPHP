@@ -30,3 +30,4 @@ interface MyIterfaceA extends MyIterfaceB {//line2
     public static function myMethod(); 
 }
 
+new $a; 

@@ -8,7 +8,7 @@ class MyException extends Exception {
         // 自定义的代码
         
         // 确保所有变量都被正确赋值
-        parent::$__construct($message, $code, $previous); 
+        parent::__construct($message, $code, $previous); 
     }
     
     // 自定义字符串输出的样式

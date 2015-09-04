@@ -116,7 +116,8 @@ tokens = [
     'TAB',
     'NEWLINE',
     'TERMINATOR',
-    'STATEMENT'
+    'STATEMENT',
+    'NAMESPACEBEFORESLASH'
 
 ] + map(lambda x: x.upper(), reserved) + commentAndNative + braces + bit + math + slash + numAndStr + inOutdent
 
@@ -169,6 +170,9 @@ def t_INLINECOMMENT(t):
     lineNoInc(t)
     return t
 
+def t_NAMESPACEBEFORESLASH(t):
+    r'namespace(?=[ \t]*\\[ \t]*[_a-zA-Z0-9])'
+    return t
 
 # handle id and reversed
 def t_INDENTIFIER(t):

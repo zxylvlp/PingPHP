@@ -270,6 +270,7 @@ class Varible(BaseNode):
             self.nsContentName.gen()
             append('::')
         if isinstance(self.val, NsContentName):
+            self.val.list_ and self.val.list_.gen()
             self.val = self.val.val
         if not self.val.isupper():
             append('$')
@@ -365,7 +366,15 @@ class Call(BaseNode):
 
 
 class Callable(BaseNode):
-    pass
+    def __init__(self, val, id_):
+        super(Callable, self).__init__(val)
+        self.id_ = id_
+    def gen(self):
+        super(Callable, self).gen()
+        if self.id_:
+            append('::')
+            append(self.id_)
+
 
 class Lambda(WithTerminatorNode):
     def __init__(self, paramList, use, terminator, block):

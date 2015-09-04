@@ -106,12 +106,12 @@ Param and Arg
 
     TypeModifier : 
                  | COLON NsContentName
-    
 
 Call
     Call : Callable ArgList RPARENT
 
     Callable : NsContentName LPARENT
+             | NsContentName SCOPEOP INDENTIFIER LPARENT
              | Expression LPARENT
 
 Lambda
@@ -128,6 +128,7 @@ Namespace
     UseNamespace : USE NsContentNameAsIdList
 
     NsContentName : INDENTIFIER
+                  | NAMESPACEBEFORESLASH
                   | BACKSLASH INDENTIFIER
                   | NsContentName BACKSLASH INDENTIFIER
 
@@ -639,12 +640,13 @@ def p_Call(p):
 def p_Callable(p):
     '''
     Callable : NsContentName LPARENT
+             | NsContentName SCOPEOP INDENTIFIER LPARENT
              | Expression LPARENT
     '''
-    if len(p) == 2:
-        p[0] = Callable(p[1])
+    if len(p) <= 3:
+        p[0] = Callable(p[1], None)
     else:
-        p[0] = Callable(p[1])
+        p[0] = Callable(p[1], p[3])
 
 def p_Lambda(p):
     '''
@@ -688,6 +690,7 @@ def p_UseNamespace(p):
 def p_NsContentName(p):
     '''
     NsContentName : INDENTIFIER
+                  | NAMESPACEBEFORESLASH
                   | SLASH INDENTIFIER
                   | NsContentName SLASH INDENTIFIER
     '''

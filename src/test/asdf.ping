@@ -28,3 +28,4 @@ interface MyIterfaceA extends MyIterfaceB:#line2
 
 	public static myMethod()
 
+new a
