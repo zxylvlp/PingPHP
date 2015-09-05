@@ -126,7 +126,7 @@ Terminator
 Namespace
     Namespace : NAMESPACE NsContentName
 
-    UseNamespace : USE DefOrConstModifier NsContentNameAsIdList
+    UseNamespace : USE NsContentNameAsIdList
 
     DefOrConstModifier :
                        : DEF
