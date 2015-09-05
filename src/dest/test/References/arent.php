@@ -1,5 +1,5 @@
 <?php
-function foo(&$var) {
+function foo(&$var) { 
     $var = &$GLOBALS["baz"]; 
 }
 foo($bar); 

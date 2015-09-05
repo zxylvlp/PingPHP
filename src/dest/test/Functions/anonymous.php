@@ -59,22 +59,22 @@ $example("hello");
 // 一个基本的购物车，包括一些已经添加的商品和每种商品的数量。
 // 其中有一个方法用来计算购物车中所有商品的总价格，该方法使
 // 用了一个 closure 作为回调函数。
-class Cart {
+class Cart { 
     const PRICE_BUTTER = 1.00; 
     const PRICE_MILK = 3.00; 
     const PRICE_EGGS = 6.95; 
     
     protected $products = array(); 
     
-    public function add($product, $quantity) {
+    public function add($product, $quantity) { 
         $this->products[$product] = $quantity; 
     }
     
-    public function getQuantity($product) {
-        return isset($this->products[$product]) ? $this->products[$product] : $false; 
+    public function getQuantity($product) { 
+        return isset($this->products[$product]) ? $this->products[$product] : false; 
     }
     
-    public function getTotal($tax) {
+    public function getTotal($tax) { 
         $total = 0.00; 
         $callback = function ($quantity, $product) use ($tax, &$total){ 
             $pricePerItem = constant(__CLASS__ . "::PRICE_" .

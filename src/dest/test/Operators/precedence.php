@@ -1,6 +1,6 @@
 <?php
 $a = 3 * 3 % 5; // (3 * 3) % 5 = 4
-$a = $true ? 0 : $true ? 1 : 2; // (true ? 0 : true) ? 1 : 2 = 2
+$a = true ? 0 : true ? 1 : 2; // (true ? 0 : true) ? 1 : 2 = 2
 
 $a = 1; 
 $b = 2; 

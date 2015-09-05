@@ -1,7 +1,7 @@
 <?php
-class foo {
+class foo { 
     public $value = 42; 
-    public &function getValue() {
+    public &function getValue() { 
         return $this->value; 
     }
 }

@@ -57,6 +57,11 @@ def indentSpaces():
     global indentLevel
     return ''.join(['    ' for i in xrange(0, indentLevel)])
 
+def notFunction(name):
+    notFunctions = ['echo', 'require', 'require_once', 'include', 'include_once']
+    if name in notFunctions:
+        return True
+    return False
 
 ''' Node classes '''
 
@@ -356,12 +361,13 @@ class Call(BaseNode):
     def gen(self):
         super(Call, self).gen()
         last = lastStr()
-        if last == 'echo':
+        isNotFunction = notFunction(last)
+        if isNotFunction:
             append(' ')
         else:
             append('(')
         self.args.gen()
-        if not last == 'echo':
+        if not isNotFunction:
             append(')')
 
 
@@ -418,6 +424,15 @@ class UseNamespace(BaseNode):
         append('use ')
         super(UseNamespace, self).gen()
 
+class DefOrConstModifier(BaseNode):
+    def gen(self):
+        if not self.val:
+            return
+        if self.val == 'def':
+            self.val = 'function'
+        super(DefOrConstModifier, self).gen()
+        append(' ')
+
 
 class NsContentName(BaseNode):
     def __init__(self, list_, val):
@@ -434,13 +449,15 @@ class NsContentNameList(CommaList):
 
 
 class NsContentNameAsId(BaseNode):
-    def __init__(self, val, id_):
+    def __init__(self, defOrConst, val, id_):
+        self.defOrConst = defOrConst
         super(NsContentNameAsId, self).__init__(val)
         self.id_ = id_
 
     def gen(self):
+        self.defOrConst.gen()
         super(NsContentNameAsId, self).gen()
-        append(['as ', self.id_])
+        self.id_ and append([' as ', self.id_])
 
 
 class NsContentNameAsIdList(CommaList):
@@ -455,7 +472,7 @@ class If(WithTerminatorNode):
     def gen(self):
         super(If, self).gen()
         if self.elseBlock:
-            append(' else {')
+            append(' else { ')
             self.terminator.gen()
             append('\n')
             self.elseBlock.gen()
@@ -475,7 +492,7 @@ class IfBlock(WithTerminatorNode):
         else:
             append('if (')
         super(IfBlock, self).gen()
-        append(') {')
+        append(') { ')
         self.terminator.gen()
         append('\n')
         self.block.gen()
@@ -664,7 +681,7 @@ class Class(WithTerminatorNode):
         append(['class ', self.val])
         self.extends.gen()
         self.implements.gen()
-        append(' {')
+        append(' { ')
         self.terminator.gen()
         append('\n')
         self.content.gen()
@@ -693,7 +710,7 @@ class Interface(WithTerminatorNode):
     def gen(self):
         append(['interface ', self.val])
         self.extends.gen()
-        append(' {')
+        append(' { ')
         self.terminator.gen()
         append('\n')
         self.content.gen()
@@ -791,7 +808,7 @@ class MemberFuncDef(WithTerminatorNode):
     def gen(self):
         super(MemberFuncDef, self).gen()
         self.returnType.gen()
-        append(' {')
+        append(' { ')
         self.terminator.gen()
         append('\n')
         self.block.gen()
@@ -837,7 +854,7 @@ class FuncDef(WithTerminatorNode):
         self.paramList.gen()
         append(')')
         self.returnType.gen()
-        append(' {')
+        append(' { ')
         self.terminator.gen()
         append('\n')
         self.block.gen()
@@ -954,7 +971,10 @@ class NewOrClone(BaseNode):
             self.argList.gen()
             append(')')
         else:
-            self.varible.gen()
+            if isinstance(self.varible, basestring):
+                append(self.varible)
+            else:
+                self.varible.gen()
 
 
 

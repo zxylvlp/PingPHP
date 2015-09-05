@@ -1,20 +1,20 @@
 <?php
-function foo($arg_1, $arg_2, $arg_n) {
+function foo($arg_1, $arg_2, $arg_n) { 
     echo "Example function.\n"; 
     return $retval; 
 }
 
 /****/
 
-$makefoo = $true; 
+$makefoo = true; 
 
 /**不能在此处调用foo()函数，
    因为它还不存在，但可以调用bar()函数.**/
 
 bar(); 
 
-if ($makefoo) {
-    function foo() {
+if ($makefoo) { 
+    function foo() { 
         echo "I don't exist until program execution reaches me.\n"; 
     }
 }
@@ -22,18 +22,18 @@ if ($makefoo) {
 /**现在可以安全调用函数 foo()了，
    因为 $makefoo 值为真**/
 
-if ($makefoo) {
+if ($makefoo) { 
     foo(); 
 }
 
-function bar() {
+function bar() { 
     echo "I exist immediately upon program start.\n"; 
 }
 
 /****/
 
-function foo() {
-    function bar() {
+function foo() { 
+    function bar() { 
         echo "I don't exist until foo() is called.\n"; 
     }
 }
@@ -49,8 +49,8 @@ bar();
 
 /****/
 
-function recursion($a) {
-    if ($a < 20) {
+function recursion($a) { 
+    if ($a < 20) { 
         echo "$a\n"; 
         recursion($a + 1); 
     }

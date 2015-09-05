@@ -1,7 +1,7 @@
 <?php
 $a = &$b; 
 /****/
-function foo(&$var) {
+function foo(&$var) { 
 }
 
 foo($a); // $a is "created" and assigned to null
@@ -20,18 +20,18 @@ $foo = &find_var($bar);
 $var1 = "Example variable"; 
 $var2 = ""; 
 
-function global_references($use_globals) {
+function global_references($use_globals) { 
     global $var1, $var2; 
-    if (!$use_globals) {
+    if (!$use_globals) { 
         $var2 = &$var1; // visible only inside the function
-    } else {
+    } else { 
         $GLOBALS["var2"] = &$var1; // visible also in global context
     }
 }
 
-global_references($false); 
+global_references(false); 
 echo "var2 is set to '$var2'\n"; // var2 is set to ''
-global_references($true); 
+global_references(true); 
 echo "var2 is set to '$var2'\n"; // var2 is set to 'Example variable'
 /****/
 $ref = 0; 
@@ -40,7 +40,7 @@ foreach (array(1, 2, 3) as $row) {
 }
 echo $ref; // 3 - last element of the iterated array
 /****/
-function foo(&$var) {
+function foo(&$var) { 
     $var++; 
 }
 

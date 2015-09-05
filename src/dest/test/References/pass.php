@@ -1,5 +1,5 @@
 <?php
-function foo(&$var) {
+function foo(&$var) { 
     $var++; 
 }
 
@@ -7,14 +7,14 @@ $a = 5;
 foo($a); 
 // $a is 6 here
 
-function &bar() {
+function &bar() { 
     $a = 5; 
     return $a; 
 }
 
 foo(bar()); 
 
-function bar() {// Note the missing &
+function bar() { // Note the missing &
     $a = 5; 
     return $a; 
 }

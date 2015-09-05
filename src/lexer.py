@@ -165,13 +165,17 @@ def t_FOLDLINE(t):
 
 
 def t_INLINECOMMENT(t):
-    r'\#[^\#\n]*\n'
+    r'\#[^\n]*\n'
     t.value = '//' + t.value[1:-1]
     lineNoInc(t)
     return t
 
 def t_NAMESPACEBEFORESLASH(t):
     r'namespace(?=[ \t]*\\[ \t]*[_a-zA-Z0-9])'
+    return t
+
+def t_NUMBER(t):
+    r'(([0-9]+|(([0-9]*\.[0-9]+)|([0-9]+\.[0-9]*)))[eE][+-]?[0-9]+)|(([0-9]*\.[0-9]+)|([0-9]+\.[0-9]*))|([1-9][0-9]*)|(0b[01]+)|(0[0-7]+)|(0[xX][0-9a-fA-F]+)|(true)|(false)|(null)|0'
     return t
 
 # handle id and reversed
@@ -199,8 +203,6 @@ def t_STRING(t):
     lineNoInc(t, t.value.count('\n'))
     return t
  
-
-t_NUMBER = r'(([0-9]+|(([0-9]*\.[0-9]+)|([0-9]+\.[0-9]*)))[eE][+-]?[0-9]+)|(([0-9]*\.[0-9]+)|([0-9]+\.[0-9]*))|([1-9][0-9]*)|(0b[01]+)|(0[0-7]+)|(0[xX][0-9a-fA-F]+)|(true)|(false)|(null)|0'
 
 t_COLON = r':'
 

@@ -1,10 +1,10 @@
 <?php
 namespace my\name; // 参考 "定义命名空间" 小节
 
-class MyClass {
+class MyClass { 
 }
 
-function myfunction() {
+function myfunction() { 
 }
 
 const MYCONST = 1; 

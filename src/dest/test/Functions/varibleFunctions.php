@@ -1,14 +1,14 @@
 <?php
-function foo() {
+function foo() { 
     echo "In foo()<br />\n"; 
 }
 
-function bar($arg = '') {
+function bar($arg = '') { 
     echo "In bar(); argument was '$arg'.<br />\n"; 
 }
 
 // 使用 echo 的包装函数
-function echoit($string_) {
+function echoit($string_) { 
     echo $string_; 
 }
 
@@ -23,13 +23,13 @@ $func('test'); // This calls echoit()
 
 /****/
 
-class Foo {
-    public function Variable() {
+class Foo { 
+    public function Variable() { 
         $name = 'Bar'; 
         $this->$name(); // This calls the Bar() method
     }
     
-    public function Bar() {
+    public function Bar() { 
         echo "This is Bar"; 
     }
 }
@@ -40,9 +40,9 @@ $foo->$funcname(); // This calls $foo->Variable()
 
 /****/
 
-class Foo {
+class Foo { 
     public static $variable = 'static property'; 
-    public static function Variable() {
+    public static function Variable() { 
         echo 'Method Variable called'; 
     }
 }

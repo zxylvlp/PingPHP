@@ -1,5 +1,5 @@
 <?php
-function square($num) {
+function square($num) { 
     return $num * $num; 
 }
 
@@ -7,7 +7,7 @@ echo square(4); // outputs '16'.
 
 /****/
 
-function small_numbers() {
+function small_numbers() { 
     return array(0, 1, 2); 
 }
 
@@ -15,7 +15,7 @@ list($zero, $one, $two) = small_numbers();
 
 /****/
 
-function &returns_reference() {
+function &returns_reference() { 
     return $someref; 
 }
 
@@ -24,7 +24,7 @@ $newref = &returns_reference();
 
 /****/
 
-function sum($a, $b): float {
+function sum($a, $b): float { 
     return $a + $b; 
 }
 
@@ -35,7 +35,7 @@ var_dump(sum(1, 2));
 
 declare($strict_types = 1); 
 
-function sum($a, $b): int {
+function sum($a, $b): int { 
     return $a + $b; 
 }
 
@@ -44,10 +44,10 @@ var_dump(sum(1, 2.5));
 
 /****/
 
-class C {
+class C { 
 }
 
-function getC(): C {
+function getC(): C { 
     return new C(); 
 }
 

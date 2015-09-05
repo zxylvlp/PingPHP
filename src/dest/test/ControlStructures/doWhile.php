@@ -1,11 +1,11 @@
 <?php
 do { 
-    if ($i < 5) {
+    if ($i < 5) { 
         echo "i is not big enough"; 
         break; 
     }
     $i *= $factor; 
-    if ($i < $minimum_limit) {
+    if ($i < $minimum_limit) { 
         break; 
     }
     echo "i is ok"; 

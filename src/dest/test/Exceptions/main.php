@@ -1,6 +1,6 @@
 <?php
-function inverse($x) {
-    if (!$x) {
+function inverse($x) { 
+    if (!$x) { 
         throw new Exception('Division by zero.'); 
     }
     return 1 / $x; 
@@ -25,11 +25,11 @@ try {
 echo "Hello World\n"; 
 
 
-class MyException extends Exception {
+class MyException extends Exception { 
 }
 
-class Test {
-    public function testing() {
+class Test { 
+    public function testing() { 
         try { 
             try { 
                 throw new MyException('foo!'); 

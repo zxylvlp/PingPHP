@@ -125,7 +125,12 @@ Terminator
 
 Namespace
     Namespace : NAMESPACE NsContentName
-    UseNamespace : USE NsContentNameAsIdList
+
+    UseNamespace : USE DefOrConstModifier NsContentNameAsIdList
+
+    DefOrConstModifier :
+                       : DEF
+                       | CONST
 
     NsContentName : INDENTIFIER
                   | NAMESPACEBEFORESLASH
@@ -135,8 +140,8 @@ Namespace
     NsContentNameList : NsContentName
                       | NsContentNameList COMMA NsContentName
 
-    NsContentNameAsId : NsContentName
-                      | NsContentName AS INDENTIFIER
+    NsContentNameAsId : DefOrConstModifier NsContentName
+                      | DefOrConstModifier NsContentName AS INDENTIFIER
 
     NsContentNameAsIdList : NsContentNameAsId
                           | NsContentNameAsIdList COMMA NsContentNameAsId
@@ -285,6 +290,8 @@ Operation
     NewOrClone : NEW NsContentName LPARENT ArgList RPARENT
                | NEW Varible
                | CLONE Varible
+               | NEW STRING
+               | CLONE STRING
 
     Compare : Expression COMPARE Expression
 
@@ -683,8 +690,20 @@ def p_Namespace(p):
 def p_UseNamespace(p):
     '''
     UseNamespace : USE NsContentNameAsIdList
+
     '''
     p[0] = UseNamespace(p[2])
+
+def p_DefOrConstModifier(p):
+    '''
+    DefOrConstModifier :
+                       | DEF
+                       | CONST
+    '''
+    if len(p) <= 1:
+        p[0] = DefOrConstModifier(None)
+    else:
+        p[0] = DefOrConstModifier(p[1])
 
 
 def p_NsContentName(p):
@@ -715,13 +734,13 @@ def p_NsContentNameList(p):
 
 def p_NsContentNameAsId(p):
     '''
-    NsContentNameAsId : NsContentName
-                      | NsContentName AS INDENTIFIER
+    NsContentNameAsId : DefOrConstModifier NsContentName
+                      | DefOrConstModifier NsContentName AS INDENTIFIER
     '''
-    if len(p) == 2:
-        p[0] = NsContentNameAsId(p[1])
+    if len(p) <= 3:
+        p[0] = NsContentNameAsId(p[1], p[2], None)
     else:
-        p[0] = NsContentNameAsId(p[1], p[3])
+        p[0] = NsContentNameAsId(p[1], p[2], p[4])
 
 
 def p_NsContentNameAsIdList(p):
@@ -1209,6 +1228,8 @@ def p_NewOrClone(p):
     NewOrClone : NEW NsContentName LPARENT ArgList RPARENT
                | NEW Varible
                | CLONE Varible
+               | NEW STRING
+               | CLONE STRING
     '''
     if len(p) > 3:
         p[0] = NewOrClone(p[1], p[2], p[4], None)

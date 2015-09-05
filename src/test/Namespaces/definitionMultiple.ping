@@ -1,0 +1,18 @@
+declare(encoding='UTF-8')
+namespace MyProject
+
+const CONNECT_OK = 1
+class Connection:
+	pass
+
+def connect():
+	pass
+
+namespace AnotherProject
+
+const CONNECT_OK = 1
+class Connection:
+	pass
+def connect():
+	pass
+
