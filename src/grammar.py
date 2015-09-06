@@ -18,7 +18,7 @@ grammar:
          | Embeded
 
     Embeded : DOCCOMMENT
-            | NATIVEPHP
+            | NATIVEPHP Termiantor
             | EMPTYLINE
             | INLINECOMMENT
 
@@ -82,6 +82,7 @@ Value and Assign:
 
     Varible : NsContentName
             | NsContentName SCOPEOP INDENTIFIER
+            | NsContentName SCOPEOP CLASS
 
     Assignable : Varible
                | Assignable LBRACKET Expression RBRACKET
@@ -113,6 +114,7 @@ Call
     Callable : NsContentName LPARENT
              | NsContentName SCOPEOP INDENTIFIER LPARENT
              | Expression LPARENT
+             | STATIC SCOPEOP INDENTIFIER LPARENT
 
 Lambda
     Lambda : LAMBDA ParamList UseModifier COLON Terminator Block
@@ -292,6 +294,7 @@ Operation
                | CLONE Varible
                | NEW STRING
                | CLONE STRING
+               | NEW STATIC LPARENT ArgList RPARENT
 
     Compare : Expression COMPARE Expression
 
@@ -383,7 +386,7 @@ def p_Line(p):
 def p_Embeded(p):
     '''
     Embeded : DOCCOMMENT
-            | NATIVEPHP
+            | NATIVEPHP Terminator
             | EMPTYLINE
             | INLINECOMMENT
 
@@ -543,6 +546,8 @@ def p_Varible(p):
     '''
     Varible : NsContentName
             | NsContentName SCOPEOP INDENTIFIER
+            | NsContentName SCOPEOP CLASS
+            | STATIC SCOPEOP INDENTIFIER
     '''
     if len(p) < 3:
         p[0] = Varible(None, p[1])
@@ -649,6 +654,7 @@ def p_Callable(p):
     Callable : NsContentName LPARENT
              | NsContentName SCOPEOP INDENTIFIER LPARENT
              | Expression LPARENT
+             | STATIC SCOPEOP INDENTIFIER LPARENT
     '''
     if len(p) <= 3:
         p[0] = Callable(p[1], None)
@@ -1226,6 +1232,7 @@ def p_BLogic(p):
 def p_NewOrClone(p):
     '''
     NewOrClone : NEW NsContentName LPARENT ArgList RPARENT
+               | NEW STATIC LPARENT ArgList RPARENT
                | NEW Varible
                | CLONE Varible
                | NEW STRING

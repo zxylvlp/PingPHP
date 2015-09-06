@@ -189,7 +189,7 @@ def t_INDENTIFIER(t):
 
 
 def t_NATIVEPHP(t):
-    r'<\?php((?!<\?php)[\s\S])*\?>[ \t]*\n'
+    r'<\?php((?!<\?php)[\s\S])*\?>[ \t]*(?=\n)'
     t.value = t.value[6:].lstrip()
     pos2 = t.value.rfind('?>')
     t.value = t.value[0:pos2].rstrip()
@@ -257,8 +257,8 @@ def change_token_list_new(tok_list):
             if tok.type == 'SPACE':
                 pre_space += 1
             elif tok.type == 'TAB':
-                pre_space += 8
-            elif tok.type in ['NEWLINE', 'INLINECOMMENT', 'DOCCOMMENT', 'NATIVEPHP']:
+                pre_space += 4
+            elif tok.type in ['NEWLINE', 'INLINECOMMENT', 'DOCCOMMENT']:
                 pre_space = 0
                 if tok.type == 'NEWLINE':
                     tok = make_lexToken('EMPTYLINE', '', tok.lineno, tok.lexpos)

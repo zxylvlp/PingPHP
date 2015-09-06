@@ -272,12 +272,15 @@ class Varible(BaseNode):
 
     def gen(self):
         if self.nsContentName:
-            self.nsContentName.gen()
+            if isinstance(self.nsContentName, basestring):
+                append(self.nsContentName)
+            else:
+                self.nsContentName.gen()
             append('::')
         if isinstance(self.val, NsContentName):
             self.val.list_ and self.val.list_.gen()
             self.val = self.val.val
-        if not self.val.isupper():
+        if not (self.val.isupper() or self.val == 'class'):
             append('$')
         super(Varible, self).gen()
 
