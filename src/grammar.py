@@ -18,7 +18,7 @@ grammar:
          | Embeded
 
     Embeded : DOCCOMMENT
-            | NATIVEPHP Termiantor
+            | NATIVEPHP TERMINATOR
             | EMPTYLINE
             | INLINECOMMENT
 
@@ -386,7 +386,7 @@ def p_Line(p):
 def p_Embeded(p):
     '''
     Embeded : DOCCOMMENT
-            | NATIVEPHP Terminator
+            | NATIVEPHP TERMINATOR
             | EMPTYLINE
             | INLINECOMMENT
 

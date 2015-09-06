@@ -121,8 +121,8 @@ tokens = [
 
 ] + map(lambda x: x.upper(), reserved) + commentAndNative + braces + bit + math + slash + numAndStr + inOutdent
 
-def lineNoInc(t, n=1):
-    t.lexer.lineno += n
+def lineNoInc(t):
+    t.lexer.lineno += t.value.count('\n')
 
 t_CAST = r'\([ \t]*((int)|(float)|(string)|(array)|(object)|(bool))[ \t]*\)'
 t_AT = r'@'
@@ -130,11 +130,11 @@ t_COMPARE = r'([=!]=[=]?)|(<>)|(>=?)|(<=?)        '
 
 def t_DOCCOMMENT(t):
     r'((\'\'\'((?!\'\'\')[\s\S])*\'\'\')|(\'{6,8})|("""((?!""")[\s\S])*""")|("{6,8}))[ \t]*\n'
+    lineNoInc(t)
     pos = t.value.rfind('"""')
     if pos == -1:
         pos = t.value.rfind('\'\'\'')
     t.value = '/**' + t.value[3:pos] + '**/'
-    lineNoInc(t, t.value.count('\n') + 1)
     return t
 
 t_SCOPEOP = r'::'
@@ -166,8 +166,8 @@ def t_FOLDLINE(t):
 
 def t_INLINECOMMENT(t):
     r'\#[^\n]*\n'
-    t.value = '//' + t.value[1:-1]
     lineNoInc(t)
+    t.value = '//' + t.value[1:-1]
     return t
 
 def t_NAMESPACEBEFORESLASH(t):
@@ -190,17 +190,17 @@ def t_INDENTIFIER(t):
 
 def t_NATIVEPHP(t):
     r'<\?php((?!<\?php)[\s\S])*\?>[ \t]*(?=\n)'
+    lineNoInc(t)
     t.value = t.value[6:].lstrip()
     pos2 = t.value.rfind('?>')
     t.value = t.value[0:pos2].rstrip()
     #print t.value
-    lineNoInc(t, t.value.count('\n') + 1)
     return t
 
 
 def t_STRING(t):
     r'(\'(([^\'])|(\\\'))*\')|("(([^"\n])|(\\"))*")'
-    lineNoInc(t, t.value.count('\n'))
+    lineNoInc(t)
     return t
  
 
