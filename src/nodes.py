@@ -58,7 +58,7 @@ def indentSpaces():
     return ''.join(['    ' for i in xrange(0, indentLevel)])
 
 def notFunction(name):
-    notFunctions = ['echo', 'require', 'require_once', 'include', 'include_once']
+    notFunctions = ['echo', 'print', 'require', 'require_once', 'include', 'include_once']
     if name in notFunctions:
         return True
     return False
@@ -674,14 +674,19 @@ class Catch(WithTerminatorNode):
 
 
 class Class(WithTerminatorNode):
-    def __init__(self, id_, extends, implements, terminator, content):
+    def __init__(self,abstract, final, id_, extends, implements, terminator, content):
+        self.abstract = abstract
+        self.final = final
         super(Class, self).__init__(id_, terminator)
         self.extends = extends
         self.implements = implements
         self.content = content
 
     def gen(self):
-        append(['class ', self.val])
+        self.abstract.gen()
+        self.final.gen()
+        append('class ')
+        super(Class, self).gen()
         self.extends.gen()
         self.implements.gen()
         append(' { ')
@@ -691,6 +696,17 @@ class Class(WithTerminatorNode):
         append([indentSpaces(), '}'])
 
 
+class JustStrModifier(BaseNode):
+    def gen(self):
+        super(JustStrModifier, self).gen()
+        self.val and append(' ')
+
+class AbstractModifier(JustStrModifier):
+    pass
+
+class FinalModifier(JustStrModifier):
+    pass
+
 class ClassContent(Block):
     pass
 
@@ -699,8 +715,16 @@ class InClassDefList(Body):
     pass
 
 
-class InClassDef(Line):
-    pass
+class InClassDef(BaseNode):
+    def __init__(self, abstract, val):
+        self.abstract = abstract
+        super(InClassDef, self).__init__(val)
+    
+    def gen(self):
+        append(indentSpaces())
+        self.abstract and append([self.abstract, ' '])
+        super(InClassDef, self).gen()
+        append('\n')
 
 
 class Interface(WithTerminatorNode):
@@ -748,11 +772,6 @@ class ImplementsModifier(BaseNode):
         super(ImplementsModifier, self).gen()
 
 
-class JustStrModifier(BaseNode):
-    def gen(self):
-        super(JustStrModifier, self).gen()
-        self.val and append(' ')
-
 
 class AccessModifier(JustStrModifier):
     pass
@@ -766,14 +785,16 @@ class RefModifier(BaseNode):
     
 
 class MemberFuncDecWithoutTerminator(BaseNode):
-    def __init__(self, access, static, ref, id_, paramList):
+    def __init__(self, final, access, static, ref, id_, paramList):
         super(MemberFuncDecWithoutTerminator, self).__init__(id_)
+        self.final = final
         self.access = access
         self.static = static
         self.ref = ref
         self.paramList = paramList
 
     def gen(self):
+        self.final.gen()
         self.access.gen()
         self.static.gen()
         self.ref.gen()
@@ -819,15 +840,17 @@ class MemberFuncDef(WithTerminatorNode):
 
 
 class DataMemberDef(WithTerminatorNode):
-    def __init__(self, access, static, id_, init, terminator):
+    def __init__(self, access, static, ref, id_, init, terminator):
         super(DataMemberDef, self).__init__(id_, terminator)
         self.access = access
         self.static = static
         self.init = init
+        self.ref = ref
 
     def gen(self):
         self.access.gen()
         self.static.gen()
+        self.ref.gen()
         append('$')
         super(DataMemberDef, self).gen()
         self.init.gen()

@@ -190,7 +190,13 @@ Catch :
           | Catch CATCH LPARENT Varible COLON NsContentName RPARENT COLON Terminator Block
 
 Class and Interface
-    Class : CLASS INDENTIFIER ExtendsModifier ImplementsModifier COLON Terminator ClassContent
+    Class : AbstractModifier FinalModifier CLASS INDENTIFIER ExtendsModifier ImplementsModifier COLON Terminator ClassContent
+
+    FinalModifier : 
+                  | FINAL
+
+    AbstractModifier : 
+                     | ABSTRACT
 
     ClassContent : INDENT InClassDefList OUTDENT
 
@@ -202,6 +208,7 @@ Class and Interface
                | DataMemberDef
                | ConstDef
                | MemberFuncDef
+               | ABSTRACT MemberFuncDec
 
     Interface : INTERFACE INDENTIFIER ExtendsModifier COLON Terminator InterfaceContent
 
@@ -232,7 +239,7 @@ Class and Interface
     RefModifier :
                 | ANDOP
 
-    MemberFuncDecWithoutTerminator: AccessModifier StaticModifier RefModifier INDENTIFIER LPARENT ParamList RPARENT
+    MemberFuncDecWithoutTerminator : FinalModifier AccessModifier StaticModifier RefModifier INDENTIFIER LPARENT ParamList RPARENT
 
     MemberFuncDec : MemberFuncDecWithoutTerminator ReturnTypeModifierForDec Terminator
 
@@ -241,7 +248,7 @@ Class and Interface
 
     MemberFuncDef : MemberFuncDecWithoutTerminator COLON ReturnTypeModifier Terminator Block
 
-    DataMemberDef : AccessModifier StaticModifier RefModifier INDENTIFIER InitModifier Terminator
+    DataMemberDef : FinalModifier AccessModifier StaticModifier RefModifier INDENTIFIER InitModifier Terminator
 
 FuncDef
 
@@ -899,9 +906,30 @@ def p_Catch(p):
 
 def p_Class(p):
     '''
-    Class : CLASS INDENTIFIER ExtendsModifier ImplementsModifier COLON Terminator ClassContent
+    Class : AbstractModifier FinalModifier CLASS INDENTIFIER ExtendsModifier ImplementsModifier COLON Terminator ClassContent
     '''
-    p[0] = Class(p[2], p[3], p[4], p[6], p[7])
+    p[0] = Class(p[1], p[2], p[4], p[5], p[6], p[8], p[9])
+
+
+def p_FinalModifier(p):
+    '''
+    FinalModifier : 
+                  | FINAL
+    '''
+    if len(p)<= 1:
+        p[0] = FinalModifier(None)
+    else:
+        p[0] = FinalModifier(p[1])
+
+def p_AbstractModifier(p):
+    '''
+    AbstractModifier : 
+                     | ABSTRACT
+    '''
+    if len(p)<=1:
+        p[0] = AbstractModifier(None)
+    else:
+        p[0] = AbstractModifier(None)
 
 
 def p_ClassContent(p):
@@ -929,8 +957,14 @@ def p_InClassDef(p):
                | DataMemberDef
                | ConstDef
                | MemberFuncDef
+               | ABSTRACT MemberFuncDec
+
     '''
-    p[0] = InClassDef(p[1])
+    if len(p) <= 2:
+        p[0] = InClassDef(None, p[1])
+    else:
+        p[0] = InClassDef(p[1], p[2])
+
 
 
 def p_Interface(p):
@@ -1027,9 +1061,9 @@ def p_RefModifier(p):
 
 def p_MemberFuncDecWithoutTerminator(p):
     '''
-    MemberFuncDecWithoutTerminator : AccessModifier StaticModifier RefModifier INDENTIFIER LPARENT ParamList RPARENT
+    MemberFuncDecWithoutTerminator : FinalModifier AccessModifier StaticModifier RefModifier INDENTIFIER LPARENT ParamList RPARENT
     '''
-    p[0] = MemberFuncDecWithoutTerminator(p[1], p[2], p[3], p[4], p[6])
+    p[0] = MemberFuncDecWithoutTerminator(p[1], p[2], p[3], p[4], p[5], p[7])
 
 
 def p_MemberFuncDec(p):
@@ -1058,9 +1092,11 @@ def p_MemberFuncDef(p):
 
 def p_DataMemberDef(p):
     '''
-    DataMemberDef : AccessModifier StaticModifier RefModifier INDENTIFIER InitModifier Terminator
+    DataMemberDef : FinalModifier AccessModifier StaticModifier RefModifier INDENTIFIER InitModifier Terminator
     '''
-    p[0] = DataMemberDef(p[1], p[2], p[4], p[5], p[6])
+    if p[1].val != None:
+        raise SyntaxError 
+    p[0] = DataMemberDef(p[2], p[3], p[4], p[5], p[6], p[7])
 
 def p_ReturnTypeModifier(p):
     '''
