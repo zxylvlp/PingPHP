@@ -22,7 +22,7 @@ echo INI_ALL, "\n"; // 输出 "7" - 使用全局常量 INI_ALL
 
 echo strlen('hi'), "\n"; // 输出 "1"
 if (is_array('hi')) { // 输出 "is not array"
-    echo "is array\n"; 
+    echo ("is array\n"); 
 } else { 
-    echo "is not array\n"; 
+    echo ("is not array\n"); 
 }

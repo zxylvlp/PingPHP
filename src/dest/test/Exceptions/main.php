@@ -22,7 +22,7 @@ try {
 }
 
 // Continue execution
-echo "Hello World\n"; 
+echo ("Hello World\n"); 
 
 
 class MyException extends Exception { 

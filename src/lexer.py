@@ -20,7 +20,7 @@ reserved = set([
     'while', 'do',
 
     # function
-    'def', 'return',
+    'def',
 
     # op
     'new', 'clone',
@@ -30,13 +30,16 @@ reserved = set([
 
     'const', 'global',
 
-    'try', 'catch', 'finally', 'throw',
+    'try', 'catch', 'finally',
 
     'yield',
 
     'lambda'
 
 ])
+
+strStatment = set(['pass', 'break', 'continue', 'echo', 'print', 'require', 'require_once', 
+    'include', 'include_once', 'return', 'throw'])
 
 reservedMap = {
     'not' : '!',
@@ -106,6 +109,7 @@ tokens = [
     'COMPARE',
     'CAST',
     'AT',
+    'STRCAT',
     'SCOPEOP',
     'INDENTIFIER',
     'COMMA',
@@ -143,8 +147,6 @@ t_TAB = r'\t'
 t_ASSIGN = r'((\+|-|\*|/|%|&|\||^|<<|>>)\s*)?='
 t_LPARENT = r'\('
 t_RPARENT = r'\)'
-#t_LBRACE = r'\{'
-#t_RBRACE = r'\}'
 t_LBRACKET = r'\['
 t_RBRACKET = r'\]'
 t_COMMA = r','
@@ -153,10 +155,9 @@ t_DOT = r'\.'
 t_SLASH = r'\\'
 
 
-def t_STATEMENT(t):
-    r'(pass)|(break)|(continue)'
-    if t.value == 'pass':
-        t.value = ''
+def t_STRCAT(t):
+    r'<<<'
+    t.value = '.'
     return t
 
 def t_FOLDLINE(t):
@@ -185,6 +186,8 @@ def t_INDENTIFIER(t):
         t.type = t.value.upper()
         if t.value in reservedMap:
             t.value = reservedMap[t.value]
+    elif t.value in strStatment:
+        t.type = 'STATEMENT'
     return t
 
 

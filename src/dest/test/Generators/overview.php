@@ -20,19 +20,19 @@ function xrange($start, $limit, $step = 1) {
 注意下面range()和xrange()输出的结果是一样的。
 **/
 
-echo 'Single digit odd numbers from range():  '; 
+echo ('Single digit odd numbers from range():  '); 
 
 foreach (range(1, 9, 2) as $number) { 
-    echo "$number "; 
+    echo ("$number "); 
 }
 
-echo "\n"; 
+echo ("\n"); 
 
-echo 'Single digit odd numbers from xrange(): '; 
+echo ('Single digit odd numbers from xrange(): '); 
 
 foreach (xrange(1, 9, 2) as $number) { 
-    echo "$number "; 
+    echo ("$number "); 
 }
 
-echo "\n"; 
+echo ("\n"); 
 

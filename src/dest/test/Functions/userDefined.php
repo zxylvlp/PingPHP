@@ -1,6 +1,6 @@
 <?php
 function foo($arg_1, $arg_2, $arg_n) { 
-    echo "Example function.\n"; 
+    echo ("Example function.\n"); 
     return $retval; 
 }
 
@@ -15,7 +15,7 @@ bar();
 
 if ($makefoo) { 
     function foo() { 
-        echo "I don't exist until program execution reaches me.\n"; 
+        echo ("I don't exist until program execution reaches me.\n"); 
     }
 }
 
@@ -27,14 +27,14 @@ if ($makefoo) {
 }
 
 function bar() { 
-    echo "I exist immediately upon program start.\n"; 
+    echo ("I exist immediately upon program start.\n"); 
 }
 
 /****/
 
 function foo() { 
     function bar() { 
-        echo "I don't exist until foo() is called.\n"; 
+        echo ("I don't exist until foo() is called.\n"); 
     }
 }
 
@@ -51,7 +51,7 @@ bar();
 
 function recursion($a) { 
     if ($a < 20) { 
-        echo "$a\n"; 
+        echo ("$a\n"); 
         recursion($a + 1); 
     }
 }

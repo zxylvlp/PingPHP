@@ -13,19 +13,19 @@ class Bar extends Foo {
     }
 }
 
-print join('', [Foo::$my_static, "\n"]); 
+print (join('', [Foo::$my_static, "\n"])); 
 
 $foo = new Foo(); 
-print join('', [$foo->staticValue(), "\n"]); 
-print join('', [$foo->my_static, "\n"]); // Undefined "Property" my_static 
+print (join('', [$foo->staticValue(), "\n"])); 
+print (join('', [$foo->my_static, "\n"])); // Undefined "Property" my_static 
 
-print join('', [foo::$my_static, "\n"]); 
+print (join('', [foo::$my_static, "\n"])); 
 $classname = 'Foo'; 
-print join('', [$classname::$my_static, "\n"]); // As of PHP 5.3.0
+print (join('', [$classname::$my_static, "\n"])); // As of PHP 5.3.0
 
-print join('', [Bar::$my_static, "\n"]); 
+print (join('', [Bar::$my_static, "\n"])); 
 $bar = new Bar(); 
-print join('', [$bar->fooStatic(), "\n"]); 
+print (join('', [$bar->fooStatic(), "\n"])); 
 
 /****/
 

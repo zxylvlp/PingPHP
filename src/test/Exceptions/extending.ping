@@ -14,7 +14,7 @@ class MyException extends Exception:
         return implode(__CLASS__ , "{}: [{$this->code}]: {$this->message}\n")
 
     public customFunction():
-        echo("A custom function for this type of exception\n")
+        echo "A custom function for this type of exception\n"
 
 
 '''
@@ -46,10 +46,10 @@ class TestException:
 try:
     o = new TestException(TestException::THROW_CUSTOM)
 catch (e:MyException): # 捕获异常
-    echo("Caught my exception\n", e)
+    echo "Caught my exception\n", e
     e.customFunction()
 catch (e:Exception):        # 被忽略
-    echo("Caught Default Exception\n", e)
+    echo "Caught Default Exception\n", e
 
 # Continue execution
 var_dump(o) # Null
@@ -61,10 +61,10 @@ try:
     o = new TestException(TestException::THROW_DEFAULT)
 catch (e:MyException):      #  不能匹配异常的种类，被忽略
 
-    echo("Caught my exception\n", e)
+    echo "Caught my exception\n", e
     e.customFunction()
 catch (e:Exception):        # 捕获异常
-    echo("Caught Default Exception\n", e)
+    echo "Caught Default Exception\n", e
 
 # 执行后续代码
 var_dump(o) # Null
@@ -75,7 +75,7 @@ echo("\n\n")
 try: 
     o = new TestException(TestException::THROW_CUSTOM)
 catch (e:Exception):        # 捕获异常
-    echo("Default Exception caught\n", e)
+    echo "Default Exception caught\n", e
 
 # 执行后续代码
 var_dump(o) # Null
@@ -86,7 +86,7 @@ echo("\n\n")
 try:
     o = new TestException()
 catch (e:Exception):         # 没有异常，被忽略
-    echo("Default Exception caught\n", e)
+    echo "Default Exception caught\n", e
 
 # 执行后续代码
 var_dump(o) # TestException

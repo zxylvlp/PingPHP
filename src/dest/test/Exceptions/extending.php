@@ -64,7 +64,7 @@ try {
 
 // Continue execution
 var_dump($o); // Null
-echo "\n\n"; 
+echo ("\n\n"); 
 
 
 // 例子 2
@@ -80,7 +80,7 @@ try {
 
 // 执行后续代码
 var_dump($o); // Null
-echo "\n\n"; 
+echo ("\n\n"); 
 
 
 // 例子 3
@@ -92,7 +92,7 @@ try {
 
 // 执行后续代码
 var_dump($o); // Null
-echo "\n\n"; 
+echo ("\n\n"); 
 
 
 // 例子 4
@@ -104,4 +104,4 @@ try {
 
 // 执行后续代码
 var_dump($o); // TestException
-echo "\n\n"; 
+echo ("\n\n"); 

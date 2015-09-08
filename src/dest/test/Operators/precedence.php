@@ -8,4 +8,4 @@ $a = $b += 3; // $a = ($b += 3) -> $a = 5, $b = 5
 
 // mixing ++ and + produces undefined behavior
 $a = 1; 
-echo ++$a + $a++; // may print 4 or 5
+echo (++$a + $a++); // may print 4 or 5

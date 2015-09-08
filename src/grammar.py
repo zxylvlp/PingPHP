@@ -16,6 +16,7 @@ grammar:
     Line : CodeBlock
          | Statement
          | Embeded
+         | JustStrStatment
 
     Embeded : DOCCOMMENT
             | NATIVEPHP TERMINATOR
@@ -26,16 +27,13 @@ grammar:
               | LambdaAssignStatement
 
     StatementWithoutTerminator : Expression
-                               | STATEMENT
-                               | Return
                                | Namespace
                                | UseNamespace
                                | GlobalDec
                                | ConstDefWithoutTerminator
-                               | Throw
                                | Yield
 
-    JustStrStatementWithTerminator : STATEMENT Terminator
+    JustStrStatement: STATEMENT ArgList Terminator
 
     CodeBlock : If
               | Switch
@@ -204,7 +202,7 @@ Class and Interface
                    | InClassDefList InClassDef
 
     InClassDef : Embeded
-               | JustStrStatementWithTerminator
+               | JustStrStatement
                | DataMemberDef
                | ConstDef
                | MemberFuncDef
@@ -218,7 +216,7 @@ Class and Interface
                      | InterfaceDefList InterfaceDef
 
     InterfaceDef : Embeded
-                 | JustStrStatementWithTerminator
+                 | JustStrStatement
                  | ConstDef
                  | MemberFuncDec
 
@@ -261,11 +259,6 @@ FuncDef
 
     ConstDefWithoutTerminator : CONST INDENTIFIER AssignRightSide
 
-    Return : RETURN Expression
-           | RETURN
-
-    Throw : THROW Expression
-
     Yield : YIELD
           | YIELD Expression
           | YIELD Expression COMMA Expression
@@ -290,6 +283,9 @@ Operation
               | Ternary
               | At
               | Ref
+              | StrCat
+
+    StrCat : Expression STRCAT Expression
 
     BMath : Expression MATH1 Expression
           | Expression MATH2 Expression
@@ -342,7 +338,7 @@ precedence = [
     ('right', 'NOT'),
     ('right', 'UMATH'),
     ('left', 'MATH1'),
-    ('left', 'MATH2'),
+    ('left', 'MATH2', 'STRCAT'),
     ('left', 'SHIFT'),
     ('nonassoc', 'COMPARE'),
     ('left', 'ANDOP'),
@@ -386,6 +382,7 @@ def p_Line(p):
     Line : CodeBlock
          | Statement
          | Embeded
+         | JustStrStatement
     '''
     p[0] = Line(p[1])
 
@@ -422,23 +419,20 @@ def p_LambdaAssignStatement(p):
 def p_StatementWithoutTerminator(p):
     '''
     StatementWithoutTerminator : Expression
-                               | STATEMENT
-                               | Return
                                | Namespace
                                | UseNamespace
                                | GlobalDec
                                | ConstDefWithoutTerminator
-                               | Throw
                                | Yield
     '''
     p[0] = StatementWithoutTerminator(p[1])
 
 
-def p_JustStrStatementWithTerminator(p):
+def p_JustStrStatement(p):
     '''
-    JustStrStatementWithTerminator : STATEMENT Terminator
+    JustStrStatement : STATEMENT ArgList Terminator
     '''
-    p[0] = JustStrStatementWithTerminator(p[1], p[2])
+    p[0] = JustStrStatement(p[1], p[2], p[3])
 
 
 def p_CodeBlock(p):
@@ -953,7 +947,7 @@ def p_InClassDefList(p):
 def p_InClassDef(p):
     '''
     InClassDef : Embeded
-               | JustStrStatementWithTerminator
+               | JustStrStatement
                | DataMemberDef
                | ConstDef
                | MemberFuncDef
@@ -995,7 +989,7 @@ def p_InterfaceDefList(p):
 def p_InterfaceDef(p):
     '''
     InterfaceDef : Embeded
-                 | JustStrStatementWithTerminator
+                 | JustStrStatement
                  | ConstDef
                  | MemberFuncDec
     '''
@@ -1129,23 +1123,6 @@ def p_ConstDef(p):
     p[0] = ConstDef(p[1], p[2])
 
 
-def p_Return(p):
-    '''
-    Return : RETURN Expression
-           | RETURN
-    '''
-    if len(p) >= 3:
-        p[0] = Return(p[2])
-    else:
-        p[0] = Return(None)
-
-
-def p_Throw(p):
-    '''
-    Throw : THROW Expression
-    '''
-    p[0] = Throw(p[2])
-
 
 def p_Yield(p):
     '''
@@ -1195,8 +1172,17 @@ def p_Operation(p):
               | Ternary
               | At
               | Ref
+              | StrCat
     '''
     p[0] = Operation(p[1])
+
+def p_StrCat(p):
+    '''
+    StrCat : Expression STRCAT Expression
+    '''
+    p[0] = StrCat(p[1], p[2], p[3])
+
+
 
 def p_BMath(p):
     '''

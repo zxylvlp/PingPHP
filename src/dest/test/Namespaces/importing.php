@@ -23,7 +23,7 @@ NSname\subns\func(); // 调用函数 My\Full\NSname\subns\func
 $a = new ArrayObject(array(1)); // 实例化 ArrayObject 对象
 // 如果不使用 "use \ArrayObject" ，则实例化一个 foo\ArrayObject 对象
 func(); // calls function My\Full\functionName
-echo CONSTANT; // echoes the value of My\Full\CONSTANT
+echo (CONSTANT); // echoes the value of My\Full\CONSTANT
 
 /****/
 

@@ -12,8 +12,8 @@ class OtherClass extends MyClass:
     public static my_static = 'static var'
 
     public static doubleColon():
-        echo(parent::CONST_VALUE, "\n")
-        echo(self::my_static, "\n")
+        echo parent::CONST_VALUE, "\n"
+        echo self::my_static, "\n"
 
 classname = 'OtherClass'
 echo($classname::doubleColon()) # 自 PHP 5.3.0 起

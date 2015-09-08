@@ -18,4 +18,4 @@ $d = namespace\MYCONST; // 参考 "namespace操作符和__NAMESPACE__常量” �
 
 $m = a\B; 
 $d = join('', [__NAMESPACE__, '\MYCONST']); 
-echo constant($d); // 参考 "命名空间和动态语言特征" 小节
+echo (constant($d)); // 参考 "命名空间和动态语言特征" 小节

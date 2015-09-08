@@ -5,7 +5,7 @@ class SimpleClass {
     
     // method declaration
     public function displayVar() { 
-        echo $this->var; 
+        echo ($this->var); 
     }
 }
 
@@ -14,11 +14,11 @@ class SimpleClass {
 class A { 
     public function foo() { 
         if (isset($this)) { 
-            echo 'this is defined ('; 
-            echo get_class($this); 
-            echo ")\n"; 
+            echo ('this is defined ('); 
+            echo (get_class($this)); 
+            echo (")\n"); 
         } else { 
-            echo "\this is not defined.\n"; 
+            echo ("\this is not defined.\n"); 
         }
     }
 }
@@ -91,7 +91,7 @@ var_dump($obj4 instanceof Child);
 class ExtendClass extends SimpleClass { 
     // Redefine the parent method
     public function displayVar() { 
-        echo "Extending class\n"; 
+        echo ("Extending class\n"); 
         parent::displayVar(); 
     }
 }
@@ -106,4 +106,4 @@ namespace NS;
 class ClassName { 
 }
 
-echo ClassName::class; 
+echo (ClassName::class); 

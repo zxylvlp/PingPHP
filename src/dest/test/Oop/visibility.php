@@ -8,16 +8,16 @@ class MyClass {
     private $private_ = 'Private'; 
     
     public function printHello() { 
-        echo $this->public_; 
-        echo $this->protected_; 
-        echo $this->private_; 
+        echo ($this->public_); 
+        echo ($this->protected_); 
+        echo ($this->private_); 
     }
 }
 
 $obj = new MyClass(); 
-echo $obj->public_; // 这行能被正常执行
-echo $obj->protected_; // 这行会产生一个致命错误
-echo $obj->private_; // 这行也会产生一个致命错误
+echo ($obj->public_); // 这行能被正常执行
+echo ($obj->protected_); // 这行会产生一个致命错误
+echo ($obj->private_); // 这行也会产生一个致命错误
 $obj->printHello(); // 输出 Public、Protected 和 Private
 
 
@@ -29,16 +29,16 @@ class MyClass2 extends MyClass {
     protected $protected_ = 'Protected2'; 
     
     public function printHello() { 
-        echo $this->public_; 
-        echo $this->protected_; 
-        echo $this->private_; 
+        echo ($this->public_); 
+        echo ($this->protected_); 
+        echo ($this->private_); 
     }
 }
 
 $obj2 = new MyClass2(); 
-echo $obj2->public_; // 这行能被正常执行
-echo $obj2->private_; // 未定义 private
-echo $obj2->protected_; // 这行会产生一个致命错误
+echo ($obj2->public_); // 这行能被正常执行
+echo ($obj2->private_); // 未定义 private
+echo ($obj2->protected_); // 这行会产生一个致命错误
 $obj2->printHello(); // 输出 Public、Protected2 和 Undefined
 
 /****/
@@ -101,21 +101,21 @@ class Bar {
     }
     
     public function testPublic() { 
-        echo "Bar::testPublic\n"; 
+        echo ("Bar::testPublic\n"); 
     }
     
     private function testPrivate() { 
-        echo "Bar::testPrivate\n"; 
+        echo ("Bar::testPrivate\n"); 
     }
 }
 
 class Foo extends Bar { 
     public function testPublic() { 
-        echo "Foo::testPublic\n"; 
+        echo ("Foo::testPublic\n"); 
     }
     
     private function testPrivate() { 
-        echo "Foo::testPrivate\n"; 
+        echo ("Foo::testPrivate\n"); 
     }
 }
 
@@ -133,7 +133,7 @@ class Test {
     }
     
     private function bar() { 
-        echo 'Accessed the private method.'; 
+        echo ('Accessed the private method.'); 
     }
     
     public function baz(Test $other) { 

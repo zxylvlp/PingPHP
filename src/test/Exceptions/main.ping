@@ -4,17 +4,17 @@ def inverse(x):
     return 1/x
 
 try:
-    echo(inverse(5), "\n")
-    echo(inverse(0), "\n")
+    echo inverse(5), "\n"
+    echo inverse(0), "\n"
 catch (e:Exception):
-    echo('Caught exception: ',  e.getMessage(), "\n")
+    echo 'Caught exception: ',  e.getMessage(), "\n"
 
 try:
-    echo(inverse(0), "\n")
+    echo inverse(0), "\n"
 catch (e:Exception):
-    echo('Caught exception: ',  e.getMessage(), "\n")
+    echo 'Caught exception: ',  e.getMessage(), "\n"
 finally:
-    echo("Second finally.\n")
+    echo "Second finally.\n"
 
 # Continue execution
 echo("Hello World\n")

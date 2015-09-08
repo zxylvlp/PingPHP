@@ -1,6 +1,6 @@
 <?php
 function takes_array($input) { 
-    echo "$input[0] + $input[1] = ", $input[0] + $input[1]; 
+    echo "$input[0] + $input[1] = " . $input[0] + $input[1]; 
 }
 
 /****/
@@ -11,7 +11,7 @@ function add_some_extra(&$string) {
 
 $str = 'This is a string, '; 
 add_some_extra($str); 
-echo $str; // outputs 'This is a string, and something extra.'
+echo ($str); // outputs 'This is a string, and something extra.'
 
 /****/
 
@@ -19,9 +19,9 @@ function makecoffee($type = "cappuccino") {
     return "Making a cup of $type.\n"; 
 }
 
-echo makecoffee(); 
-echo makecoffee(null); 
-echo makecoffee("espresso"); 
+echo (makecoffee()); 
+echo (makecoffee(null)); 
+echo (makecoffee("espresso")); 
 
 /****/
 
@@ -30,8 +30,8 @@ function makecoffee($types = array("cappuccino"), $coffeeMaker = NULL) {
     return join("", ["Making a cup of ", join(", ", $types), " with $device.\n"]); 
 }
 
-echo makecoffee(); 
-echo makecoffee(array("cappuccino", "lavazza"), "teapot"); 
+echo (makecoffee()); 
+echo (makecoffee(array("cappuccino", "lavazza"), "teapot")); 
 
 /****/
 
@@ -39,7 +39,7 @@ function makeyogurt($type = "acidophilus", $flavour) {
     return "Making a bowl of $type $flavour.\n"; 
 }
 
-echo makeyogurt("raspberry"); // won't work as expected
+echo (makeyogurt("raspberry")); // won't work as expected
 
 /****/
 
@@ -47,7 +47,7 @@ function makeyogurt($flavour, $type = "acidophilus") {
     return "Making a bowl of $type $flavour.\n"; 
 }
 
-echo makeyogurt("raspberry"); // works as expected
+echo (makeyogurt("raspberry")); // works as expected
 
 /****/
 
@@ -61,7 +61,7 @@ class E {
 }
 
 function f(C $c) { 
-    echo join("", [get_class($c), "\n"]); 
+    echo (join("", [get_class($c), "\n"])); 
 }
 
 f(new C()); 
@@ -84,7 +84,7 @@ class E {
 }
 
 function f(I $i) { 
-    echo join("", [get_class($i), "\n"]); 
+    echo (join("", [get_class($i), "\n"])); 
 }
 
 f(new C()); 
@@ -136,7 +136,7 @@ try {
     var_dump(sum(1, 2)); 
     var_dump(sum(1.5, 2.5)); 
 } catch (TypeError $e) { 
-    echo join("", ['Error: ', $e->getMessage()]); 
+    echo (join("", ['Error: ', $e->getMessage()])); 
 } 
 
 /****/
@@ -149,7 +149,7 @@ function sum(...$numbers) {
     return $acc; 
 }
 
-echo sum(1, 2, 3, 4); 
+echo (sum(1, 2, 3, 4)); 
 
 /****/
 
@@ -160,7 +160,7 @@ function add($a, $b) {
 echo add(...[1, 2]), "\n"; 
 
 $a = [1, 2]; 
-echo add(...$a); 
+echo (add(...$a)); 
 
 /****/
 
@@ -177,7 +177,7 @@ $b = new DateInterval('P2D');
 echo total_intervals('d', $a, $b), ' days'; 
 
 // This will fail, since null isn't a DateInterval object.
-echo total_intervals('d', null); 
+echo (total_intervals('d', null)); 
 
 /****/
 
@@ -189,4 +189,4 @@ function sum() {
     return $acc; 
 }
 
-echo sum(1, 2, 3, 4); 
+echo (sum(1, 2, 3, 4)); 

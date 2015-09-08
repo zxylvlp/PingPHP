@@ -23,11 +23,11 @@ class ConcreteClass2 extends AbstractClass:
 
 class1 = new ConcreteClass1()
 class1.printOut()
-echo(class1.prefixValue('FOO_'), "\n")
+echo class1.prefixValue('FOO_'), "\n"
 
 class2 = new ConcreteClass2()
 class2.printOut()
-echo(class2.prefixValue('FOO_'), "\n")
+echo class2.prefixValue('FOO_'), "\n"
 
 ''''''
 
@@ -49,5 +49,5 @@ class ConcreteClass extends AbstractClass:
         return "{$prefix}{$separator} {$name}"
 
 class_ = new ConcreteClass()
-echo(class_.prefixName("Pacman"), "\n")
-echo(class_.prefixName("Pacwoman"), "\n")
+echo class_.prefixName("Pacman"), "\n"
+echo class_.prefixName("Pacwoman"), "\n"

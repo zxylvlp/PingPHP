@@ -30,15 +30,15 @@ function global_references($use_globals) {
 }
 
 global_references(false); 
-echo "var2 is set to '$var2'\n"; // var2 is set to ''
+echo ("var2 is set to '$var2'\n"); // var2 is set to ''
 global_references(true); 
-echo "var2 is set to '$var2'\n"; // var2 is set to 'Example variable'
+echo ("var2 is set to '$var2'\n"); // var2 is set to 'Example variable'
 /****/
 $ref = 0; 
 $row = &$ref; 
 foreach (array(1, 2, 3) as $row) { 
 }
-echo $ref; // 3 - last element of the iterated array
+echo ($ref); // 3 - last element of the iterated array
 /****/
 function foo(&$var) { 
     $var++; 

@@ -1,10 +1,10 @@
 namespace MyProject
 
-echo('"', __NAMESPACE__, '"') # 输出 "MyProject"
+echo '"', __NAMESPACE__, '"'  # 输出 "MyProject"
 
 ''''''
 
-echo('"', __NAMESPACE__, '"') # 输出 ""
+echo '"', __NAMESPACE__, '"'  # 输出 ""
 
 ''''''
 

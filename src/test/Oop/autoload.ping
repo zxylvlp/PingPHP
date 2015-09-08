@@ -1,5 +1,5 @@
 def __autoload(class_name):
-    require_once(join('', [class_name, '.php']))
+    require_once class_name <<< '.php'
 
 obj  = new MyClass1()
 obj2 = new MyClass2()
@@ -27,7 +27,7 @@ def __autoload(name):
 try:
     obj = new NonLoadableClass()
 catch (e:Exception):
-    echo(e.getMessage(), "\n")
+    echo e.getMessage(), "\n"
 
 ''''''
 
@@ -38,7 +38,7 @@ def __autoload(name):
 try:
     obj = new NonLoadableClass()
 catch (e:Exception):
-    echo(e.getMessage(), "\n")
+    echo e.getMessage(), "\n"
 
 
 

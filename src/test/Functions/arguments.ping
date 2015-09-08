@@ -1,5 +1,5 @@
 def takes_array(input):
-    echo ("$input[0] + $input[1] = ", input[0]+input[1])
+    echo "$input[0] + $input[1] = " <<< input[0]+input[1]
 
 ''''''
 
@@ -138,7 +138,7 @@ echo(sum(1, 2, 3, 4))
 def add(a, b):
     return a + b
 
-echo(add([1, 2]...), "\n")
+echo add([1, 2]...), "\n"
 
 a = [1, 2]
 echo(add(a...))
@@ -153,7 +153,7 @@ def total_intervals(unit, intervals...:DateInterval):
 
 a = new DateInterval('P1D')
 b = new DateInterval('P2D')
-echo(total_intervals('d', a, b), ' days')
+echo total_intervals('d', a, b), ' days'
 
 # This will fail, since null isn't a DateInterval object.
 echo(total_intervals('d', null))

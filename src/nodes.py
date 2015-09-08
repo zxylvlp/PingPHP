@@ -57,12 +57,6 @@ def indentSpaces():
     global indentLevel
     return ''.join(['    ' for i in xrange(0, indentLevel)])
 
-def notFunction(name):
-    notFunctions = ['echo', 'print', 'require', 'require_once', 'include', 'include_once']
-    if name in notFunctions:
-        return True
-    return False
-
 ''' Node classes '''
 
 
@@ -171,9 +165,16 @@ class StatementWithoutTerminator(BaseNode):
     pass
 
 
-class JustStrStatementWithTerminator(WithTerminatorNode):
+class JustStrStatement(WithTerminatorNode):
+    def __init__(self, val, args, terminator):
+        super(JustStrStatement, self).__init__(val, terminator)
+        self.args = args
     def gen(self):
-        if not self.val=='':
+        if not self.val=='pass':
+            super(JustStrStatement, self).gen()
+            if self.args.val:
+                append(' ')
+            self.args.gen()
             append('; ')
             self.terminator.gen()
         else:
@@ -363,15 +364,9 @@ class Call(BaseNode):
 
     def gen(self):
         super(Call, self).gen()
-        last = lastStr()
-        isNotFunction = notFunction(last)
-        if isNotFunction:
-            append(' ')
-        else:
-            append('(')
+        append('(')
         self.args.gen()
-        if not isNotFunction:
-            append(')')
+        append(')')
 
 
 class Callable(BaseNode):
@@ -905,17 +900,6 @@ class ConstDef(WithTerminatorNode):
         self.terminator.gen()
 
 
-class Return(BaseNode):
-    def gen(self):
-        append('return')
-        self.val and append(' ')
-        super(Return, self).gen()
-
-class Throw(BaseNode):
-    def gen(self):
-        append('throw ')
-        super(Throw, self).gen()
-
 class Yield(BaseNode):
     def __init__(self, exp1, exp2):
         super(Yield, self).__init__(exp1)
@@ -945,6 +929,8 @@ class GlobalVaribleList(CommaList):
 class Operation(BaseNode):
     pass
 
+class StrCat(BinaryOperationNode):
+    pass
 
 class UMath(UnaryOperationNode):
     pass

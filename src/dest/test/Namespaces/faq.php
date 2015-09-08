@@ -47,7 +47,7 @@ $b = \INI_ALL;
 
 namespace foo; 
 $a = new \my\name(); // instantiates "my\name" class
-echo \strlen('hi'); // calls function "strlen"
+echo (\strlen('hi')); // calls function "strlen"
 $a = \INI_ALL; // $a is set to the value of constant "INI_ALL"
 
 /****/
@@ -110,8 +110,8 @@ class thing {
 /****/
 
 namespace my\stuff; 
-include 'file1.php'; 
-include 'another.php'; 
+include ('file1.php'); 
+include ('another.php'); 
 
 use another\thing as MyClass; 
 $a = new MyClass(); // instantiates class "thing" from namespace another

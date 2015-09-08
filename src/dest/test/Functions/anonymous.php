@@ -1,7 +1,7 @@
 <?php
-echo preg_replace_callback('~-([a-z])~', function ($match) { 
+echo (preg_replace_callback('~-([a-z])~', function ($match) { 
     return strtoupper($match[1]); 
-}, 'hello-world'); 
+}, 'hello-world')); 
 // 输出 helloWorld
 
 $greet = function ($name) { 
@@ -19,19 +19,19 @@ $example = function () {
     var_dump($message); 
 }; 
 
-echo $example(); 
+echo ($example()); 
 
 // 继承 $message
 $example = function () use ($message){ 
     var_dump($message); 
 }; 
 
-echo $example(); 
+echo ($example()); 
 
 // Inherited variable's value is from when the function
 // is defined, not when called
 $message = 'world'; 
-echo $example(); 
+echo ($example()); 
 
 // Reset message
 $message = 'hello'; 
@@ -41,12 +41,12 @@ $example = function () use (&$message){
     var_dump($message); 
 }; 
 
-echo $example(); 
+echo ($example()); 
 
 // The changed value in the parent scope
 // is reflected inside the function call
 $message = 'world'; 
-echo $example(); 
+echo ($example()); 
 
 // Closures can also accept regular arguments
 $example = function ($arg) use ($message){ 

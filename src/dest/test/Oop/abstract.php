@@ -6,7 +6,7 @@ class AbstractClass {
     
     // 普通方法（非抽象方法）
     public function printOut() { 
-        print join('', [$this->getValue(), "\n"]); 
+        print (join('', [$this->getValue(), "\n"])); 
     }
 }
 
