@@ -33,7 +33,7 @@ class TestException {
     const THROW_CUSTOM = 1; 
     const THROW_DEFAULT = 2; 
     
-    public function __construct($avalue = self::THROW_NONE) { 
+    function __construct($avalue = self::THROW_NONE) { 
         
         switch ($avalue) { 
             case self::THROW_CUSTOM : 

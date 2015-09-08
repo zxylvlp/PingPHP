@@ -7,7 +7,7 @@ class MyClass {
     protected $protected_ = 'Protected'; 
     private $private_ = 'Private'; 
     
-    public function printHello() { 
+    function printHello() { 
         echo ($this->public_); 
         echo ($this->protected_); 
         echo ($this->private_); 
@@ -28,7 +28,7 @@ class MyClass2 extends MyClass {
     // 可以对 public 和 protected 进行重定义，但 private 而不能
     protected $protected_ = 'Protected2'; 
     
-    public function printHello() { 
+    function printHello() { 
         echo ($this->public_); 
         echo ($this->protected_); 
         echo ($this->private_); 
@@ -64,7 +64,7 @@ class MyClass {
     }
     
     // 此方法为公有
-    public function Foo() { 
+    function Foo() { 
         $this->MyPublic(); 
         $this->MyProtected(); 
         $this->MyPrivate(); 
@@ -83,7 +83,7 @@ $myclass->Foo(); // 公有，受保护，私有都可以执行
 **/
 class MyClass2 extends MyClass { 
     // 此方法为公有
-    public function Foo2() { 
+    function Foo2() { 
         $this->MyPublic(); 
         $this->MyProtected(); 
         $this->MyPrivate(); // 这行会产生一个致命错误

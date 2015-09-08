@@ -164,6 +164,15 @@ class LambdaAssignStatement(BaseNode):
 class StatementWithoutTerminator(BaseNode):
     pass
 
+class StaticVarDef(BaseNode):
+    def __init__(self, id_, init):
+        super(StaticVarDef, self).__init__(id_)
+        self.init = init
+    def gen(self):
+        append('static $')
+        super(StaticVarDef, self).gen()
+        self.init.gen()
+
 
 class JustStrStatement(WithTerminatorNode):
     def __init__(self, val, args, terminator):
@@ -271,7 +280,7 @@ class Varible(BaseNode):
         self.nsContentName = nsContentName
         super(Varible, self).__init__(val)
 
-    def gen(self):
+    def gen(self, noDollar = False):
         if self.nsContentName:
             if isinstance(self.nsContentName, basestring):
                 append(self.nsContentName)
@@ -282,7 +291,7 @@ class Varible(BaseNode):
             self.val.list_ and self.val.list_.gen()
             self.val = self.val.val
         if not (self.val.isupper() or self.val == 'class'):
-            append('$')
+            noDollar or append('$')
         super(Varible, self).gen()
 
 
@@ -690,6 +699,19 @@ class Class(WithTerminatorNode):
         self.content.gen()
         append([indentSpaces(), '}'])
 
+class Trait(WithTerminatorNode):
+    def __init__(self, id_, terminator, content):
+        super(Trait, self).__init__(id_, terminator)
+        self.content = content
+    def gen(self):
+        append('trait ')
+        super(Trait, self).gen()
+        append(' { ')
+        self.terminator.gen()
+        append('\n')
+        self.content.gen()
+        append([indentSpaces(), '}'])
+
 
 class JustStrModifier(BaseNode):
     def gen(self):
@@ -720,6 +742,50 @@ class InClassDef(BaseNode):
         self.abstract and append([self.abstract, ' '])
         super(InClassDef, self).gen()
         append('\n')
+
+class UseTrait(WithTerminatorNode):
+    def __init__(self, use, terminator, content):
+        super(UseTrait, self).__init__(use, terminator)
+        self.content = content
+    def gen(self):
+        super(UseTrait, self).gen()
+        if self.content:
+            append(' { ')
+            self.terminator.gen()
+            append('\n')
+            self.content.gen()
+            append([indentSpaces(), '}'])
+        else:
+            append('; ')
+            self.terminator.gen()
+
+class UseTraitContent(Block):
+    pass
+
+class InUseTraitDefList(Body):
+    pass
+
+class InUseTraitDef(BaseNode):
+    def __init__(self, var, type_, access, ns, terminator):
+        super(InUseTraitDef, self).__init__(var)
+        self.type_ = type_
+        self.access = access
+        self.ns = ns
+        self.terminator = terminator
+    def gen(self):
+        append(indentSpaces())
+        self.val.gen(True)
+        append([' ', self.type_, ' '])
+        if self.access:
+            self.access.gen()
+        if self.ns:
+            self.ns.gen()
+        else:
+            popStr()
+        append('; ')
+        self.terminator.gen()
+        append('\n')
+
 
 
 class Interface(WithTerminatorNode):
@@ -769,7 +835,11 @@ class ImplementsModifier(BaseNode):
 
 
 class AccessModifier(JustStrModifier):
-    pass
+    def gen(self, defaultPublic = False):
+        if defaultPublic and self.val == None:
+            self.val = 'public'
+        super(AccessModifier, self).gen()
+
 
 
 class StaticModifier(JustStrModifier):
@@ -843,7 +913,7 @@ class DataMemberDef(WithTerminatorNode):
         self.ref = ref
 
     def gen(self):
-        self.access.gen()
+        self.access.gen(True)
         self.static.gen()
         self.ref.gen()
         append('$')

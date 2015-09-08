@@ -1,0 +1,84 @@
+# 声明一个'iTemplate'接口
+interface iTemplate:
+    public setVariable(name, var)
+    public getHtml(template)
+
+
+# 实现接口
+# 下面的写法是正确的
+class Template implements iTemplate:
+    private vars = array()
+  
+    public setVariable(name, var):
+        this.vars[name] = var
+  
+    public getHtml(template):
+        for name,value in this.vars:
+            template = str_replace('{' <<< name <<< '}', value, template)
+ 
+        return template
+
+# 下面的写法是错误的，会报错，因为没有实现 getHtml()：
+# Fatal error: Class BadTemplate contains 1 abstract methods
+# and must therefore be declared abstract (iTemplate::getHtml)
+class BadTemplate implements iTemplate:
+    private vars = array()
+  
+    public setVariable(name, var):
+        this.vars[name] = var
+
+''''''
+
+interface a:
+    public foo()
+
+interface b extends a:
+    public baz(baz:Baz)
+
+# 正确写法
+class c implements b:
+    public foo():
+        pass
+
+    public baz(baz:Baz):
+        pass
+
+# 错误写法会导致一个致命错误
+class d implements b:
+    public foo():
+        pass
+
+    public baz(foo:Foo):
+        pass
+
+''''''
+interface a:
+    public foo()
+
+interface b:
+    public bar()
+
+interface c extends a, b:
+    public baz()
+
+class d implements c:
+    public foo():
+        pass
+
+    public bar():
+        pass
+
+    public baz():
+        pass
+
+''''''
+interface a:
+    const B = 'Interface constant'
+
+# 输出接口常量
+echo a::B
+
+# 错误写法，因为常量不能被覆盖。接口常量的概念和类常量是一样的。
+class b implements a:
+    const B = 'Class constant'
+

@@ -1,12 +1,12 @@
 <?php
 class BaseClass { 
-    public function __construct() { 
+    function __construct() { 
         print ("In BaseClass constructor\n"); 
     }
 }
 
 class SubClass extends BaseClass { 
-    public function __construct() { 
+    function __construct() { 
         parent::__construct(); 
         print ("In SubClass constructor\n"); 
     }
@@ -39,12 +39,12 @@ class Bar {
 /****/
 
 class MyDestructableClass { 
-    public function __construct() { 
+    function __construct() { 
         print ("In constructor\n"); 
         $this->name = "MyDestructableClass"; 
     }
     
-    public function __destruct() { 
+    function __destruct() { 
         print (join("", ["Destroying ", $this->name, "\n"])); 
     }
 }

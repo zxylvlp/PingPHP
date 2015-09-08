@@ -1,6 +1,6 @@
 <?php
 class classname { 
-    public function __construct() { 
+    function __construct() { 
         echo __METHOD__, "\n"; 
     }
 }
@@ -21,7 +21,7 @@ echo constant('CONSTNAME'), "\n"; // prints global
 
 namespace namespacename; 
 class classname { 
-    public function __construct() { 
+    function __construct() { 
         echo __METHOD__, "\n"; 
     }
 }

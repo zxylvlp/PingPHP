@@ -24,12 +24,12 @@ $func('test'); // This calls echoit()
 /****/
 
 class Foo { 
-    public function Variable() { 
+    function Variable() { 
         $name = 'Bar'; 
         $this->$name(); // This calls the Bar() method
     }
     
-    public function Bar() { 
+    function Bar() { 
         echo ("This is Bar"); 
     }
 }
@@ -42,7 +42,7 @@ $foo->$funcname(); // This calls $foo->Variable()
 
 class Foo { 
     public static $variable = 'static property'; 
-    public static function Variable() { 
+    static function Variable() { 
         echo ('Method Variable called'); 
     }
 }

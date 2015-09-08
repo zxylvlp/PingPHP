@@ -6,12 +6,12 @@ from helper import *
 
 reserved = set([
     # namespace
-    'namespace', 'use', 'as',
+    'namespace', 'use', 'as', 'insteadof',
     # class and interface
     'class', 'extends', 'implements',
     'public', 'private', 'protected',
     'static', 'abstract', 'final',
-    'interface',
+    'interface', 'trait',
 
     # ctrl flow
     'if', 'elif', 'else',

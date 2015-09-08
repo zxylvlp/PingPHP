@@ -16,7 +16,7 @@ grammar:
     Line : CodeBlock
          | Statement
          | Embeded
-         | JustStrStatment
+         | JustStrStatement
 
     Embeded : DOCCOMMENT
             | NATIVEPHP TERMINATOR
@@ -32,6 +32,9 @@ grammar:
                                | GlobalDec
                                | ConstDefWithoutTerminator
                                | Yield
+                               | StaticVarDef
+
+    StaticVarDef : STATIC INDENTIFIER InitModifier
 
     JustStrStatement: STATEMENT ArgList Terminator
 
@@ -44,6 +47,7 @@ grammar:
               | FuncDef
               | Class
               | Interface
+              | Trait
 
     Expression : Value
                | Assign
@@ -112,6 +116,8 @@ Call
     Callable : NsContentName LPARENT
              | NsContentName SCOPEOP INDENTIFIER LPARENT
              | Expression LPARENT
+             | Expression DOT INDENTIFIER LPARENT
+             | Expression 
              | STATIC SCOPEOP INDENTIFIER LPARENT
 
 Lambda
@@ -190,6 +196,8 @@ Catch :
 Class and Interface
     Class : AbstractModifier FinalModifier CLASS INDENTIFIER ExtendsModifier ImplementsModifier COLON Terminator ClassContent
 
+    Trait : TRAIT INDENTIFIER COLON Terminator ClassContent
+
     FinalModifier : 
                   | FINAL
 
@@ -207,6 +215,19 @@ Class and Interface
                | ConstDef
                | MemberFuncDef
                | ABSTRACT MemberFuncDec
+               | UseTrait
+
+    UseTrait : UseNamespace Terminator
+             | UseNamespace COLON Terminator UseTraitContent
+
+    UseTraitContent : INDENT InUseTraitDefList OUTDENT
+
+    InUseTraitDefList : InUseTraitDef
+                      | InUseTraitDefList InUseTraitDef
+
+    InUseTraitDef : Varible INSTEADOF NsContentName Terminator
+                  | Varible AS AccessModifier NsContentName Terminator
+                  | Varible AS AccessModifier Terminator
 
     Interface : INTERFACE INDENTIFIER ExtendsModifier COLON Terminator InterfaceContent
 
@@ -221,7 +242,7 @@ Class and Interface
                  | MemberFuncDec
 
     ExtendsModifier :
-                    | EXTENDS NsContentName
+                    | EXTENDS NsContentNameList
 
     ImplementsModifier :
                        | IMPLEMENTS NsContentNameList
@@ -424,8 +445,16 @@ def p_StatementWithoutTerminator(p):
                                | GlobalDec
                                | ConstDefWithoutTerminator
                                | Yield
+                               | StaticVarDef
     '''
     p[0] = StatementWithoutTerminator(p[1])
+
+
+def p_StaticVarDef(p):
+    '''
+    StaticVarDef : STATIC INDENTIFIER InitModifier
+    '''
+    p[0] = StaticVarDef(p[2], p[3])
 
 
 def p_JustStrStatement(p):
@@ -446,6 +475,7 @@ def p_CodeBlock(p):
               | FuncDef
               | Class
               | Interface
+              | Trait
     '''
     p[0] = CodeBlock(p[1])
 
@@ -458,6 +488,7 @@ def p_Expression(p):
                | Call
                | LPARENT Expression RPARENT
                | Lambda
+               | AnonymousClass
     '''
     if len(p)==2:
         p[0] = Expression(p[1])
@@ -904,6 +935,21 @@ def p_Class(p):
     '''
     p[0] = Class(p[1], p[2], p[4], p[5], p[6], p[8], p[9])
 
+def p_AnonymousClass(p):
+    '''
+    AnonymousClass : NEW CLASS LPARENT ArgList RPARENT ExtendsModifier ImplementsModifier COLON Terminator ClassContent
+    '''
+    #p[0] = Class(p[1], p[2], p[4], p[5], p[6], p[8], p[9])
+
+
+
+
+def p_Trait(p):
+    '''
+    Trait : TRAIT INDENTIFIER COLON Terminator ClassContent
+    '''
+    p[0] = Trait(p[2], p[4], p[5])
+
 
 def p_FinalModifier(p):
     '''
@@ -952,13 +998,51 @@ def p_InClassDef(p):
                | ConstDef
                | MemberFuncDef
                | ABSTRACT MemberFuncDec
-
+               | UseTrait
     '''
     if len(p) <= 2:
         p[0] = InClassDef(None, p[1])
     else:
         p[0] = InClassDef(p[1], p[2])
 
+def p_UseTrait(p):
+    '''
+    UseTrait : UseNamespace Terminator
+             | UseNamespace COLON Terminator UseTraitContent
+    '''
+    if len(p) <= 3:
+        p[0] = UseTrait(p[1], p[2], None)
+    else:
+        p[0] = UseTrait(p[1], p[3], p[4])
+
+def p_UseTraitContent(p):
+    '''
+    UseTraitContent : INDENT InUseTraitDefList OUTDENT
+    '''
+    p[0] = UseTraitContent(p[2])
+
+def p_InUseTraitDefList(p):
+    '''
+    InUseTraitDefList : InUseTraitDef
+                      | InUseTraitDefList InUseTraitDef
+    '''
+    if len(p) <= 2:
+        p[0] = InUseTraitDefList(None, p[1])
+    else:
+        p[0] = InUseTraitDefList(p[1], p[2])
+
+def p_InUseTraitDef(p):
+    '''
+    InUseTraitDef : Varible INSTEADOF NsContentName Terminator
+                  | Varible AS AccessModifier Terminator
+                  | Varible AS AccessModifier NsContentName Terminator
+    '''
+    if p[2] == 'insteadof':
+        p[0] = InUseTraitDef(p[1], p[2], None, p[3], p[4])
+    elif len(p) <= 5:
+        p[0] = InUseTraitDef(p[1], p[2], p[3], None, p[4])
+    else:
+        p[0] = InUseTraitDef(p[1], p[2], p[3], p[4], p[5])
 
 
 def p_Interface(p):
@@ -999,7 +1083,7 @@ def p_InterfaceDef(p):
 def p_ExtendsModifier(p):
     '''
     ExtendsModifier :
-                    | EXTENDS NsContentName
+                    | EXTENDS NsContentNameList
     '''
     if len(p) > 1:
         p[0] = ExtendsModifier(p[2])
@@ -1028,7 +1112,7 @@ def p_AccessModifier(p):
     if len(p) > 1:
         p[0] = AccessModifier(p[1])
     else:
-        p[0] = AccessModifier('public')
+        p[0] = AccessModifier(None)
 
 
 def p_StaticModifier(p):

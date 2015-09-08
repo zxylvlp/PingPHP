@@ -12,7 +12,7 @@ class SimpleClass {
 /****/
 
 class A { 
-    public function foo() { 
+    function foo() { 
         if (isset($this)) { 
             echo ('this is defined ('); 
             echo (get_class($this)); 
@@ -24,7 +24,7 @@ class A {
 }
 
 class B { 
-    public function bar() { 
+    function bar() { 
         // Note: the next line will issue a warning if E_STRICT is enabled.
         A::foo(); 
     }
@@ -90,7 +90,7 @@ var_dump($obj4 instanceof Child);
 
 class ExtendClass extends SimpleClass { 
     // Redefine the parent method
-    public function displayVar() { 
+    function displayVar() { 
         echo ("Extending class\n"); 
         parent::displayVar(); 
     }
