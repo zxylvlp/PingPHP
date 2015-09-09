@@ -3,8 +3,9 @@ echo(preg_replace_callback('~-([a-z])~', lambda(match):
 , 'hello-world'))
 # 输出 helloWorld
 
-greet = lambda(name):
+greet = (lambda(name):
     printf("Hello %s\r\n", name)
+)
 
 $greet('World')
 $greet('PHP')
@@ -13,14 +14,16 @@ $greet('PHP')
 message = 'hello'
 
 # 没有 "use"
-example = lambda():
+example = (lambda():
     var_dump(message)
+)
 
 echo($example())
 
 # 继承 $message
-example = lambda() use(message):
+example = (lambda() use(message):
     var_dump(message)
+)
 
 echo($example())
 
@@ -33,8 +36,9 @@ echo($example())
 message = 'hello'
 
 # Inherit by-reference
-example = lambda() use(&message):
+example = (lambda() use(&message):
     var_dump(message)
+)
 
 echo($example())
 
@@ -44,8 +48,9 @@ message = 'world'
 echo($example())
 
 # Closures can also accept regular arguments
-example = lambda(arg) use(message):
+example = (lambda(arg) use(message):
     var_dump("{$arg} {$message}")
+)
 
 $example("hello")
 
@@ -69,12 +74,10 @@ class Cart:
     
     public getTotal(tax):
         total = 0.00
-        callback = lambda(quantity, product) use (tax, &total):
-			<?php
-            $pricePerItem = constant(__CLASS__ . "::PRICE_" .
-            strtoupper($product));
-			?>
+        callback = (lambda(quantity, product) use (tax, &total):
+            pricePerItem = constant(__CLASS__ <<< "::PRICE_" <<< strtoupper(product))
             total += (pricePerItem * quantity) * (tax + 1.0)
+        )
         array_walk(this.products, callback)
         return round(total, 2)
 
@@ -86,7 +89,5 @@ my_cart.add('milk', 3)
 my_cart.add('eggs', 6)
 
 # 打出出总价格，其中有 5% 的销售税.
-<?php
-print $my_cart->getTotal(0.05) . "\n";
-?>
+print my_cart.getTotal(0.05) <<< "\n"
 # 最后结果是 54.29

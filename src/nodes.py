@@ -152,15 +152,6 @@ class Statement(WithTerminatorNode):
         else:
             popStrToLastNewLine()
             
-class LambdaAssignStatement(BaseNode):
-    def __init__(self, val, lambda_):
-        super(LambdaAssignStatement, self).__init__(val)
-        self.lambda_ = lambda_
-    def gen(self):
-        super(LambdaAssignStatement, self).gen()
-        append(' = ')
-        self.lambda_.gen()
-
 class StatementWithoutTerminator(BaseNode):
     pass
 
@@ -196,13 +187,27 @@ class CodeBlock(BaseNode):
 
 
 class Expression(BaseNode):
+    pass
+
+class ParentExp(BaseNode):
     def gen(self):
-        if isinstance(self.val, Expression):
-            append('(')
-            super(Expression, self).gen()
-            append(')')
+        append('(')
+        super(ParentExp, self).gen()
+        append(')')
+
+class AccessObj(BaseNode):
+    def __init__(self, exp1, id_, exp2):
+        super(AccessObj, self).__init__(exp1)
+        self.id_ = id_
+        self.exp2 = exp2
+    def gen(self):
+        super(AccessObj, self).gen()
+        if self.id_:
+            append(['->', self.id_])
         else:
-            super(Expression, self).gen()
+            append('[')
+            self.exp2.gen()
+            append(']')
 
 
 class Block(BaseNode):
@@ -295,34 +300,13 @@ class Varible(BaseNode):
         super(Varible, self).gen()
 
 
-class Assignable(BaseNode):
-    def __init__(self, val, exp, id_):
-        super(Assignable, self).__init__(val)
-        self.exp = exp
-        self.id_ = id_
-
-    def gen(self):
-        super(Assignable, self).gen()
-        if self.exp != None and self.id_ == None:
-            append('[')
-            self.exp.gen()
-            append(']')
-        elif self.exp == None and self.id_ != None:
-            append(['->', self.id_])
-
-
 class Assign(BaseNode):
     def __init__(self, val, rightSide):
         super(Assign, self).__init__(val)
         self.rightSide = rightSide
 
     def gen(self):
-        if isinstance(self.val, ArrayLiteral):
-            append('list(')
-            self.val.val.gen()
-            append(')')
-        else:
-            super(Assign, self).gen()
+        super(Assign, self).gen()
         self.rightSide.gen()
 
 
@@ -529,11 +513,6 @@ class InSwitchDefList(Body):
 class InSwitchDef(Line):
     pass
 
-
-class ValueList(BaseNode):
-    def __init__(self, list_, value):
-        super(ValueList, self).__init__(value)
-        self.list_ = list_
 
 class Case(WithTerminatorNode):
     def __init__(self, case, valueList, terminator, block):

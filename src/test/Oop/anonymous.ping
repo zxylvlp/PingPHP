@@ -47,4 +47,4 @@ class Outer:
                 return this.prop2 + this.prop3 + this.func1()
         )
 
-#echo (new Outer()).func2().func3()
+echo (new Outer()).func2().func3()

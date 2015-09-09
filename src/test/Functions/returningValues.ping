@@ -8,7 +8,7 @@ echo(square(4))   # outputs '16'.
 def small_numbers():
     return array (0, 1, 2)
 
-[zero, one, two] = small_numbers()
+list(zero, one, two) = small_numbers()
 
 ''''''
 

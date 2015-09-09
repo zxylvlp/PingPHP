@@ -3,6 +3,7 @@
 *.out
 parsetab.*
 src/test.php
+src/gitDiff.txt
 
 # C extensions
 *.so

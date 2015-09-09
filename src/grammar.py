@@ -24,7 +24,6 @@ grammar:
             | INLINECOMMENT
 
     Statement : StatementWithoutTerminator Terminator
-              | LambdaAssignStatement
 
     StatementWithoutTerminator : Expression
                                | Namespace
@@ -53,8 +52,10 @@ grammar:
                | Assign
                | Operation
                | Call
-               | LPARENT Expression RPARENT
                | Lambda
+               | AnonymousClass
+               | ParentExp
+               | AccessObj
 
     Block : INDENT Body OUTDENT
 
@@ -65,7 +66,7 @@ Value and Assign:
 
     AssignRightSide : ASSIGN Expression
 
-    Value : Assignable
+    Value : Varible
           | Literal
 
     Literal : SimpleLiteral
@@ -86,12 +87,7 @@ Value and Assign:
             | NsContentName SCOPEOP INDENTIFIER
             | NsContentName SCOPEOP CLASS
 
-    Assignable : Varible
-               | Assignable LBRACKET Expression RBRACKET
-               | Assignable DOT INDENTIFIER
-
-    Assign : Assignable AssignRightSide
-           | ArrayLiteral AssignRightSide
+    Assign : Expression AssignRightSide
 
 
 Param and Arg
@@ -169,10 +165,7 @@ Switch
     InSwitchDef : Case
                 | Embeded
 
-    ValueList : Value
-              | ValueList COMMA Value
-
-    Case : CASE ValueList COLON Terminator Block
+    Case : CASE ArgList COLON Terminator Block
          | DEFAULT COLON Terminator Block
 
 For
@@ -324,8 +317,8 @@ Operation
 
     Cast : CAST Expression
 
-    InDecrement : INDECREMENT Assignable 
-                | Assignable INDECREMENT
+    InDecrement : INDECREMENT Expression
+                | Expression INDECREMENT
 
     UBit : BITNOT Expression
 
@@ -422,19 +415,12 @@ def p_Embeded(p):
 def p_Statement(p):
     '''
     Statement : StatementWithoutTerminator Terminator
-              | LambdaAssignStatement
     '''
     if len(p) < 3:
         term = Terminator('')
     else:
         term = p[2]
     p[0] = Statement(p[1], term)
-
-def p_LambdaAssignStatement(p):
-    '''
-    LambdaAssignStatement : Assignable ASSIGN Lambda
-    '''
-    p[0] = LambdaAssignStatement(p[1], p[3])
 
 
 def p_StatementWithoutTerminator(p):
@@ -486,14 +472,28 @@ def p_Expression(p):
                | Assign
                | Operation
                | Call
-               | LPARENT Expression RPARENT
                | Lambda
                | AnonymousClass
+               | AccessObj
+               | ParentExp
     '''
-    if len(p)==2:
-        p[0] = Expression(p[1])
+    p[0] = Expression(p[1])
+
+def p_ParentExp(p):
+    '''
+    ParentExp : LPARENT Expression RPARENT
+    '''
+    p[0] = ParentExp(p[2])
+
+def p_AccessObj(p):
+    '''
+    AccessObj : Expression DOT INDENTIFIER
+              | Expression LBRACKET Expression RBRACKET
+    '''
+    if len(p) <= 4:
+        p[0] = AccessObj(p[1], p[3], None)
     else:
-        p[0] = Expression(p[2])
+        p[0] = AccessObj(p[1], None, p[3])
 
 
 def p_Block(p):
@@ -523,7 +523,7 @@ def p_AssignRightSide(p):
 
 def p_Value(p):
     '''
-    Value : Assignable
+    Value : Varible
           | Literal
     '''
     p[0] = Value(p[1])
@@ -587,24 +587,9 @@ def p_Varible(p):
         p[0] = Varible(p[1], p[3])
 
 
-def p_Assignable(p):
-    '''
-    Assignable : Varible
-               | Assignable LBRACKET Expression RBRACKET
-               | Assignable DOT INDENTIFIER
-    '''
-    if len(p) == 2:
-        p[0] = Assignable(p[1], None, None)
-    elif len(p) == 5:
-        p[0] = Assignable(p[1], p[3], None)
-    else:
-        p[0] = Assignable(p[1], None, p[3])
-
-
 def p_Assign(p):
     '''
-    Assign : Assignable AssignRightSide
-           | ArrayLiteral AssignRightSide
+    Assign : Expression AssignRightSide
     '''
     p[0] = Assign(p[1], p[2])
 
@@ -845,20 +830,9 @@ def p_InSwitchDef(p):
     '''
     p[0] = InSwitchDef(p[1])
 
-def p_ValueList(p):
-    '''
-    ValueList : Value
-                | Value COMMA Value
-    '''
-    if len(p)<=2:
-        p[0] = ValueList(None, p[1])
-    else:
-        p[0] = ValueList(p[1], p[3])
-
-
 def p_Case(p):
     '''
-    Case : CASE ValueList COLON Terminator Block
+    Case : CASE ArgList COLON Terminator Block
          | DEFAULT COLON Terminator Block
     '''
     if p[1] == 'case':
@@ -1292,8 +1266,8 @@ def p_Cast(p):
 
 def p_InDecrement(p):
     '''
-    InDecrement : INDECREMENT Assignable 
-                | Assignable INDECREMENT
+    InDecrement : INDECREMENT Expression
+                | Expression INDECREMENT
     '''
     from helper import isString
     if isString(p[1]):

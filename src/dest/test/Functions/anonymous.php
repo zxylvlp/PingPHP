@@ -4,9 +4,9 @@ echo (preg_replace_callback('~-([a-z])~', function ($match) {
 }, 'hello-world')); 
 // 输出 helloWorld
 
-$greet = function ($name) { 
+$greet = (function ($name) { 
     printf("Hello %s\r\n", $name); 
-}; 
+}); 
 
 $greet('World'); 
 $greet('PHP'); 
@@ -15,16 +15,16 @@ $greet('PHP');
 $message = 'hello'; 
 
 // 没有 "use"
-$example = function () { 
+$example = (function () { 
     var_dump($message); 
-}; 
+}); 
 
 echo ($example()); 
 
 // 继承 $message
-$example = function () use ($message){ 
+$example = (function () use ($message){ 
     var_dump($message); 
-}; 
+}); 
 
 echo ($example()); 
 
@@ -37,9 +37,9 @@ echo ($example());
 $message = 'hello'; 
 
 // Inherit by-reference
-$example = function () use (&$message){ 
+$example = (function () use (&$message){ 
     var_dump($message); 
-}; 
+}); 
 
 echo ($example()); 
 
@@ -49,9 +49,9 @@ $message = 'world';
 echo ($example()); 
 
 // Closures can also accept regular arguments
-$example = function ($arg) use ($message){ 
+$example = (function ($arg) use ($message){ 
     var_dump("{$arg} {$message}"); 
-}; 
+}); 
 
 $example("hello"); 
 
@@ -76,11 +76,10 @@ class Cart {
     
     public function getTotal($tax) { 
         $total = 0.00; 
-        $callback = function ($quantity, $product) use ($tax, &$total){ 
-            $pricePerItem = constant(__CLASS__ . "::PRICE_" .
-            strtoupper($product));
+        $callback = (function ($quantity, $product) use ($tax, &$total){ 
+            $pricePerItem = constant(__CLASS__ . "::PRICE_" . strtoupper($product)); 
             $total += ($pricePerItem * $quantity) * ($tax + 1.0); 
-        }; 
+        }); 
         array_walk($this->products, $callback); 
         return round($total, 2); 
     }
@@ -94,5 +93,5 @@ $my_cart->add('milk', 3);
 $my_cart->add('eggs', 6); 
 
 // 打出出总价格，其中有 5% 的销售税.
-print $my_cart->getTotal(0.05) . "\n";
+print $my_cart->getTotal(0.05) . "\n"; 
 // 最后结果是 54.29
