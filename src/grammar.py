@@ -30,7 +30,6 @@ grammar:
                                | UseNamespace
                                | GlobalDec
                                | ConstDefWithoutTerminator
-                               | Yield
                                | StaticVarDef
 
     StaticVarDef : STATIC INDENTIFIER InitModifier
@@ -56,6 +55,7 @@ grammar:
                | AnonymousClass
                | ParentExp
                | AccessObj
+               | Yield
 
     Block : INDENT Body OUTDENT
 
@@ -430,7 +430,6 @@ def p_StatementWithoutTerminator(p):
                                | UseNamespace
                                | GlobalDec
                                | ConstDefWithoutTerminator
-                               | Yield
                                | StaticVarDef
     '''
     p[0] = StatementWithoutTerminator(p[1])
@@ -476,6 +475,7 @@ def p_Expression(p):
                | AnonymousClass
                | AccessObj
                | ParentExp
+               | Yield
     '''
     p[0] = Expression(p[1])
 
@@ -866,10 +866,13 @@ def p_DoWhile(p):
 
 def p_CommentOrEmptyLineList(p):
     '''
-    CommentOrEmptyLineList : CommentOrEmptyLine
+    CommentOrEmptyLineList :
+                           | CommentOrEmptyLine
                            | CommentOrEmptyLineList CommentOrEmptyLine 
     '''
-    if len(p) <= 2:
+    if len(p) <= 1:
+        p[0] = CommentOrEmptyLineList(None, None)
+    elif len(p) <= 2:
         p[0] = CommentOrEmptyLineList(None, p[1])
     else:
         p[0] = CommentOrEmptyLineList(p[1], p[2])

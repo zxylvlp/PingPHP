@@ -1,0 +1,35 @@
+class BaseClass:
+   public  test():
+       echo "BaseClass::test() called\n"
+   
+   
+   final public  moreTesting():
+       echo "BaseClass::moreTesting() called\n"
+   
+
+
+class ChildClass extends BaseClass:
+   public  moreTesting():
+       echo "ChildClass::moreTesting() called\n"
+   
+
+# Results in Fatal error: Cannot override final method BaseClass::moreTesting()
+
+''''''
+
+final class BaseClass:
+   public  test():
+       echo "BaseClass::test() called\n"
+   
+   
+   # 这里无论你是否将方法声明为final，都没有关系
+   final public  moreTesting():
+       echo "BaseClass::moreTesting() called\n"
+   
+
+
+class ChildClass extends BaseClass:
+    pass
+
+# 产生 Fatal error: Class ChildClass may not inherit from final class (BaseClass)
+

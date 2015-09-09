@@ -1,0 +1,102 @@
+class A:
+    public static who():
+        echo __CLASS__
+    
+    public static test():
+        self::who()
+    
+
+class B extends A:
+    public static who():
+        echo __CLASS__
+    
+
+
+B::test()
+
+''''''
+
+class A:
+    public static who():
+        echo __CLASS__
+    
+    public static test():
+        static::who() # 后期静态绑定从这里开始
+    
+
+
+class B extends A:
+    public static who():
+        echo __CLASS__
+    
+
+B::test()
+
+
+''''''
+
+
+class A:
+    private foo():
+        echo "success!\n"
+    
+    public test():
+        this.foo()
+        static::foo()
+    
+
+
+class B extends A:
+   '''foo() will be copied to B, hence its scope will still be A and
+    * the call be successful '''
+    pass
+
+
+class C extends A:
+    private foo():
+        ''' original method is replaced the scope of the new one is C '''
+        pass
+    
+
+
+b = new B()
+b.test()
+c = new C()
+c.test()   #fails
+
+
+
+''''''
+
+
+
+class A:
+    public static foo():
+        static::who()
+    
+
+    public static who():
+        echo __CLASS__<<<"\n"
+    
+
+
+class B extends A:
+    public static test():
+        A::foo()
+        parent::foo()
+        self::foo()
+    
+
+    public static who():
+        echo __CLASS__<<<"\n"
+    
+
+class C extends B:
+    public static who():
+        echo __CLASS__<<<"\n"
+    
+
+
+C::test()
+
+

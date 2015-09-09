@@ -1,4 +1,10 @@
 <?php
+$i = 0; 
+
+do { 
+    echo $i; 
+} while($i > 0); 
+
 do { 
     if ($i < 5) { 
         echo ("i is not big enough"); 
@@ -12,5 +18,4 @@ do {
     
     /**process i**/
     
-    // asdf
 } while(0); 

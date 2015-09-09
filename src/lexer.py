@@ -84,7 +84,7 @@ math = [
     'INDECREMENT',
 ]
 
-t_EXPONENT = r'\*\*'
+t_EXPONENT = r'\*\*     '
 t_MATH1 = r'\*|/|%'
 t_MATH2 = r'\+|-'
 t_INDECREMENT = r'(\+\+)|(--)'
@@ -202,7 +202,7 @@ def t_NATIVEPHP(t):
 
 
 def t_STRING(t):
-    r'(\'(([^\'])|(\\\'))*\')|("(([^"\n])|(\\"))*")'
+    r'(\'(([^\'])|((?<=\\)(?<!\\\\)\'))*\')|("(([^"\n])|((?<=\\)(?<!\\\\)"))*")'
     lineNoInc(t)
     return t
  

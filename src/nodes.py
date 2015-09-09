@@ -954,7 +954,8 @@ class Yield(BaseNode):
         super(Yield, self).__init__(exp1)
         self.exp2 = exp2
     def gen(self):
-        append('yield ')
+        append('yield')
+        self.val and append(' ')
         super(Yield, self).gen()
         if self.exp2:
             append(' => ')
