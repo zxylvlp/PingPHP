@@ -36,15 +36,15 @@ class TestException {
     function __construct($avalue = self::THROW_NONE) { 
         
         switch ($avalue) { 
-            case self::THROW_CUSTOM : 
+            case self::THROW_CUSTOM: 
                 // 抛出自定义异常
                 throw new MyException('1 is an invalid parameter', 5); 
                 break; 
-            case self::THROW_DEFAULT : 
+            case self::THROW_DEFAULT: 
                 // 抛出默认的异常
                 throw new Exception('2 is not allowed as a parameter', 6); 
                 break; 
-            default : 
+            default: 
                 // 没有异常的情况下，创建一个对象
                 $this->var = $avalue; 
         }

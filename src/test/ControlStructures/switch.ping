@@ -1,0 +1,73 @@
+if i == 0:
+    echo "i equals 0"
+elif i == 1:
+    echo "i equals 1"
+elif i == 2:
+    echo "i equals 2"
+
+switch i:
+    case 0:
+        echo "i equals 0"
+    case 1:
+        echo "i equals 1"
+    case 2:
+        echo "i equals 2"
+
+''''''
+
+switch i:
+    case "apple":
+        echo "i is apple"
+    case "bar":
+        echo "i is bar"
+    case "cake":
+        echo "i is cake"
+
+''''''
+
+switch i:
+    case 0:
+        echo "i equals 0"
+    case 1:
+        echo "i equals 1"
+    case 2:
+        echo "i equals 2"
+
+''''''
+
+switch i:
+    case 0,1,2:
+        echo "i is less than 3 but not negative"
+    case 3:
+        echo "i is 3"
+''''''
+
+switch i:
+    case 0:
+        echo "i equals 0"
+    case 1:
+        echo "i equals 1"
+    case 2:
+        echo "i equals 2"
+    default:
+        echo "i is not equal to 0, 1 or 2"
+
+''''''
+
+switch i:
+    case 0:
+        echo "i equals 0"
+    case 1:
+        echo "i equals 1"
+    case 2:
+        echo "i equals 2"
+    default:
+        echo "i is not equal to 0, 1 or 2"
+
+''''''
+
+switch beer:
+    case 'tuborg', 'carlsberg', 'heineken':
+        echo 'Good choice'
+    default:
+        echo 'Please make a new selection...'

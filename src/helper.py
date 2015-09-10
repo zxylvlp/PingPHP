@@ -130,7 +130,7 @@ def initLogging():
 def errorMsg(errorType, t):
     lineStart = fileStrCache[:t.lexpos].rfind('\n') + 1
     linePos = t.lexpos - lineStart
-    errorContent = fileStrCache[lineStart:t.lexpos] + '`ERROR`' + t.value
+    errorContent = fileStrCache[lineStart:t.lexpos] + '`ERROR`' + fileStrCache[t.lexpos:t.lexpos+len(t.value)]
     logging.error(errorType + " error in %d,%d \n%s\a", t.lineno, linePos+1 , errorContent)
     raise Exception
 

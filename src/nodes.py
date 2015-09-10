@@ -530,7 +530,7 @@ class Case(WithTerminatorNode):
             for value in valueList:
                 append([indentSpaces(), 'case '])
                 value.gen()
-                append([' : ', '\n'])
+                append([': ', '\n'])
             popStr()
             self.terminator.gen()
             append('\n')
@@ -539,7 +539,7 @@ class Case(WithTerminatorNode):
             append([indentSpaces(), 'break; ', '\n'])
             outdent()
         else:
-            append('default : ')
+            append('default: ')
             self.terminator.gen()
             append('\n')
             self.block.gen()
@@ -550,24 +550,20 @@ class Case(WithTerminatorNode):
 
 
 class For(WithTerminatorNode):
-    def __init__(self, id1Ref, id1, id2Ref, id2, exp, terminator, block):
-        super(For, self).__init__(exp, terminator)
-        self.id1Ref = id1Ref
-        self.id1 = id1
-        self.id2Ref = id2Ref
-        self.id2 = id2
+    def __init__(self, exp1, exp2, exp3, terminator, block):
+        super(For, self).__init__(exp3, terminator)
+        self.exp1 = exp1
+        self.exp2 = exp2
         self.block = block
 
     def gen(self):
         append('foreach (')
         super(For, self).gen()
         append(' as ')
-        self.id1Ref.gen()
-        append(['$', self.id1])
-        if self.id2:
+        self.exp1.gen()
+        if self.exp2:
             append(' => ')
-            self.id2Ref.gen()
-            append(['$', self.id2])
+            self.exp2.gen()
         append(') { ')
         self.terminator.gen()
         append('\n')
@@ -608,6 +604,17 @@ class DoWhile(WithTerminatorNode):
 
 class CommentOrEmptyLineList(Body):
     pass
+
+class Declare(BaseNode):
+    def __init__(self, id_, exp):
+        super(Declare, self).__init__(id_)
+        self.exp = exp
+    def gen(self):
+        append('declare(')
+        super(Declare, self).gen()
+        append(' = ')
+        self.exp.gen()
+        append(')')
 
 class CommentOrEmptyLine(Line):
     pass
@@ -1005,7 +1012,7 @@ class InDecrement(UnaryOperationNode):
 class UBit(UnaryOperationNode):
     pass
 
-class BBit(UnaryOperationNode):
+class BBit(BinaryOperationNode):
     pass
 
 class InstanceOf(BinaryOperationNode):

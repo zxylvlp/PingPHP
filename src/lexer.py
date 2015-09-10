@@ -18,6 +18,7 @@ reserved = set([
     'for', 'in',
     'switch', 'case', 'default',
     'while', 'do',
+    'declare',
 
     # function
     'def',
@@ -71,7 +72,7 @@ bit = [
     'BITXOR'
 ]
 
-t_SHIFT = r'(<<)|(>>)'
+
 t_ANDOP = r'&'
 t_BITNOT = r'~'
 t_BITOR = r'\|'
@@ -130,8 +131,6 @@ def lineNoInc(t):
 
 t_CAST = r'\([ \t]*((int)|(float)|(string)|(array)|(object)|(bool))[ \t]*\)'
 t_AT = r'@'
-t_COMPARE = r'([=!]=[=]?)|(<>)|(>=?)|(<=?)        '
-
 def t_DOCCOMMENT(t):
     r'((\'\'\'((?!\'\'\')[\s\S])*\'\'\')|(\'{6,8})|("""((?!""")[\s\S])*""")|("{6,8}))[ \t]*\n'
     lineNoInc(t)
@@ -141,10 +140,42 @@ def t_DOCCOMMENT(t):
     t.value = '/**' + t.value[3:pos] + '**/'
     return t
 
+def t_NATIVEPHP(t):
+    r'<\?php((?!<\?php)[\s\S])*\?>[ \t]*(?=\n)'
+    lineNoInc(t)
+    t.value = t.value[6:].lstrip()
+    pos2 = t.value.rfind('?>')
+    t.value = t.value[0:pos2].rstrip()
+    #print t.value
+    return t
+
+
+
 t_SCOPEOP = r'::'
 t_SPACE = r'[ ]'
 t_TAB = r'\t'
-t_ASSIGN = r'((\+|-|\*|/|%|&|\||^|<<|>>)\s*)?='
+
+def t_ASSIGN(t):
+    r'(((\+|-|\*|/|%|&|\||^|(<<<)|(<<)|(>>))\s*)?=)(?![=])'
+    if t.value[0:3] == '<<<':
+        t.value = '.='
+    return t
+
+
+def t_STRCAT(t):
+    r'<<<'
+    t.value = '.'
+    return t
+
+def t_SHIFT(t):
+    r'(<<)|(>>)'
+    return t
+
+def t_COMPARE(t):
+    r'([=!]=[=]?)|(<>)|(>=?)|(<=?)'
+    return t
+
+
 t_LPARENT = r'\('
 t_RPARENT = r'\)'
 t_LBRACKET = r'\['
@@ -154,11 +185,6 @@ t_THREEDOT = r'\.\.\.'
 t_DOT = r'\.'
 t_SLASH = r'\\'
 
-
-def t_STRCAT(t):
-    r'<<<'
-    t.value = '.'
-    return t
 
 def t_FOLDLINE(t):
     r'\\\n'
@@ -190,15 +216,6 @@ def t_INDENTIFIER(t):
         t.type = 'STATEMENT'
     return t
 
-
-def t_NATIVEPHP(t):
-    r'<\?php((?!<\?php)[\s\S])*\?>[ \t]*(?=\n)'
-    lineNoInc(t)
-    t.value = t.value[6:].lstrip()
-    pos2 = t.value.rfind('?>')
-    t.value = t.value[0:pos2].rstrip()
-    #print t.value
-    return t
 
 
 def t_STRING(t):

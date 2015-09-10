@@ -33,7 +33,7 @@ var_dump(sum(1, 2));
 
 /****/
 
-declare($strict_types = 1); 
+declare(strict_types = 1); 
 
 function sum($a, $b): int { 
     return $a + $b; 

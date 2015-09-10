@@ -31,6 +31,8 @@ grammar:
                                | GlobalDec
                                | ConstDefWithoutTerminator
                                | StaticVarDef
+                               | Declare
+
 
     StaticVarDef : STATIC INDENTIFIER InitModifier
 
@@ -178,6 +180,8 @@ While
 
 DoWhile
     DoWhile : DO COLON Terminator Block WHILE Expression Terminator
+
+    Declare : DECLARE LPARENT INDENTIFIER ASSIGN Expression RPARENT
 
 Try
     Try : TRY COLON Terminator Block Catch
@@ -431,6 +435,7 @@ def p_StatementWithoutTerminator(p):
                                | GlobalDec
                                | ConstDefWithoutTerminator
                                | StaticVarDef
+                               | Declare
     '''
     p[0] = StatementWithoutTerminator(p[1])
 
@@ -843,13 +848,13 @@ def p_Case(p):
 
 def p_For(p):
     '''
-    For : FOR RefModifier INDENTIFIER IN Expression COLON Terminator Block
-    For : FOR RefModifier INDENTIFIER COMMA RefModifier INDENTIFIER IN Expression COLON Terminator Block
+    For : FOR Expression IN Expression COLON Terminator Block
+    For : FOR Expression COMMA Expression IN Expression COLON Terminator Block
     '''
-    if p[4] == 'in':
-        p[0] = For(p[2], p[3], None, None, p[5], p[7], p[8])
+    if len(p) <= 8:
+        p[0] = For(p[2], None, p[4], p[6], p[7])
     else:
-        p[0] = For(p[2], p[3], p[5], p[6], p[8], p[10], p[11])
+        p[0] = For(p[2], p[4], p[6], p[8], p[9])
 
 def p_While(p):
     '''
@@ -884,6 +889,12 @@ def p_CommentOrEmptyLine(p):
                        | INLINECOMMENT
     '''
     p[0] = CommentOrEmptyLine(p[1])
+
+def p_Declare(p):
+    '''
+    Declare : DECLARE LPARENT INDENTIFIER ASSIGN Expression RPARENT
+    '''
+    p[0] = Declare(p[3], p[5])
 
 def p_Try(p):
     '''
