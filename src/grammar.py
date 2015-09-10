@@ -546,6 +546,7 @@ def p_SimpleLiteral(p):
     '''
     SimpleLiteral : NUMBER
                   | STRING
+                  | EXEC
     '''
     p[0] = SimpleLiteral(p[1])
 

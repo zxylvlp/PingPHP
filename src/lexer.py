@@ -122,7 +122,8 @@ tokens = [
     'NEWLINE',
     'TERMINATOR',
     'STATEMENT',
-    'NAMESPACEBEFORESLASH'
+    'NAMESPACEBEFORESLASH',
+    'EXEC'
 
 ] + map(lambda x: x.upper(), reserved) + commentAndNative + braces + bit + math + slash + numAndStr + inOutdent
 
@@ -150,6 +151,9 @@ def t_NATIVEPHP(t):
     return t
 
 
+def t_EXEC(t):
+    r'`(((?<!\\)`)|([^`]))*`'
+    return t
 
 t_SCOPEOP = r'::'
 t_SPACE = r'[ ]'
@@ -187,7 +191,7 @@ t_SLASH = r'\\'
 
 
 def t_FOLDLINE(t):
-    r'\\\n'
+    r'\\[ ]*\n'
     lineNoInc(t)
 
 
