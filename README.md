@@ -1,7 +1,8 @@
-PingPHP 
-===
-
+#PingPHP 
+[![Build Status](https://travis-ci.org/zxylvlp/PingPHP.svg?branch=master)](https://travis-ci.org/zxylvlp/PingPHP)
 ###A PHP code generator which use Python Like grammar
+
+
 
 ##简介
 
