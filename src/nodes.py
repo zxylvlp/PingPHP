@@ -206,7 +206,7 @@ class AccessObj(BaseNode):
             append(['->', self.id_])
         else:
             append('[')
-            self.exp2.gen()
+            self.exp2 and self.exp2.gen()
             append(']')
 
 
@@ -295,6 +295,8 @@ class Varible(BaseNode):
         if isinstance(self.val, NsContentName):
             self.val.list_ and self.val.list_.gen()
             self.val = self.val.val
+        if self.val == '_':
+            return
         if not (self.val.isupper() or self.val == 'class'):
             noDollar or append('$')
         super(Varible, self).gen()
@@ -980,7 +982,7 @@ class GlobalVaribleList(CommaList):
         if self.list_ != None:
             self.list_.gen()
             append(', ')
-        append('$')
+        #append('$')
         super(CommaList, self).gen()
 
 class Operation(BaseNode):

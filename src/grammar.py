@@ -83,7 +83,7 @@ Value and Assign:
                             | ArrayLiteralContentList COMMA ArrayLiteralContent
 
     ArrayLiteralContent : Expression
-                        | SimpleLiteral COLON Expression
+                        | Expression COLON Expression
 
     Varible : NsContentName
             | NsContentName SCOPEOP INDENTIFIER
@@ -494,9 +494,13 @@ def p_AccessObj(p):
     '''
     AccessObj : Expression DOT INDENTIFIER
               | Expression LBRACKET Expression RBRACKET
+              | Expression LBRACKET RBRACKET
     '''
     if len(p) <= 4:
-        p[0] = AccessObj(p[1], p[3], None)
+        if p[2] == '.':
+            p[0] = AccessObj(p[1], p[3], None)
+        else:
+            p[0] = AccessObj(p[1], None, None)
     else:
         p[0] = AccessObj(p[1], None, p[3])
 
@@ -572,7 +576,7 @@ def p_ArrayLiteralContentList(p):
 def p_ArrayLiteralContent(p):
     '''
     ArrayLiteralContent : Expression
-    ArrayLiteralContent : SimpleLiteral COLON Expression
+    ArrayLiteralContent : Expression COLON Expression
     '''
     if len(p) < 3:
         p[0] = ArrayLiteralContent(None, p[1])
@@ -1220,8 +1224,8 @@ def p_GlobalDec(p):
 
 def p_GlobalVaribleList(p):
     '''
-    GlobalVaribleList : INDENTIFIER
-                      | GlobalVaribleList COMMA INDENTIFIER
+    GlobalVaribleList : Varible 
+                      | GlobalVaribleList COMMA Varible
     '''
     if len(p) > 2:
         p[0] = GlobalVaribleList(p[1], p[3])

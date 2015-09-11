@@ -1,0 +1,297 @@
+echo 'this is a simple string'
+
+# 可以录入多行
+echo 'You can also have embedded newlines in 
+strings this way as it is
+okay to do'
+
+# 输出： Arnold once said: "I'll be back"
+echo 'Arnold once said: "I\'ll be back"'
+
+# 输出： You deleted C:\*.*?
+echo 'You deleted C:\\*.*?'
+
+# 输出： You deleted C:\*.*?
+echo 'You deleted C:\*.*?'
+
+# 输出： This will not expand: \n a newline
+echo 'This will not expand: \n a newline'
+
+# 输出： Variables do not $expand $either
+echo 'Variables do not $expand $either'
+
+''''''
+
+class foo:
+    <?php
+    public $bar = <<<EOT
+bar
+EOT;
+    ?>
+
+''''''
+
+<?php
+$str = <<<EOD
+Example of string
+spanning multiple lines
+using heredoc syntax.
+EOD;
+?>
+
+''' 含有变量的更复杂示例 '''
+class foo:
+    foo
+    bar
+
+    foo():
+        this.foo = 'Foo'
+        this.bar = array('Bar1', 'Bar2', 'Bar3')
+
+foo = new foo()
+name = 'MyName'
+
+<?php
+echo <<<EOT
+My name is "$name". I am printing some $foo->foo.
+Now, I am printing some {$foo->bar[1]}.
+This should print a capital 'A': \x41
+EOT;
+?>
+
+''''''
+
+<?php
+var_dump(array(<<<EOD
+foobar!
+EOD
+));
+?>
+
+''''''
+
+# 静态变量
+def foo():
+    <?php
+    static $bar = <<<LABEL
+Nothing in here...
+LABEL;
+    ?>
+
+''''''
+
+# 类的常量、属性
+class foo:
+    <?php
+    const BAR = <<<FOOBAR
+Constant example
+FOOBAR;
+    ?>
+
+    <?php
+    public $baz = <<<FOOBAR
+Property example
+FOOBAR;
+    ?>
+
+''''''
+
+<?php
+echo <<<"FOOBAR"
+Hello World!
+FOOBAR;
+?>
+
+''''''
+
+<?php
+$str = <<<'EOD'
+Example of string
+spanning multiple lines
+using nowdoc syntax.
+EOD;
+?>
+
+''' 含有变量的更复杂的示例 '''
+class foo:
+    public foo
+    public bar
+
+    foo():
+        this.foo = 'Foo'
+        this.bar = array('Bar1', 'Bar2', 'Bar3')
+
+foo = new foo()
+name = 'MyName'
+
+''''''
+
+<?php
+echo <<<'EOT'
+My name is "$name". I am printing some $foo->foo.
+Now, I am printing some {$foo->bar[1]}.
+This should not print a capital 'A': \x41
+EOT;
+?>
+
+''''''
+
+class foo:
+    <?php
+    public $bar = <<<'EOT'
+bar
+EOT;
+    ?>
+
+''''''
+
+juice = "apple"
+
+echo "He drank some $juice juice." <<< PHP_EOL
+# Invalid. "s" is a valid character for a variable name, but the variable is $juice.
+echo "He drank some juice made of $juices."
+
+''''''
+
+juices = ["apple", "orange", "koolaid1" : "purple"]
+
+echo "He drank some $juices[0] juice." <<< PHP_EOL
+echo "He drank some $juices[1] juice." <<< PHP_EOL
+echo "He drank some juice made of $juice[0]s." <<< PHP_EOL # Won't work
+echo "He drank some $juices[koolaid1] juice." <<< PHP_EOL
+
+class people:
+    public john = "John Smith"
+    public jane = "Jane Smith"
+    public robert = "Robert Paulsen"
+   
+    public smith = "Smith"
+
+people = new people()
+
+echo "$people->john drank some $juices[0] juice." <<< PHP_EOL
+echo "$people->john then said hello to $people->jane." <<< PHP_EOL
+echo "$people->john's wife greeted $people->robert." <<< PHP_EOL
+echo "$people->robert greeted the two $people->smiths." # Won't work
+
+''''''
+
+# 显示所有错误
+error_reporting(E_ALL)
+
+great = 'fantastic'
+
+# 无效，输出: This is { fantastic}
+echo "This is { $great}"
+
+# 有效，输出： This is fantastic
+echo "This is {$great}"
+echo "This is ${great}"
+
+# 有效
+echo "This square is {$square->width}00 centimeters broad." 
+
+# 有效，只有通过花括号语法才能正确解析带引号的键名
+echo "This works: {$arr['key']}"
+
+# 有效
+echo "This works: {$arr[4][3]}"
+
+# 这是错误的表达式，因为就象 $foo[bar] 的格式在字符串以外也是错的一样。
+# 换句话说，只有在 PHP 能找到常量 foo 的前提下才会正常工作；这里会产生一个
+# E_NOTICE (undefined constant) 级别的错误。
+echo "This is wrong: {$arr[foo][3]}" 
+
+# 有效，当在字符串中使用多重数组时，一定要用括号将它括起来
+echo "This works: {$arr['foo'][3]}"
+
+# 有效
+echo "This works: " . $arr['foo'][3]
+
+echo "This works too: {$obj->values[3]->name}"
+
+echo "This is the value of the var named $name: {${$name}}"
+
+echo "This is the value of the var named by the return value of getName(): {${getName()}}"
+
+echo "This is the value of the var named by the return value of \$object->getName(): {${$object->getName()}}"
+
+# 无效，输出： This is the return value of getName(): {getName()}
+echo "This is the return value of getName(): {getName()}"
+
+''''''
+
+class foo:
+    bar = 'I am bar.'
+
+foo = new foo()
+bar = 'bar'
+baz = array('foo', 'bar', 'baz', 'quux')
+echo "{$foo->$bar}\n"
+echo "{$foo->$baz[1]}\n"
+
+''''''
+
+# 显示所有错误
+error_reporting(E_ALL)
+
+class beers:
+    const SOFTDRINK = 'rootbeer'
+    public static ale = 'ipa'
+
+rootbeer = 'A & W'
+ipa = 'Alexander Keith\'s'
+
+# 有效，输出： I'd like an A & W
+echo "I'd like an {${beers::SOFTDRINK}}\n"
+
+# 也有效，输出： I'd like an Alexander Keith's
+echo "I'd like an {${beers::$ale}}\n"
+
+''''''
+
+# 取得字符串的第一个字符
+str = 'This is a test.'
+first = str[0]
+
+# 取得字符串的第三个字符
+third = str[2]
+
+# 取得字符串的最后一个字符
+str = 'This is still a test.'
+last = str[strlen(str)-1] 
+
+# 修改字符串的最后一个字符
+str = 'Look at the sea'
+str[strlen(str)-1] = 'e'
+
+''''''
+
+str = 'abc'
+
+var_dump(str['1'])
+var_dump(isset(str['1']))
+
+var_dump(str['1.0'])
+var_dump(isset(str['1.0']))
+
+var_dump(str['x'])
+var_dump(isset(str['x']))
+
+var_dump(str['1x'])
+var_dump(isset(str['1x']))
+
+''''''
+
+foo = 1 + "10.5"                # $foo is float (11.5)
+foo = 1 + "-1.3e3"              # $foo is float (-1299)
+foo = 1 + "bob-1.3e3"           # $foo is integer (1)
+foo = 1 + "bob3"                # $foo is integer (1)
+foo = 1 + "10 Small Pigs"       # $foo is integer (11)
+foo = 4 + "10.2 Little Piggies" # $foo is float (14.2)
+foo = "10.0 pigs " + 1          # $foo is float (11)
+foo = "10.0 pigs " + 1.0        # $foo is float (11)     
+
+''''''
+
+echo "\$foo==$foo type is " <<< gettype(foo) <<< "<br />\n"
