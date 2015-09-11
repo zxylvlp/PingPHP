@@ -904,7 +904,8 @@ class DataMemberDef(WithTerminatorNode):
         self.access.gen(True)
         self.static.gen()
         self.ref.gen()
-        append('$')
+        if not self.val.isupper():
+            append('$')
         super(DataMemberDef, self).gen()
         self.init.gen()
         append('; ')

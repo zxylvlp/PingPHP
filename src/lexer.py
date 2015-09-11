@@ -130,7 +130,7 @@ tokens = [
 def lineNoInc(t):
     t.lexer.lineno += t.value.count('\n')
 
-t_CAST = r'\([ \t]*((int)|(float)|(string)|(array)|(object)|(bool))[ \t]*\)'
+t_CAST = r'\([ \t]*((int)|(float)|(double)|(string)|(array)|(object)|(binary)|(bool)|(unset))[ \t]*\)'
 t_AT = r'@'
 def t_DOCCOMMENT(t):
     r'((\'\'\'((?!\'\'\')[\s\S])*\'\'\')|(\'{6,8})|("""((?!""")[\s\S])*""")|("{6,8}))[ \t]*\n'
@@ -209,6 +209,11 @@ def t_NUMBER(t):
     r'(([0-9]+|(([0-9]*\.[0-9]+)|([0-9]+\.[0-9]*)))[eE][+-]?[0-9]+)|(([0-9]*\.[0-9]+)|([0-9]+\.[0-9]*))|([1-9][0-9]*)|(0b[01]+)|(0[0-7]+)|(0[xX][0-9a-fA-F]+)|(true)|(false)|(null)|0'
     return t
 
+def t_STRING(t):
+    r'b?((\'(([^\'])|((?<=\\)(?<!\\\\)\'))*\')|("(([^"\n])|((?<=\\)(?<!\\\\)"))*"))'
+    lineNoInc(t)
+    return t
+ 
 # handle id and reversed
 def t_INDENTIFIER(t):
     r'(\$?[_a-zA-Z][_a-zA-Z0-9]*)|(__[A-Z_]+__)'
@@ -220,13 +225,6 @@ def t_INDENTIFIER(t):
         t.type = 'STATEMENT'
     return t
 
-
-
-def t_STRING(t):
-    r'(\'(([^\'])|((?<=\\)(?<!\\\\)\'))*\')|("(([^"\n])|((?<=\\)(?<!\\\\)"))*")'
-    lineNoInc(t)
-    return t
- 
 
 t_COLON = r':'
 

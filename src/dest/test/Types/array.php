@@ -99,8 +99,8 @@ $b = array_values($a);
 
 /****/
 
-$foo[$bar] = 'enemy'; 
-echo $foo[$bar]; 
+$foo['bar'] = 'enemy'; 
+echo $foo['bar']; 
 // etc
 
 /****/
@@ -134,7 +134,7 @@ print $arr['veggie']; // carrot
 // of an undefined constant named fruit
 // 
 // Notice: Use of undefined constant fruit - assumed 'fruit' in...
-print $arr[$fruit]; // apple
+print $arr['fruit']; // apple
 
 // This defines a constant to demonstrate what's going on.  The value 'veggie'
 // is assigned to a constant named fruit.
@@ -146,11 +146,11 @@ print $arr[FRUIT]; // carrot
 
 // The following is okay, as it's inside a string. Constants are not looked for
 // within strings, so no E_NOTICE occurs here
-print "Hello $arr[fruit]"; // Hello apple
+print "Hello $arr[FRUIT]"; // Hello apple
 
 // With one exception: braces surrounding arrays within strings allows constants
 // to be interpreted
-print "Hello {$arr[fruit]}"; // Hello carrot
+print "Hello {$arr[FRUIT]}"; // Hello carrot
 print "Hello {$arr['fruit']}"; // Hello apple
 
 // This will not work, and will result in a parse error, such as:
@@ -160,7 +160,7 @@ print "Hello $arr['fruit']";
 print "Hello $_GET['foo']"; 
 
 // Concatenation is another option
-print "Hello " . $$arr['fruit']; // Hello apple
+print "Hello " . $arr['fruit']; // Hello apple
 
 /****/
 
@@ -181,12 +181,12 @@ $error_descriptions[8] = "This is just an informal notice";
 /****/
 
 class A { 
-    private $$A; // This will become '\0A\0A'
+    private $A; // This will become '\0A\0A'
 }
 
 class B extends A { 
-    private $$A; // This will become '\0B\0A'
-    public $$AA; // This will become 'AA'
+    private $A; // This will become '\0B\0A'
+    public $AA; // This will become 'AA'
 }
 
 var_dump((array)new B()); 
@@ -225,7 +225,7 @@ $map = ['version' => 4, 'OS' => 'Linux', 'lang' => 'english', 'short_tags' => tr
 $array_ = [7, 8, 0, 156, -10]; 
 // this is the same as array(0 => 7, 1 => 8, ...)
 
-$switching = [5 => 6, 3 => 7, 'a' => 4, 11, '8' => 2, '02' => 77, 0 => 12]; 
+$switching = [10, 5 => 6, 3 => 7, 'a' => 4, 11, '8' => 2, '02' => 77, 0 => 12]; 
 
 // empty array
 $empty = array(); 
@@ -242,7 +242,7 @@ foreach ($colors as $color) {
 
 // PHP 5
 
-foreach ($colors as $color) { 
+foreach ($colors as &$color) { 
     $color = strtoupper($color); 
 }
 

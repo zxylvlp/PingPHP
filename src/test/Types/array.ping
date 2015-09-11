@@ -122,8 +122,8 @@ b = array_values(a)
 
 ''''''
 
-foo[bar] = 'enemy'
-echo foo[bar]
+foo['bar'] = 'enemy'
+echo foo['bar']
 # etc
 
 ''''''
@@ -156,7 +156,7 @@ print arr['veggie'] # carrot
 # of an undefined constant named fruit
 # 
 # Notice: Use of undefined constant fruit - assumed 'fruit' in...
-print arr[fruit]    # apple
+print arr['fruit']    # apple
 
 # This defines a constant to demonstrate what's going on.  The value 'veggie'
 # is assigned to a constant named fruit.
@@ -168,11 +168,11 @@ print arr[FRUIT]    # carrot
 
 # The following is okay, as it's inside a string. Constants are not looked for
 # within strings, so no E_NOTICE occurs here
-print "Hello $arr[fruit]"      # Hello apple
+print "Hello $arr[FRUIT]"      # Hello apple
 
 # With one exception: braces surrounding arrays within strings allows constants
 # to be interpreted
-print "Hello {$arr[fruit]}"    # Hello carrot
+print "Hello {$arr[FRUIT]}"    # Hello carrot
 print "Hello {$arr['fruit']}"  # Hello apple
 
 # This will not work, and will result in a parse error, such as:
@@ -182,7 +182,7 @@ print "Hello $arr['fruit']"
 print "Hello $_GET['foo']"
 
 # Concatenation is another option
-print "Hello " <<< $arr['fruit'] # Hello apple
+print "Hello " <<< arr['fruit'] # Hello apple
 
 ''''''
 
@@ -260,7 +260,7 @@ array_ = [      7,\
          ] 
 # this is the same as array(0 => 7, 1 => 8, ...)
 
-switching = [\
+switching = [ 10,\
                     5    :  6, \
                     3    :  7, \
                     'a'  :  4, \
@@ -284,7 +284,7 @@ for color in colors:
 
 # PHP 5
 
-for color in colors:
+for &color in colors:
     color = strtoupper(color)
 
 unset(color) 
