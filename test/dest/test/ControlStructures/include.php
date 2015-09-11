@@ -1,0 +1,70 @@
+<?php
+$color = 'green'; 
+$fruit = 'apple'; 
+
+/****/
+
+echo "A $color $fruit"; // A
+
+include 'vars.php'; 
+
+echo "A $color $fruit"; // A green apple
+
+/****/
+
+function foo() { 
+    global $color; 
+    
+    include 'vars.php'; 
+    
+    echo "A $color $fruit"; 
+}
+
+/**vars.php is in the scope of foo() so     *
+ * $fruit is NOT available outside of this  *
+ * scope.  $color is because we declared it *
+ * as global.                              **/
+
+foo(); // A green apple
+echo "A $color $fruit"; // A green
+
+/****/
+
+/**This example assumes that www.example.com is configured to parse .php *
+ * files and not .txt files. Also, 'Works' here means that the variables *
+ * $foo and $bar are available within the included file.                **/
+
+// Won't work; file.txt wasn't handled by www.example.com as PHP
+include 'http://www.example.com/file.txt?foo=1&bar=2'; 
+
+// Won't work; looks for a file named 'file.php?foo=1&bar=2' on the
+// local filesystem.
+include 'file.php?foo=1&bar=2'; 
+
+// Works.
+include 'http://www.example.com/file.php?foo=1&bar=2'; 
+
+$foo = 1; 
+$bar = 2; 
+include 'file.txt'; // Works.
+include 'file.php'; // Works.
+
+/****/
+
+$string = get_include_contents('somefile.php'); 
+
+function get_include_contents($filename) { 
+    if (is_file($filename)) { 
+        ob_start(); 
+        include $filename; 
+        $contents = ob_get_contents(); 
+        ob_end_clean(); 
+        return $contents; 
+    }
+    return false; 
+}
+
+/****/
+
+include_once "a.php"; // 这将包含 a.php
+include_once "A.php"; // 这将再次包含 a.php！（仅 PHP 4）

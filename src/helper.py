@@ -102,6 +102,8 @@ def filesNoCache():
     conf = getConfig()
     filesSet = filesMatch(conf["transFiles"]).difference(filesMatch(conf["ignoreFiles"]))
     getConfigPath() in filesSet and filesSet.remove(getConfigPath())
+    filesSet = list(filesSet)
+    filesSet.sort()
     return filesSet
 
 
