@@ -125,7 +125,7 @@ tokens = [
     'NAMESPACEBEFORESLASH',
     'EXEC'
 
-] + map(lambda x: x.upper(), reserved) + commentAndNative + braces + bit + math + slash + numAndStr + inOutdent
+] + list(map(lambda x: x.upper(), reserved)) + commentAndNative + braces + bit + math + slash + numAndStr + inOutdent
 
 def lineNoInc(t):
     t.lexer.lineno += t.value.count('\n')
