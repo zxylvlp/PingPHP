@@ -86,7 +86,7 @@ def saveJson(path, obj):
 
 
 def isString(obj):
-    return isinstance(obj, basestring)
+    return isinstance(obj, str)
 
 
 def filesMatch(patternList):

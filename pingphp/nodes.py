@@ -55,7 +55,7 @@ def lastStr():
 
 def indentSpaces():
     global indentLevel
-    return ''.join(['    ' for i in xrange(0, indentLevel)])
+    return ''.join(['    ' for i in range(0, indentLevel)])
 
 ''' Node classes '''
 
@@ -287,7 +287,7 @@ class Varible(BaseNode):
 
     def gen(self, noDollar = False):
         if self.nsContentName:
-            if isinstance(self.nsContentName, basestring):
+            if isinstance(self.nsContentName, str):
                 append(self.nsContentName)
             else:
                 self.nsContentName.gen()
@@ -1043,7 +1043,7 @@ class NewOrClone(BaseNode):
             self.argList.gen()
             append(')')
         else:
-            if isinstance(self.varible, basestring):
+            if isinstance(self.varible, str):
                 append(self.varible)
             else:
                 self.varible.gen()

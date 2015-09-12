@@ -2,8 +2,8 @@
 *.result
 *.out
 parsetab.*
-src/test.php
-src/gitDiff.txt
+.DS_Store
+.Python
 
 # C extensions
 *.so
@@ -25,6 +25,7 @@ lib64
 __pycache__
 
 # Installer logs
+pip-selfcheck.json
 pip-log.txt
 
 # Unit test / coverage reports
@@ -41,3 +42,4 @@ nosetests.xml
 .pydevproject
 *.swp
 .idea
+include

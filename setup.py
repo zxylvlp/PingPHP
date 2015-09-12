@@ -1,20 +1,13 @@
-from setuptools import setup, find_packages
-from codecs import open
-from os import path
-
-here = path.abspath(path.dirname(__file__))
-
-with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
-    long_description = f.read()
+from setuptools import setup
 
 setup(
     name='PingPHP',
 
     version='0.0.1',
 
-    description='A sample Python project',
+    description='A PHP code generator which use Python Like grammar',
 
-    long_description=long_description,
+    long_description='A PHP code generator which use Python Like grammar',
 
     url='https://github.com/zxylvlp/PingPHP',
 
@@ -36,29 +29,24 @@ setup(
 
         'License :: OSI Approved :: MIT License',
 
-        'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.2',
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: pypy',
     ],
 
     # What does your project relate to?
     keywords='PHP code generator',
 
-    # You can just specify the packages manually here if your project is
-    # simple. Or you can use find_packages().
-    packages=['src'],
-
+    packages=['pingphp'],
 
     install_requires=['ply', 'glob2', 'watchdog'],
 
     entry_points={
         'console_scripts': [
-            'pingrun=src:run',
-            'pingsee=src:see'
+            'pingrun=pingphp:run',
+            'pingsee=pingphp:see'
         ],
     },
 )

@@ -803,7 +803,7 @@ def p_IfBlock(p):
     IfBlock : IF Expression COLON Terminator Block
             | IfBlock ELIF Expression COLON Terminator Block
     '''
-    if isinstance(p[1], basestring):
+    if isinstance(p[1], str):
         p[0] = IfBlock(None, p[2], p[4], p[5])
     else:
         p[0] = IfBlock(p[1], p[3], p[5], p[6])
