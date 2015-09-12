@@ -6,8 +6,8 @@ import os.path
 import glob2
 import logging
 from ply import yacc
-from lexer import PingLexer
-from grammar import *
+from .lexer import PingLexer
+from .grammar import *
 import traceback
 
 configObj = None

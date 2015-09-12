@@ -1,6 +1,6 @@
 ''' AST BaseNode Abstract Class
 '''
-from helper import *
+from .helper import *
 
 '''utils functions'''
 indentLevel = 0
@@ -66,7 +66,7 @@ class BaseNode(object):
 
     def gen(self):
         if self.val:
-            from helper import isString
+            from .helper import isString
             if isString(self.val):
                 append(self.val)
             elif hasattr(self.val, 'gen'):

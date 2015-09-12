@@ -1,7 +1,7 @@
 import time
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
-from helper import *
+from .helper import *
 
 
 class FileChangeEventHandler(FileSystemEventHandler):

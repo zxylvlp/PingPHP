@@ -1,7 +1,7 @@
 '''PingPHP grammar file
 '''
-from nodes import *
-from lexer import *
+from .nodes import *
+from .lexer import *
 import logging
 
 '''
@@ -1288,7 +1288,7 @@ def p_InDecrement(p):
     InDecrement : INDECREMENT Expression
                 | Expression INDECREMENT
     '''
-    from helper import isString
+    from .helper import isString
     if isString(p[1]):
         p[0] = InDecrement(p[1], p[2], False)
     else:
@@ -1370,5 +1370,5 @@ def p_Ref(p):
     p[0] = Ref(p[1],p[2])
 
 def p_error(p):
-    from helper import errorMsg
+    from .helper import errorMsg
     errorMsg("Grammar", p)

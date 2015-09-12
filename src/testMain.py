@@ -1,7 +1,7 @@
-from helper import *
-from grammar import *
-from lexer import PingLexer
-from ply import yacc
+from .helper import *
+from .grammar import *
+from .lexer import PingLexer
+from .ply import yacc
 
 if __name__ == '__main__':
     pLexer = PingLexer(read('./test/References/whatdo.ping'))

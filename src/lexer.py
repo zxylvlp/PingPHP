@@ -2,7 +2,7 @@
 # codeing: utf8
 
 from ply import lex
-from helper import *
+from .helper import *
 
 reserved = set([
     # namespace
@@ -230,7 +230,7 @@ t_COLON = r':'
 
 
 def t_error(t):
-    from helper import errorMsg
+    from .helper import errorMsg
     errorMsg('Lexical', t)
 
 
