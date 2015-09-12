@@ -10,4 +10,4 @@ if __name__ == '__main__':
     str_res = res.gen()
     # write('test.php',str_res)
 
-    print res.gen()
+    print(res.gen())

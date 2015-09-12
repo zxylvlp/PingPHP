@@ -20,7 +20,7 @@ def projectName():
 def printStack(e):
     if not configObj['debug']:
         return
-    print traceback.format_exc()
+    print(traceback.format_exc())
 
 def read(path):
     file_obj = open(path, 'rU')
@@ -28,7 +28,7 @@ def read(path):
     try:
         result = file_obj.read()
     except:
-        print 'open' + path + 'fail'
+        print('open' + path + 'fail')
 
     finally:
         file_obj.close()
@@ -43,7 +43,7 @@ def write(path, str_):
     try:
         file_obj.write(str_)
     except:
-        print 'open' + path + 'fail'
+        print('open' + path + 'fail')
 
     finally:
         file_obj.close()
@@ -65,7 +65,7 @@ def json2Str(obj):
 
 
 def printObj(obj):
-    print json2Str(obj)
+    print(json2Str(obj))
 
 
 def getConfigPath():

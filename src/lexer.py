@@ -342,7 +342,7 @@ if __name__ == '__main__':
     filename = './test/Functions/anonymous.ping'
     initLogging()
     import sys
-    print sys.argv
+    print(sys.argv)
     if len(sys.argv)>1:
         filename = sys.argv[1]
     lexer = lex.lex()
