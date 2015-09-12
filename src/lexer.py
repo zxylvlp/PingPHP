@@ -349,4 +349,4 @@ if __name__ == '__main__':
     lexer.input(read(filename))
     tokList = token_list(lexer)
     for item in change_token_list_new(tokList):
-        print item
+        print(item)
