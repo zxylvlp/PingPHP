@@ -1,5 +1,7 @@
-#!/bin/env python
 # codeing: utf8
+'''
+helper functions
+'''
 import json
 import os
 import os.path
@@ -23,15 +25,14 @@ def printStack(e):
     print(traceback.format_exc())
 
 def read(path):
-    file_obj = open(path, 'rU')
     result = ''
     try:
-        result = file_obj.read()
+        file_ = open(path, 'rU')
+        result = file_.read()
     except:
-        print('open' + path + 'fail')
-
+        logging.error('Read file: '+path+' fail')
     finally:
-        file_obj.close()
+        file_.close()
     return result
 
 
@@ -39,14 +40,14 @@ def write(path, str_):
     pathAndName = os.path.split(path)
     if len(pathAndName[0]) > 0 and not os.path.exists(pathAndName[0]):
         os.makedirs(pathAndName[0])
-    file_obj = open(path, 'w')
     try:
-        file_obj.write(str_)
+        file_ = open(path, 'w')
+        file_.write(str_)
     except:
-        print('open' + path + 'fail')
+        logging.error('Write file: '+path+' fail')
 
     finally:
-        file_obj.close()
+        file_.close()
 
 
 def loadJson(path):
@@ -78,6 +79,22 @@ def getConfig():
         path = getConfigPath()
         configObj = loadJson(path)
         saveJson(path, configObj)
+        if 'debug' in configObj:
+            configObj['debug'] = bool(configObj['debug'])
+        else:
+            configObj['debug'] = False
+        if not (('destDir' in configObj) and isinstance(configObj['destDir'], str)):
+            logging.error('Config File: destDir field error')
+            exit(1)
+        if not (('transFiles' in configObj) and isinstance(configObj['transFiles'], list)):
+            logging.error('Config File: transFiles field error')
+            exit(1)
+        if not ('ignoreFiles' in configObj): 
+            config['ignoreFiles'] = []
+        if not isinstance(configObj['ignoreFiles'], list):
+            logging.error('Config File: ignoreFiles field error')
+            exit(1)
+
     return configObj
 
 

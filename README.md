@@ -148,7 +148,12 @@ class MyClass {
 $myclass = new MyClass(); 
 ```
 
-## Related
+##Grammar
+* [Ping Code](https://github.com/zxylvlp/PingPHP/tree/master/test/dest/test)
+* [Generated PHP Code](https://github.com/zxylvlp/PingPHP/tree/master/test/dest/test)
+
+
+##Related
 
 * Vim Syntax highlighting plugin: [vim-PingPHP](https://github.com/PingPHP/Vim-PingPHP)
 * Sublime Text Syntax highlighting plugin: (Temporarily not supported)
