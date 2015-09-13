@@ -1,6 +1,6 @@
-# codeing: utf8
+# encoding: utf-8
 '''
-helper functions
+PingPHP helper functions
 '''
 import json
 import os
@@ -8,7 +8,8 @@ import os.path
 import glob2
 import logging
 from ply import yacc
-from .lexer import PingLexer
+import sys
+from .lexer import *
 from .grammar import *
 import traceback
 
@@ -16,13 +17,16 @@ configObj = None
 filesSet = None
 fileStrCache = ''
 
+
 def projectName():
     return "PingPHP"
+
 
 def printStack(e):
     if not configObj['debug']:
         return
     print(traceback.format_exc())
+
 
 def read(path):
     result = ''
@@ -30,7 +34,7 @@ def read(path):
         file_ = open(path, 'rU')
         result = file_.read()
     except:
-        logging.error('Read file: '+path+' fail')
+        logging.error('Read file: ' + path + ' fail')
     finally:
         file_.close()
     return result
@@ -44,7 +48,7 @@ def write(path, str_):
         file_ = open(path, 'w')
         file_.write(str_)
     except:
-        logging.error('Write file: '+path+' fail')
+        logging.error('Write file: ' + path + ' fail')
 
     finally:
         file_.close()
@@ -79,23 +83,27 @@ def getConfig():
         path = getConfigPath()
         configObj = loadJson(path)
         saveJson(path, configObj)
-        if 'debug' in configObj:
-            configObj['debug'] = bool(configObj['debug'])
-        else:
-            configObj['debug'] = False
-        if not (('destDir' in configObj) and isinstance(configObj['destDir'], str)):
-            logging.error('Config File: destDir field error')
-            exit(1)
-        if not (('transFiles' in configObj) and isinstance(configObj['transFiles'], list)):
-            logging.error('Config File: transFiles field error')
-            exit(1)
-        if not ('ignoreFiles' in configObj): 
-            config['ignoreFiles'] = []
-        if not isinstance(configObj['ignoreFiles'], list):
-            logging.error('Config File: ignoreFiles field error')
-            exit(1)
-
+        checkConfig()
     return configObj
+
+
+def checkConfig():
+    global configObj
+    if 'debug' in configObj:
+        configObj['debug'] = bool(configObj['debug'])
+    else:
+        configObj['debug'] = False
+    if not (('destDir' in configObj) and isString(configObj['destDir'])):
+        logging.error('Config File: destDir field error')
+        exit(1)
+    if not (('transFiles' in configObj) and isinstance(configObj['transFiles'], list)):
+        logging.error('Config File: transFiles field error')
+        exit(1)
+    if not ('ignoreFiles' in configObj):
+        configObj['ignoreFiles'] = []
+    if not isinstance(configObj['ignoreFiles'], list):
+        logging.error('Config File: ignoreFiles field error')
+        exit(1)
 
 
 def saveJson(path, obj):
@@ -103,7 +111,11 @@ def saveJson(path, obj):
 
 
 def isString(obj):
-    return isinstance(obj, str)
+    if isinstance(obj, str):
+        return True
+    if sys.version_info.major < 3:
+        return isinstance(obj, unicode)
+    return False
 
 
 def filesMatch(patternList):
@@ -146,11 +158,12 @@ def initLogging():
     logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s',
                         datefmt='%Y-%m-%d %H:%M:%S')
 
+
 def errorMsg(errorType, t):
     lineStart = fileStrCache[:t.lexpos].rfind('\n') + 1
     linePos = t.lexpos - lineStart
-    errorContent = fileStrCache[lineStart:t.lexpos] + '`ERROR`' + fileStrCache[t.lexpos:t.lexpos+len(t.value)]
-    logging.error(errorType + " error in %d,%d \n%s\a", t.lineno, linePos+1 , errorContent)
+    errorContent = fileStrCache[lineStart:t.lexpos] + '`ERROR`' + fileStrCache[t.lexpos:t.lexpos + len(t.value)]
+    logging.error(errorType + " error in %d,%d \n%s\a", t.lineno, linePos + 1, errorContent)
     raise Exception
 
 
@@ -162,6 +175,7 @@ def transFiles():
         printStack(e)
         exit(1)
 
+
 def transFilesNoExit():
     try:
         for file_ in files():
@@ -169,14 +183,13 @@ def transFilesNoExit():
     except Exception as e:
         printStack(e)
 
+
 def doTrans(path):
     dest = mapSrcToDest(path)
     logging.info("Translating %s: %s to %s", 'file', path, dest)
     global fileStrCache
     fileStrCache = read(path)
     pLexer = PingLexer(fileStrCache)
-    # print pLexer.token()
-    # print pLexer.tokList
     parser = yacc.yacc(optimize=True)
     res = parser.parse(lexer=pLexer)
     strRes = res.gen()

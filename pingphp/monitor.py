@@ -1,3 +1,7 @@
+# encoding: utf-8
+'''
+PingPHP monitor
+'''
 import time
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler

@@ -1,8 +1,8 @@
-''' AST BaseNode Abstract Class
+# encoding: utf-8
 '''
-from .helper import *
+PingPHP AST nodes
+'''
 
-'''utils functions'''
 indentLevel = 0
 outputString = []
 

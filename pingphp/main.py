@@ -1,12 +1,13 @@
+# encoding: utf-8
+'''
+PingPHP main functions
+'''
+from .helper import *
 def run():
-    from .helper import initLogging
-    from .helper import transFiles
     initLogging()
     transFiles()
 
 def see():
-
-    from .monitor import initMonitor
     run()
     initMonitor()
 
@@ -21,7 +22,6 @@ def init():
         ""
     ]
 }'''
-    from .helper import write
     write('./PingPHP.conf.json', initStr)
     print('Init Done!')
 

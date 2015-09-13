@@ -1,8 +1,9 @@
-#!/bin/env python
-# codeing: utf8
+# encoding: utf-8
+'''
+PingPHP lexer
+'''
 
 from ply import lex
-from .helper import *
 
 reserved = set([
     # namespace
@@ -39,13 +40,13 @@ reserved = set([
 
 ])
 
-strStatment = set(['pass', 'break', 'continue', 'echo', 'print', 'require', 'require_once', 
-    'include', 'include_once', 'return', 'throw'])
+strStatment = set(['pass', 'break', 'continue', 'echo', 'print', 'require', 'require_once',
+                   'include', 'include_once', 'return', 'throw'])
 
 reservedMap = {
-    'not' : '!',
-    'and' : '&&',
-    'or' : '||'
+    'not': '!',
+    'and': '&&',
+    'or': '||'
 }
 
 commentAndNative = [
@@ -58,8 +59,6 @@ commentAndNative = [
 braces = [
     'LPARENT',
     'RPARENT',
-    #'LBRACE',
-    #'RBRACE',
     'LBRACKET',
     'RBRACKET'
 ]
@@ -71,7 +70,6 @@ bit = [
     'BITOR',
     'BITXOR'
 ]
-
 
 t_ANDOP = r'&'
 t_BITNOT = r'~'
@@ -127,11 +125,15 @@ tokens = [
 
 ] + list(map(lambda x: x.upper(), reserved)) + commentAndNative + braces + bit + math + slash + numAndStr + inOutdent
 
+
 def lineNoInc(t):
     t.lexer.lineno += t.value.count('\n')
 
+
 t_CAST = r'\([ \t]*((int)|(float)|(double)|(string)|(array)|(object)|(binary)|(bool)|(unset))[ \t]*\)'
 t_AT = r'@'
+
+
 def t_DOCCOMMENT(t):
     r'((\'\'\'((?!\'\'\')[\s\S])*\'\'\')|(\'{6,8})|("""((?!""")[\s\S])*""")|("{6,8}))[ \t]*\n'
     lineNoInc(t)
@@ -141,13 +143,20 @@ def t_DOCCOMMENT(t):
     t.value = '/**' + t.value[3:pos] + '**/'
     return t
 
+
 def t_NATIVEPHP(t):
     r'<\?php((?!<\?php)[\s\S])*\?>[ \t]*(?=\n)'
     lineNoInc(t)
     t.value = t.value[6:].lstrip()
     pos2 = t.value.rfind('?>')
     t.value = t.value[0:pos2].rstrip()
-    #print t.value
+    # print t.value
+    return t
+
+def t_INLINECOMMENT(t):
+    r'\#[^\n]*\n'
+    lineNoInc(t)
+    t.value = '//' + t.value[1:-1]
     return t
 
 
@@ -155,9 +164,11 @@ def t_EXEC(t):
     r'`(((?<!\\)`)|([^`]))*`'
     return t
 
+
 t_SCOPEOP = r'::'
 t_SPACE = r'[ ]'
 t_TAB = r'\t'
+
 
 def t_ASSIGN(t):
     r'(((\+|-|\*|/|%|&|\||^|(<<<)|(<<)|(>>))\s*)?=)(?![=])'
@@ -171,9 +182,11 @@ def t_STRCAT(t):
     t.value = '.'
     return t
 
+
 def t_SHIFT(t):
     r'(<<)|(>>)'
     return t
+
 
 def t_COMPARE(t):
     r'([=!]=[=]?)|(<>)|(>=?)|(<=?)'
@@ -195,25 +208,23 @@ def t_FOLDLINE(t):
     lineNoInc(t)
 
 
-def t_INLINECOMMENT(t):
-    r'\#[^\n]*\n'
-    lineNoInc(t)
-    t.value = '//' + t.value[1:-1]
-    return t
 
 def t_NAMESPACEBEFORESLASH(t):
     r'namespace(?=[ \t]*\\[ \t]*[_a-zA-Z0-9])'
     return t
 
+
 def t_NUMBER(t):
     r'(([0-9]+|(([0-9]*\.[0-9]+)|([0-9]+\.[0-9]*)))[eE][+-]?[0-9]+)|(([0-9]*\.[0-9]+)|([0-9]+\.[0-9]*))|([1-9][0-9]*)|(0b[01]+)|(0[0-7]+)|(0[xX][0-9a-fA-F]+)|(true)|(false)|(null)|0'
     return t
+
 
 def t_STRING(t):
     r'b?((\'(([^\'])|((?<=\\)(?<!\\\\)\'))*\')|("(([^"\n])|((?<=\\)(?<!\\\\)"))*"))'
     lineNoInc(t)
     return t
- 
+
+
 # handle id and reversed
 def t_INDENTIFIER(t):
     r'(\$?[_a-zA-Z][_a-zA-Z0-9]*)|(__[A-Z_]+__)'
@@ -236,16 +247,16 @@ def t_error(t):
 
 def t_NEWLINE(t):
     r'\n'
-    lineNoInc(t) 
+    lineNoInc(t)
     return t
 
 
-def token_list(lexer):
+def tokenList(lexer):
     return [t for t in lexer]
 
 
-def make_lexToken(type, value, lineno, lexpos):
-    tok = lex.LexToken()  # 'NEWLINE','\n',0,0)
+def makeLexToken(type, value, lineno, lexpos):
+    tok = lex.LexToken()
     tok.type = type
     tok.value = value
     tok.lineno = lineno
@@ -253,70 +264,68 @@ def make_lexToken(type, value, lineno, lexpos):
     return tok
 
 
-def change_token_list_new(tok_list):
-    # from ply import lex
-    dummy = make_lexToken('NEWLINE', '\n', 0, 0)
-    tok_list.insert(0, dummy)
+def changeTokenList(tokList):
+    dummy = makeLexToken('NEWLINE', '\n', 0, 0)
+    tokList.insert(0, dummy)
 
-    dummy = make_lexToken('EOF', '', tok_list[-1].lineno + 1, tok_list[-1].lexpos + 1)
-    tok_list.append(dummy)
+    dummy = makeLexToken('EOF', '', tokList[-1].lineno + 1, tokList[-1].lexpos + 1)
+    tokList.append(dummy)
 
-    pre_space = 0
-    count_start = False
-    space_stack = [0]
-    content_cache = []
+    preSpace = 0
+    countStart = False
+    spaceStack = [0]
+    contentCache = []
 
-    result_tok_list = []
-    for tok in tok_list:
-        if count_start == False and (tok.type in ('NEWLINE', 'INLINECOMMENT')):
-            pre_space = 0
-            count_start = True
+    resultTokList = []
+    for tok in tokList:
+        if countStart == False and (tok.type in ('NEWLINE', 'INLINECOMMENT')):
+            preSpace = 0
+            countStart = True
             if tok.type == 'NEWLINE':
-                tok = make_lexToken('TERMINATOR', '', tok.lineno, tok.lexpos)
-            result_tok_list.append(tok)
+                tok = makeLexToken('TERMINATOR', '', tok.lineno, tok.lexpos)
+            resultTokList.append(tok)
             continue
-        if count_start:
+        if countStart:
             if tok.type == 'SPACE':
-                pre_space += 1
+                preSpace += 1
             elif tok.type == 'TAB':
-                pre_space += 4
+                preSpace += 4
             elif tok.type in ['NEWLINE', 'INLINECOMMENT', 'DOCCOMMENT']:
-                pre_space = 0
+                preSpace = 0
                 if tok.type == 'NEWLINE':
-                    tok = make_lexToken('EMPTYLINE', '', tok.lineno, tok.lexpos)
-                content_cache.append(tok)
+                    tok = makeLexToken('EMPTYLINE', '', tok.lineno, tok.lexpos)
+                contentCache.append(tok)
             else:
-                count_start = False
+                countStart = False
 
-                if space_stack[-1] < pre_space:
-                    space_stack.append(pre_space)
-                    indent = make_lexToken('INDENT', '', tok.lineno, tok.lexpos)
-                    result_tok_list.append(indent)
+                if spaceStack[-1] < preSpace:
+                    spaceStack.append(preSpace)
+                    indent = makeLexToken('INDENT', '', tok.lineno, tok.lexpos)
+                    resultTokList.append(indent)
                     # print 'INDENT'
                 else:
-                    while (space_stack[-1] > pre_space):
-                        space_stack.pop()
-                        indent = make_lexToken('OUTDENT', '', tok.lineno, tok.lexpos)
-                        result_tok_list.append(indent)
+                    while spaceStack[-1] > preSpace:
+                        spaceStack.pop()
+                        indent = makeLexToken('OUTDENT', '', tok.lineno, tok.lexpos)
+                        resultTokList.append(indent)
                         # print 'OUTDENT'
 
-                result_tok_list.extend(content_cache)
-                result_tok_list.append(tok)
-                content_cache = []
+                resultTokList.extend(contentCache)
+                resultTokList.append(tok)
+                contentCache = []
         else:
             if tok.type != 'SPACE' and tok.type != 'TAB':
-                result_tok_list.append(tok)
+                resultTokList.append(tok)
 
-    return result_tok_list[1:-1]
-
+    return resultTokList[1:-1]
 
 
 class PingLexer(object):
     def __init__(self, inputStr):
         lexer = lex.lex()
         lexer.input(inputStr)
-        self.tokList = token_list(lexer)
-        self.tokList = change_token_list_new(self.tokList)
+        self.tokList = tokenList(lexer)
+        self.tokList = changeTokenList(self.tokList)
         self.nowIndex = 0
 
     def token(self):
@@ -325,7 +334,6 @@ class PingLexer(object):
             self.nowIndex += 1
             return result
 
-    # Iterator interface
     def __iter__(self):
         return self
 

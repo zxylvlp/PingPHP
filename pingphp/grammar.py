@@ -1,7 +1,8 @@
-'''PingPHP grammar file
+# encoding: utf-8
+'''
+PingPHP grammars
 '''
 from .nodes import *
-from .lexer import *
 import logging
 
 '''
