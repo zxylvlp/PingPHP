@@ -18,7 +18,7 @@
 
 To install PingPHP, simply:
 
-`$ sudo pip install redis`
+`$ sudo pip install pingphp`
 
 or from source:
 
