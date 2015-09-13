@@ -33,6 +33,8 @@ def read(path):
     try:
         file_ = open(path, 'rU')
         result = file_.read()
+        if len(result) != 0 and result[-1] != '\n':
+            result += '\n'
     except:
         logging.error('Read file: ' + path + ' fail')
     finally:
@@ -113,7 +115,7 @@ def saveJson(path, obj):
 def isString(obj):
     if isinstance(obj, str):
         return True
-    if sys.version_info.major < 3:
+    if sys.version_info[0] < 3:
         return isinstance(obj, unicode)
     return False
 
