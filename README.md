@@ -149,7 +149,7 @@ $myclass = new MyClass();
 ```
 
 ##Grammar
-* [Ping Code](https://github.com/zxylvlp/PingPHP/tree/master/test/dest/test)
+* [Ping Code](https://github.com/zxylvlp/PingPHP/tree/master/test/test)
 * [Generated PHP Code](https://github.com/zxylvlp/PingPHP/tree/master/test/dest/test)
 
 
