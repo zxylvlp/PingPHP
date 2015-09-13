@@ -54,7 +54,8 @@ setup(
     entry_points={
         'console_scripts': [
             'pingrun=pingphp:run',
-            'pingsee=pingphp:see'
+            'pingsee=pingphp:see',
+            'pinginit=pingphp:init'
         ],
     },
 )

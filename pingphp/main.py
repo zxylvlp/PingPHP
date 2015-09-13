@@ -11,3 +11,17 @@ def see():
     initMonitor()
 
 
+def init():
+    initStr = '''{
+    "destDir": "",
+    "transFiles": [
+        ""
+    ],
+    "ignoreFiles": [
+        ""
+    ]
+}'''
+    from .helper import write
+    write('./PingPHP.conf.json', initStr)
+    print('Init Done!')
+

@@ -6,3 +6,7 @@ def see():
     from .main import see
     main.see()
 
+def init():
+    from .main import init
+    main.init()
+

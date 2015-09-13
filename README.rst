@@ -4,19 +4,35 @@
 
 
 
-##简介
+##Introduction
 
-这本质上是一个PHP代码生成器，类似于CoffeeScript。而本代码库和它之间有一个很重要区别。这个库是为了高效的编写类似Python语法的代码，并且生成的PHP与手工写的代码并无差异，可以提高生产效率，并且生成的代码易于维护。而CoffeeScript的目的完全就是维护CoffeeScript,增加了很多语法糖，提升了效率却失去了生成后代码的可读性。对于广大PHPer这样多的语法糖恐怕是很难接受的，而且为了工作需要，配合其他的开发人员，直接维护Ping代码会影响沟通。
+- PingPHP essentially is a PHP code generator, similar to CoffeeScript(CS). However there is a big difference between this code and CS. 
+- This library is in order to efficiently write Ping code with Python like grammar, and generate the PHP code which is not different from manual code. So it can improve the production efficiency, and the generated code is easy to maintain. 
+- The purpose of the CS is to maintain the CS code, with a lot of syntax sugar, it improved the efficiency of the code but loss the readability of the code. 
+- For the most of PHPer, such a large number of syntax sugar is very hard to accept. 
+- Moreover, when we work with other developers, maintaining the Ping or CS code directly would impede communication.
 
-这个Ping是我老婆的名字，写这个库的目的之一也是为了提升工作效率帮助大家可以多陪陪自己的家人和朋友。
+- Ping is my wife's name. And one of the purposes of writen this library is help PHPer to improve the work efficiency. Help us to spend more time with our family and friends.
 
-这个库选了Python这个语言来写，主要是为了快速开发，以前没有用过，用了很多quick and dirty的方式做出一个小样来。
+##Installation
 
-目前它还在最初阶段的开发中，very buggy。每天可能会抽出一个小时左右的时间来写，时间不是很充裕，但是我会坚持下来。
+To install PingPHP, simply:
 
-##使用方法
+`$ sudo pip install redis`
 
-自己按照需求定义配置文件PingPHP.conf.json，里面的参数应该大家都懂，linux查文件的通配符表示。下面的例子中输出的文件是dest/test/\*\*/\*.ping
+or from source:
+
+`$ sudo python setup.py install`
+
+##Getting Started
+
+Generate PingPHP.conf.json file.
+
+```
+$ pinginit
+```
+
+Then edit the config file with Wildcard.
 
 ```
 {
@@ -30,74 +46,121 @@
 }
 ```
 
-然后再shell中运行
+Generate files:
 
 ```
-python main.py
+$ pingrun
 ```
-
-##结果示例
-
-输入文件asdf.ping
+Generate files and observe their changes:
 
 ```
-class MyClass extends MyBaseClass implements MyIterfaceA, MyIterfaceB:#line1
-
-	a#line2
-	b#line2
-	
-	'''
-	我的多行注释
-	'''
-
-	#我的单行注释
-
-	<?php
-	public $c = 1;
-	?>
-	public static myMethod():#line2
-
-		a = 2#line2
-
-		this.a = 1#line2
-	
-		return a#line2
-
-interface MyIterfaceA extends MyIterfaceB:#line2
-
-	public static myMethod()
+$ pingsee
 ```
 
-输出文件asdf.php
+##CodeSample
+
+Input file: part of typeHinting.ping
+
+```
+''''''
+#如下面的类
+class MyClass:
+
+    '''
+     * 测试函数
+     * 第一个参数必须为 OtherClass 类的一个对象
+    '''
+    public test(otherclass:OtherClass):
+        echo otherclass.var
+    
+
+
+    '''
+     * 另一个测试函数
+     * 第一个参数必须为数组 
+    ''' 
+    public test_array(input_array:array):
+        print_r(input_array)
+    
+
+
+    '''
+     * 第一个参数必须为递归类型
+    '''
+    public test_interface(iterator:Traversable):
+        echo get_class(iterator)
+    
+    
+    '''
+     * 第一个参数必须为回调类型
+    '''
+    public test_callable(callback:callable, data):
+        call_user_func(callback, data)
+    
+myclass = new MyClass()
+
+```
+
+Output file: part of typeHinting.php
 
 ```
 <?php
-class MyClass extends MyBaseClass implements MyIterfaceA, MyIterfaceB {//line1
-        
-        public $a;//line2
-        public $b;//line2
-        
-        /**
-		我的多行注释
-		**/
-        
-        //我的单行注释
-        
-        public $c = 1;
-	
-        public static function myMethod() {//line2
-                
-                $a = 2;//line2
-                
-                $this->a = 1;//line2
-                
-                return;//line2
-        }
+/****/
+//如下面的类
+class MyClass { 
+    
+    /**
+     * 测试函数
+     * 第一个参数必须为 OtherClass 类的一个对象
+    **/
+    public function test(OtherClass $otherclass) { 
+        echo $otherclass->var; 
+    }
+    
+    
+    
+    /**
+     * 另一个测试函数
+     * 第一个参数必须为数组 
+    **/
+    public function test_array(array $input_array) { 
+        print_r($input_array); 
+    }
+    
+    
+    
+    /**
+     * 第一个参数必须为递归类型
+    **/
+    public function test_interface(Traversable $iterator) { 
+        echo get_class($iterator); 
+    }
+    
+    
+    /**
+     * 第一个参数必须为回调类型
+    **/
+    public function test_callable(callable $callback, $data) { 
+        call_user_func($callback, $data); 
+    }
 }
 
-interface MyIterfaceA extends MyIterfaceB {//line2
-        
-        public static function myMethod();
-}
-
+$myclass = new MyClass(); 
 ```
+
+## Related
+
+* Vim Syntax highlighting plugin: [vim-PingPHP](https://github.com/PingPHP/Vim-PingPHP)
+* Sublime Text Syntax highlighting plugin: (Temporarily not supported)
+
+##Author
+
+* [Weibo http://weibo.com/zxylvlp](http://weibo.com/zxylvlp)
+
+* [Mail 937141576@qq.com](mailto:937141576@qq.com)
+
+##License (MIT)
+
+Copyright (c) 2015 zxylvlp
+
+[MIT](https://github.com/zxylvlp/PingPHP/blob/master/LICENSE)
