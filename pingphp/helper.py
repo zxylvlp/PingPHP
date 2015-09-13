@@ -160,7 +160,7 @@ def doTrans(path):
     pLexer = PingLexer(fileStrCache)
     # print pLexer.token()
     # print pLexer.tokList
-    parser = yacc.yacc()
+    parser = yacc.yacc(optimize=True)
     res = parser.parse(lexer=pLexer)
     strRes = res.gen()
     write(dest, strRes)

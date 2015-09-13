@@ -1072,8 +1072,3 @@ class Ref(UnaryOperationNode):
     pass
 
 
-if __name__ == '__main__':
-    pass
-    # b = BaseNode('str')
-    # print b.isinstance(basestring)
-    # print Body.indentLevel

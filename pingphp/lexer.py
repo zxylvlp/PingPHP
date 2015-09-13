@@ -336,17 +336,3 @@ class PingLexer(object):
         return t
 
     __next__ = next
-
-
-if __name__ == '__main__':
-    filename = './test/Functions/anonymous.ping'
-    initLogging()
-    import sys
-    print(sys.argv)
-    if len(sys.argv)>1:
-        filename = sys.argv[1]
-    lexer = lex.lex()
-    lexer.input(read(filename))
-    tokList = token_list(lexer)
-    for item in change_token_list_new(tokList):
-        print(item)

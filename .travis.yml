@@ -8,6 +8,6 @@ python:
     - pypy 
 
 script:
-    - ./runtests.sh
+    - ./runtest.sh
     
 
