@@ -20,26 +20,45 @@
 
     <section class="main-content">
       <h1>
-<a id="pingphp-" class="anchor" href="#pingphp-" aria-hidden="true"><span class="octicon octicon-link"></span></a>PingPHP </h1>
+<a id="pingphp" class="anchor" href="#pingphp" aria-hidden="true"><span class="octicon octicon-link"></span></a>PingPHP</h1>
+
+<p><a href="https://travis-ci.org/zxylvlp/PingPHP"><img src="https://travis-ci.org/zxylvlp/PingPHP.svg?branch=master" alt="Build Status"></a></p>
 
 <h3>
 <a id="a-php-code-generator-which-use-python-like-grammar" class="anchor" href="#a-php-code-generator-which-use-python-like-grammar" aria-hidden="true"><span class="octicon octicon-link"></span></a>A PHP code generator which use Python Like grammar</h3>
 
 <h2>
-<a id="简介" class="anchor" href="#%E7%AE%80%E4%BB%8B" aria-hidden="true"><span class="octicon octicon-link"></span></a>简介</h2>
+<a id="introduction" class="anchor" href="#introduction" aria-hidden="true"><span class="octicon octicon-link"></span></a>Introduction</h2>
 
-<p>这本质上是一个PHP代码生成器，类似于CoffeeScript。而本代码库和它之间有一个很重要区别。这个库是为了高效的编写类似Python语法的代码，并且生成的PHP与手工写的代码并无差异，可以提高生产效率，并且生成的代码易于维护。而CoffeeScript的目的完全就是维护CoffeeScript,增加了很多语法糖，提升了效率却失去了生成后代码的可读性。对于广大PHPer这样多的语法糖恐怕是很难接受的，而且为了工作需要，配合其他的开发人员，直接维护Ping代码会影响沟通。</p>
-
-<p>这个Ping是我老婆的名字，写这个库的目的之一也是为了提升工作效率帮助大家可以多陪陪自己的家人和朋友。</p>
-
-<p>这个库选了Python这个语言来写，主要是为了快速开发，以前没有用过，用了很多quick and dirty的方式做出一个小样来。</p>
-
-<p>目前它还在最初阶段的开发中，very buggy。每天可能会抽出一个小时左右的时间来写，时间不是很充裕，但是我会坚持下来。</p>
+<ul>
+<li>PingPHP essentially is a PHP code generator, similar to CoffeeScript(CS). However there is a big difference between this code and CS. </li>
+<li>This library is in order to efficiently write Ping code with Python like grammar, and generate the PHP code which is not different from manual code. So it can improve the production efficiency, and the generated code is easy to maintain. </li>
+<li>The purpose of the CS is to maintain the CS code, with a lot of syntax sugar, it improved the efficiency of the code but loss the readability of the code. </li>
+<li>For the most of PHPer, such a large number of syntax sugar is very hard to accept. </li>
+<li><p>Moreover, when we work with other developers, maintaining the Ping or CS code directly would impede communication.</p></li>
+<li><p>Ping is my wife's name. And one of the purposes of writen this library is help PHPer to improve the work efficiency. Help us to spend more time with our family and friends.</p></li>
+</ul>
 
 <h2>
-<a id="使用方法" class="anchor" href="#%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95" aria-hidden="true"><span class="octicon octicon-link"></span></a>使用方法</h2>
+<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation</h2>
 
-<p>自己按照需求定义配置文件PingPHP.conf.json，里面的参数应该大家都懂，linux查文件的通配符表示。下面的例子中输出的文件是dest/test/**/*.ping</p>
+<p>To install PingPHP, simply:</p>
+
+<p><code>$ sudo pip install pingphp</code></p>
+
+<p>or from source:</p>
+
+<p><code>$ sudo python setup.py install</code></p>
+
+<h2>
+<a id="getting-started" class="anchor" href="#getting-started" aria-hidden="true"><span class="octicon octicon-link"></span></a>Getting Started</h2>
+
+<p>Generate PingPHP.conf.json file.</p>
+
+<pre><code>$ pinginit
+</code></pre>
+
+<p>Then edit the config file with Wildcard.</p>
 
 <pre><code>{
     "ignoreFiles": [
@@ -52,75 +71,129 @@
 }
 </code></pre>
 
-<p>然后再shell中运行</p>
+<p>Generate files:</p>
 
-<pre><code>python main.py
+<pre><code>$ pingrun
+</code></pre>
+
+<p>Generate files and observe their changes:</p>
+
+<pre><code>$ pingsee
 </code></pre>
 
 <h2>
-<a id="结果示例" class="anchor" href="#%E7%BB%93%E6%9E%9C%E7%A4%BA%E4%BE%8B" aria-hidden="true"><span class="octicon octicon-link"></span></a>结果示例</h2>
+<a id="codesample" class="anchor" href="#codesample" aria-hidden="true"><span class="octicon octicon-link"></span></a>CodeSample</h2>
 
-<p>输入文件asdf.ping</p>
+<p>Input file: part of typeHinting.ping</p>
 
-<pre><code>class MyClass extends MyBaseClass implements MyIterfaceA, MyIterfaceB:#line1
-
-    a#line2
-    b#line2
+<pre><code>''''''
+#如下面的类
+class MyClass:
 
     '''
-    我的多行注释
+     * 测试函数
+     * 第一个参数必须为 OtherClass 类的一个对象
     '''
+    public test(otherclass:OtherClass):
+        echo otherclass.var
 
-    #我的单行注释
 
-    &lt;?php
-    public $c = 1;
-    ?&gt;
-    public static myMethod():#line2
 
-        a = 2#line2
+    '''
+     * 另一个测试函数
+     * 第一个参数必须为数组 
+    ''' 
+    public test_array(input_array:array):
+        print_r(input_array)
 
-        this.a = 1#line2
 
-        return a#line2
 
-interface MyIterfaceA extends MyIterfaceB:#line2
+    '''
+     * 第一个参数必须为递归类型
+    '''
+    public test_interface(iterator:Traversable):
+        echo get_class(iterator)
 
-    public static myMethod()
+
+    '''
+     * 第一个参数必须为回调类型
+    '''
+    public test_callable(callback:callable, data):
+        call_user_func(callback, data)
+
+myclass = new MyClass()
+
 </code></pre>
 
-<p>输出文件asdf.php</p>
+<p>Output file: part of typeHinting.php</p>
 
 <pre><code>&lt;?php
-class MyClass extends MyBaseClass implements MyIterfaceA, MyIterfaceB {//line1
+/****/
+//如下面的类
+class MyClass { 
 
-        public $a;//line2
-        public $b;//line2
+    /**
+     * 测试函数
+     * 第一个参数必须为 OtherClass 类的一个对象
+    **/
+    public function test(OtherClass $otherclass) { 
+        echo $otherclass-&gt;var; 
+    }
 
-        /**
-        我的多行注释
-        **/
 
-        //我的单行注释
 
-        public $c = 1;
+    /**
+     * 另一个测试函数
+     * 第一个参数必须为数组 
+    **/
+    public function test_array(array $input_array) { 
+        print_r($input_array); 
+    }
 
-        public static function myMethod() {//line2
 
-                $a = 2;//line2
 
-                $this-&gt;a = 1;//line2
+    /**
+     * 第一个参数必须为递归类型
+    **/
+    public function test_interface(Traversable $iterator) { 
+        echo get_class($iterator); 
+    }
 
-                return;//line2
-        }
+
+    /**
+     * 第一个参数必须为回调类型
+    **/
+    public function test_callable(callable $callback, $data) { 
+        call_user_func($callback, $data); 
+    }
 }
 
-interface MyIterfaceA extends MyIterfaceB {//line2
-
-        public static function myMethod();
-}
-
+$myclass = new MyClass(); 
 </code></pre>
+
+<h2>
+<a id="related" class="anchor" href="#related" aria-hidden="true"><span class="octicon octicon-link"></span></a>Related</h2>
+
+<ul>
+<li>Vim Syntax highlighting plugin: <a href="https://github.com/PingPHP/Vim-PingPHP">vim-PingPHP</a>
+</li>
+<li>Sublime Text Syntax highlighting plugin: (Temporarily not supported)</li>
+</ul>
+
+<h2>
+<a id="author" class="anchor" href="#author" aria-hidden="true"><span class="octicon octicon-link"></span></a>Author</h2>
+
+<ul>
+<li><p><a href="http://weibo.com/zxylvlp">Weibo http://weibo.com/zxylvlp</a></p></li>
+<li><p><a href="mailto:937141576@qq.com">Mail 937141576@qq.com</a></p></li>
+</ul>
+
+<h2>
+<a id="license-mit" class="anchor" href="#license-mit" aria-hidden="true"><span class="octicon octicon-link"></span></a>License (MIT)</h2>
+
+<p>Copyright (c) 2015 zxylvlp</p>
+
+<p><a href="https://github.com/zxylvlp/PingPHP/blob/master/LICENSE">MIT</a></p>
 
       <footer class="site-footer">
         <span class="site-footer-owner"><a href="https://github.com/zxylvlp/PingPHP">PingPHP</a> is maintained by <a href="https://github.com/zxylvlp">zxylvlp</a>.</span>
