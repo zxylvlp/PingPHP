@@ -9,7 +9,11 @@ class Logger {
 $util->setLogger(new Logger()); 
 
 // PHP 7+ code
-$util->setLogger(); 
+$util->setLogger(new class () { 
+    public function log($msg) { 
+        echo $msg; 
+    }
+}); 
 
 /****/
 
@@ -20,7 +24,13 @@ interface SomeInterface {
 trait SomeTrait { 
 }
 
-var_dump(); 
+var_dump(new class (10) extends SomeClass implements SomeInterface { 
+    private $num; 
+    public function __construct($num) { 
+        $this->num = $num; 
+    }
+    use SomeTrait; 
+}); 
 
 /****/
 
@@ -33,7 +43,17 @@ class Outer {
     }
     
     public function func2() { 
-        return (); 
+        return (new class ($this->prop) extends Outer { 
+            private $prop3; 
+            
+            public function __construct($prop) { 
+                $this->prop3 = $prop; 
+            }
+            
+            public function func3() { 
+                return $this->prop2 + $this->prop3 + $this->func1(); 
+            }
+        }); 
     }
 }
 

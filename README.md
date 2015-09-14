@@ -8,11 +8,11 @@
 
 - PingPHP essentially is a PHP code generator, similar to CoffeeScript(CS). However there is a big difference between this code and CS. 
 - This library is in order to efficiently write Ping code with Python like grammar, and generate the PHP code which is not different from manual code. So it can improve the production efficiency, and the generated code is easy to maintain. 
-- The purpose of the CS is to maintain the CS code, with a lot of syntax sugar, it improved the efficiency of the code but loss the readability of the code. 
+- The purpose of the CS is to maintain the CS code, with a lot of syntax sugar, it improved the efficiency of the code but lost the readability of the code. 
 - For the most of PHPer, such a large number of syntax sugar is very hard to accept. 
 - Moreover, when we work with other developers, maintaining the Ping or CS code directly would impede communication.
 
-- Ping is my wife's name. And one of the purposes of writen this library is help PHPer to improve the work efficiency. Help us to spend more time with our family and friends.
+- Ping is my wife's name. And one of the purposes of writing this library is to help PHPer to improve the work efficiency. Help us to spend more time with our family and friends.
 
 ##Installation
 

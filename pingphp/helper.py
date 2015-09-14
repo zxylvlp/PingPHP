@@ -186,13 +186,19 @@ def transFilesNoExit():
         printStack(e)
 
 
+hasTable = False
 def doTrans(path):
     dest = mapSrcToDest(path)
     logging.info("Translating %s: %s to %s", 'file', path, dest)
     global fileStrCache
     fileStrCache = read(path)
     pLexer = PingLexer(fileStrCache)
-    parser = yacc.yacc(optimize=True)
+    global hasTable
+    if configObj['debug'] and not hasTable:
+        hasTable = True
+        parser = yacc.yacc()
+    else:
+        parser = yacc.yacc(optimize=True)
     res = parser.parse(lexer=pLexer)
     strRes = res.gen()
     write(dest, strRes)

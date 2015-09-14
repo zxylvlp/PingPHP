@@ -71,22 +71,12 @@ bit = [
     'BITXOR'
 ]
 
-t_ANDOP = r'&'
-t_BITNOT = r'~'
-t_BITOR = r'\|'
-t_BITXOR = r'\^'
-
 math = [
     'EXPONENT',
     'MATH1',
     'MATH2',
     'INDECREMENT',
 ]
-
-t_EXPONENT = r'\*\*     '
-t_MATH1 = r'\*|/|%'
-t_MATH2 = r'\+|-'
-t_INDECREMENT = r'(\+\+)|(--)'
 
 slash = [
     'SLASH',
@@ -104,34 +94,31 @@ inOutdent = [
 ]
 
 tokens = [
-    'ASSIGN',
-    'COMPARE',
-    'CAST',
-    'AT',
-    'STRCAT',
-    'SCOPEOP',
-    'INDENTIFIER',
-    'COMMA',
-    'THREEDOT',
-    'DOT',
-    'COLON',
-    'SPACE',
-    'TAB',
-    'NEWLINE',
-    'TERMINATOR',
-    'STATEMENT',
-    'NAMESPACEBEFORESLASH',
-    'EXEC'
+             'ASSIGN',
+             'COMPARE',
+             'CAST',
+             'AT',
+             'STRCAT',
+             'SCOPEOP',
+             'INDENTIFIER',
+             'COMMA',
+             'THREEDOT',
+             'DOT',
+             'COLON',
+             'SPACE',
+             'TAB',
+             'NEWLINE',
+             'TERMINATOR',
+             'STATEMENT',
+             'NAMESPACEBEFORESLASH',
+             'EXEC'
 
-] + list(map(lambda x: x.upper(), reserved)) + commentAndNative + braces + bit + math + slash + numAndStr + inOutdent
+         ] + list(
+    map(lambda x: x.upper(), reserved)) + commentAndNative + braces + bit + math + slash + numAndStr + inOutdent
 
 
 def lineNoInc(t):
     t.lexer.lineno += t.value.count('\n')
-
-
-t_CAST = r'\([ \t]*((int)|(float)|(double)|(string)|(array)|(object)|(binary)|(bool)|(unset))[ \t]*\)'
-t_AT = r'@'
 
 
 def t_DOCCOMMENT(t):
@@ -153,6 +140,7 @@ def t_NATIVEPHP(t):
     # print t.value
     return t
 
+
 def t_INLINECOMMENT(t):
     r'\#[^\n]*\n'
     lineNoInc(t)
@@ -160,14 +148,15 @@ def t_INLINECOMMENT(t):
     return t
 
 
-def t_EXEC(t):
-    r'`(((?<!\\)`)|([^`]))*`'
+def t_STRING(t):
+    r'b?((\'(([^\'])|((?<=\\)(?<!\\\\)\'))*\')|("(([^"\n])|((?<=\\)(?<!\\\\)"))*"))'
+    lineNoInc(t)
     return t
 
 
-t_SCOPEOP = r'::'
-t_SPACE = r'[ ]'
-t_TAB = r'\t'
+def t_EXEC(t):
+    r'`(((?<!\\)`)|([^`]))*`'
+    return t
 
 
 def t_ASSIGN(t):
@@ -193,24 +182,14 @@ def t_COMPARE(t):
     return t
 
 
-t_LPARENT = r'\('
-t_RPARENT = r'\)'
-t_LBRACKET = r'\['
-t_RBRACKET = r'\]'
-t_COMMA = r','
-t_THREEDOT = r'\.\.\.'
-t_DOT = r'\.'
-t_SLASH = r'\\'
-
-
 def t_FOLDLINE(t):
     r'\\[ ]*\n'
     lineNoInc(t)
 
 
-
-def t_NAMESPACEBEFORESLASH(t):
-    r'namespace(?=[ \t]*\\[ \t]*[_a-zA-Z0-9])'
+def t_NEWLINE(t):
+    r'\n'
+    lineNoInc(t)
     return t
 
 
@@ -219,9 +198,8 @@ def t_NUMBER(t):
     return t
 
 
-def t_STRING(t):
-    r'b?((\'(([^\'])|((?<=\\)(?<!\\\\)\'))*\')|("(([^"\n])|((?<=\\)(?<!\\\\)"))*"))'
-    lineNoInc(t)
+def t_NAMESPACEBEFORESLASH(t):
+    r'namespace(?=[ \t]*\\[ \t]*[_a-zA-Z0-9])'
     return t
 
 
@@ -237,18 +215,36 @@ def t_INDENTIFIER(t):
     return t
 
 
+t_ANDOP = r'&'
+t_BITNOT = r'~'
+t_BITOR = r'\|'
+t_BITXOR = r'\^'
+
+t_EXPONENT = r'\*\*     '
+t_MATH1 = r'\*|/|%'
+t_MATH2 = r'\+|-'
+t_INDECREMENT = r'(\+\+)|(--)'
+
+t_CAST = r'\([ \t]*((int)|(float)|(double)|(string)|(array)|(object)|(binary)|(bool)|(unset))[ \t]*\)'
+t_AT = r'@'
+t_SCOPEOP = r'::'
+t_SPACE = r'[ ]'
+t_TAB = r'\t'
+
+t_LPARENT = r'\('
+t_RPARENT = r'\)'
+t_LBRACKET = r'\['
+t_RBRACKET = r'\]'
+t_COMMA = r','
+t_THREEDOT = r'\.\.\.'
+t_DOT = r'\.'
+t_SLASH = r'\\'
 t_COLON = r':'
 
 
 def t_error(t):
     from .helper import errorMsg
     errorMsg('Lexical', t)
-
-
-def t_NEWLINE(t):
-    r'\n'
-    lineNoInc(t)
-    return t
 
 
 def tokenList(lexer):

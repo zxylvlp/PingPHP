@@ -43,10 +43,12 @@ def popStr():
     global outputString
     outputString.pop()
 
+
 def popStrToLastNewLine():
     while lastStr() != '\n':
         popStr()
     popStr()
+
 
 def lastStr():
     global outputString
@@ -56,6 +58,7 @@ def lastStr():
 def indentSpaces():
     global indentLevel
     return ''.join(['    ' for i in range(0, indentLevel)])
+
 
 ''' Node classes '''
 
@@ -78,6 +81,7 @@ class WithTerminatorNode(BaseNode):
         super(WithTerminatorNode, self).__init__(val)
         self.terminator = terminator
 
+
 class UnaryOperationNode(BaseNode):
     def __init__(self, op, exp):
         super(UnaryOperationNode, self).__init__(op)
@@ -87,11 +91,13 @@ class UnaryOperationNode(BaseNode):
         super(UnaryOperationNode, self).gen()
         self.exp.gen()
 
+
 class UnaryOperationWithSpaceNode(UnaryOperationNode):
     def gen(self):
         super(UnaryOperationWithSpaceNode, self).gen()
         append(' ')
         self.exp.gen()
+
 
 class BinaryOperationNode(BaseNode):
     def __init__(self, exp1, op, exp2):
@@ -146,19 +152,22 @@ class Statement(WithTerminatorNode):
     def gen(self):
         super(Statement, self).gen()
 
-        if not self.val.val=='':
+        if not self.val.val == '':
             append('; ')
             self.terminator.gen()
         else:
             popStrToLastNewLine()
-            
+
+
 class StatementWithoutTerminator(BaseNode):
     pass
+
 
 class StaticVarDef(BaseNode):
     def __init__(self, id_, init):
         super(StaticVarDef, self).__init__(id_)
         self.init = init
+
     def gen(self):
         append('static $')
         super(StaticVarDef, self).gen()
@@ -169,8 +178,9 @@ class JustStrStatement(WithTerminatorNode):
     def __init__(self, val, args, terminator):
         super(JustStrStatement, self).__init__(val, terminator)
         self.args = args
+
     def gen(self):
-        if not self.val=='pass':
+        if not self.val == 'pass':
             super(JustStrStatement, self).gen()
             if self.args.val:
                 append(' ')
@@ -179,7 +189,6 @@ class JustStrStatement(WithTerminatorNode):
             self.terminator.gen()
         else:
             popStrToLastNewLine()
-         
 
 
 class CodeBlock(BaseNode):
@@ -189,17 +198,20 @@ class CodeBlock(BaseNode):
 class Expression(BaseNode):
     pass
 
+
 class ParentExp(BaseNode):
     def gen(self):
         append('(')
         super(ParentExp, self).gen()
         append(')')
 
+
 class AccessObj(BaseNode):
     def __init__(self, exp1, id_, exp2):
         super(AccessObj, self).__init__(exp1)
         self.id_ = id_
         self.exp2 = exp2
+
     def gen(self):
         super(AccessObj, self).gen()
         if self.id_:
@@ -225,7 +237,7 @@ class AssignRightSide(BaseNode):
     def __init__(self, assign, exp):
         super(AssignRightSide, self).__init__(assign)
         self.exp = exp
-    
+
     def gen(self):
         append(' ')
         super(AssignRightSide, self).gen()
@@ -285,7 +297,7 @@ class Varible(BaseNode):
         self.nsContentName = nsContentName
         super(Varible, self).__init__(val)
 
-    def gen(self, noDollar = False):
+    def gen(self, noDollar=False):
         if self.nsContentName:
             if isinstance(self.nsContentName, str):
                 append(self.nsContentName)
@@ -320,6 +332,7 @@ class Arg(BaseNode):
     def __init__(self, exp, threeDot):
         self.threeDot = threeDot
         super(Arg, self).__init__(exp)
+
     def gen(self):
         self.threeDot and self.threeDot.gen()
         super(Arg, self).gen()
@@ -328,8 +341,10 @@ class Arg(BaseNode):
 class ParamList(CommaList):
     pass
 
+
 class ThreeDotModifier(BaseNode):
     pass
+
 
 class Param(BaseNode):
     def __init__(self, ref, val, threeDot, type_, init):
@@ -347,10 +362,12 @@ class Param(BaseNode):
         super(Param, self).gen()
         self.init.gen()
 
+
 class TypeModifier(BaseNode):
     def gen(self):
         super(TypeModifier, self).gen()
         self.val and append(' ')
+
 
 class Call(BaseNode):
     def __init__(self, val, args):
@@ -368,6 +385,7 @@ class Callable(BaseNode):
     def __init__(self, val, id_):
         super(Callable, self).__init__(val)
         self.id_ = id_
+
     def gen(self):
         super(Callable, self).gen()
         if self.id_:
@@ -380,6 +398,7 @@ class Lambda(WithTerminatorNode):
         super(Lambda, self).__init__(paramList, terminator)
         self.use = use
         self.block = block
+
     def gen(self):
         append('function (')
         super(Lambda, self).gen()
@@ -391,9 +410,11 @@ class Lambda(WithTerminatorNode):
         self.block.gen()
         append([indentSpaces(), '}'])
 
+
 class UseModifier(BaseNode):
     def __init__(self, paramList):
         super(UseModifier, self).__init__(paramList)
+
     def gen(self):
         if not self.val:
             return
@@ -416,6 +437,7 @@ class UseNamespace(BaseNode):
     def gen(self):
         append('use ')
         super(UseNamespace, self).gen()
+
 
 class DefOrConstModifier(BaseNode):
     def gen(self):
@@ -491,10 +513,12 @@ class IfBlock(WithTerminatorNode):
         self.block.gen()
         append([indentSpaces(), '}'])
 
+
 class Switch(WithTerminatorNode):
     def __init__(self, exp, terminator, content):
         super(Switch, self).__init__(exp, terminator)
         self.content = content
+
     def gen(self):
         append('switch (')
         super(Switch, self).gen()
@@ -503,6 +527,7 @@ class Switch(WithTerminatorNode):
         append('\n')
         self.content.gen()
         append([indentSpaces(), '}'])
+
 
 class SwitchContent(Block):
     pass
@@ -521,10 +546,11 @@ class Case(WithTerminatorNode):
         super(Case, self).__init__(case, terminator)
         self.valueList = valueList
         self.block = block
+
     def gen(self):
         if self.val == 'case':
             valueList = []
-            while(self.valueList):
+            while (self.valueList):
                 valueList.append(self.valueList.val)
                 self.valueList = self.valueList.list_
             valueList.reverse()
@@ -548,9 +574,6 @@ class Case(WithTerminatorNode):
         popStr()
 
 
-
-
-
 class For(WithTerminatorNode):
     def __init__(self, exp1, exp2, exp3, terminator, block):
         super(For, self).__init__(exp3, terminator)
@@ -572,10 +595,12 @@ class For(WithTerminatorNode):
         self.block.gen()
         append([indentSpaces(), '}'])
 
+
 class While(WithTerminatorNode):
     def __init__(self, exp, terminator, block):
         super(While, self).__init__(exp, terminator)
         self.block = block
+
     def gen(self):
         append('while (')
         super(While, self).gen()
@@ -585,12 +610,14 @@ class While(WithTerminatorNode):
         self.block.gen()
         append([indentSpaces(), '}'])
 
+
 class DoWhile(WithTerminatorNode):
     def __init__(self, term1, block, cmtOrEptList, exp, term2):
         super(DoWhile, self).__init__(exp, term1)
         self.block = block
         self.term2 = term2
         self.cmtOrEptList = cmtOrEptList
+
     def gen(self):
         append('do { ')
         self.terminator.gen()
@@ -604,13 +631,16 @@ class DoWhile(WithTerminatorNode):
         append('); ')
         self.term2.gen()
 
+
 class CommentOrEmptyLineList(Body):
     pass
+
 
 class Declare(BaseNode):
     def __init__(self, id_, exp):
         super(Declare, self).__init__(id_)
         self.exp = exp
+
     def gen(self):
         append('declare(')
         super(Declare, self).gen()
@@ -618,8 +648,10 @@ class Declare(BaseNode):
         self.exp.gen()
         append(')')
 
+
 class CommentOrEmptyLine(Line):
     pass
+
 
 class Try(WithTerminatorNode):
     def __init__(self, tryTerm, tryBlock, catch, finTerm, finBlock):
@@ -627,6 +659,7 @@ class Try(WithTerminatorNode):
         self.catch = catch
         self.finTerm = finTerm
         self.finBlock = finBlock
+
     def gen(self):
         append('try { ')
         self.terminator.gen()
@@ -641,12 +674,14 @@ class Try(WithTerminatorNode):
             self.finBlock.gen()
             append([indentSpaces(), '}'])
 
+
 class Catch(WithTerminatorNode):
     def __init__(self, catch, var, className, terminator, block):
         super(Catch, self).__init__(var, terminator)
         self.catch = catch
         self.className = className
         self.block = block
+
     def gen(self):
         if self.catch:
             self.catch.gen()
@@ -661,12 +696,8 @@ class Catch(WithTerminatorNode):
             append([indentSpaces(), '} '])
 
 
-
-
-
-
 class Class(WithTerminatorNode):
-    def __init__(self,abstract, final, id_, extends, implements, terminator, content):
+    def __init__(self, abstract, final, id_, extends, implements, terminator, content):
         self.abstract = abstract
         self.final = final
         super(Class, self).__init__(id_, terminator)
@@ -687,10 +718,32 @@ class Class(WithTerminatorNode):
         self.content.gen()
         append([indentSpaces(), '}'])
 
+
+class AnonymousClass(WithTerminatorNode):
+    def __init__(self, argList, extends, implements, termiantor, content):
+        super(AnonymousClass, self).__init__(argList, termiantor)
+        self.extends = extends
+        self.implements = implements
+        self.content = content
+
+    def gen(self):
+        append('new class (')
+        super(AnonymousClass, self).gen()
+        append(')')
+        self.extends.gen()
+        self.implements.gen()
+        append(' { ')
+        self.terminator.gen()
+        append('\n')
+        self.content.gen()
+        append([indentSpaces(), '}'])
+
+
 class Trait(WithTerminatorNode):
     def __init__(self, id_, terminator, content):
         super(Trait, self).__init__(id_, terminator)
         self.content = content
+
     def gen(self):
         append('trait ')
         super(Trait, self).gen()
@@ -706,11 +759,14 @@ class JustStrModifier(BaseNode):
         super(JustStrModifier, self).gen()
         self.val and append(' ')
 
+
 class AbstractModifier(JustStrModifier):
     pass
 
+
 class FinalModifier(JustStrModifier):
     pass
+
 
 class ClassContent(Block):
     pass
@@ -724,17 +780,19 @@ class InClassDef(BaseNode):
     def __init__(self, abstract, val):
         self.abstract = abstract
         super(InClassDef, self).__init__(val)
-    
+
     def gen(self):
         append(indentSpaces())
         self.abstract and append([self.abstract, ' '])
         super(InClassDef, self).gen()
         append('\n')
 
+
 class UseTrait(WithTerminatorNode):
     def __init__(self, use, terminator, content):
         super(UseTrait, self).__init__(use, terminator)
         self.content = content
+
     def gen(self):
         super(UseTrait, self).gen()
         if self.content:
@@ -747,11 +805,14 @@ class UseTrait(WithTerminatorNode):
             append('; ')
             self.terminator.gen()
 
+
 class UseTraitContent(Block):
     pass
 
+
 class InUseTraitDefList(Body):
     pass
+
 
 class InUseTraitDef(BaseNode):
     def __init__(self, var, type_, access, ns, terminator):
@@ -760,6 +821,7 @@ class InUseTraitDef(BaseNode):
         self.access = access
         self.ns = ns
         self.terminator = terminator
+
     def gen(self):
         append(indentSpaces())
         self.val.gen(True)
@@ -773,7 +835,6 @@ class InUseTraitDef(BaseNode):
         append('; ')
         self.terminator.gen()
         append('\n')
-
 
 
 class Interface(WithTerminatorNode):
@@ -821,21 +882,20 @@ class ImplementsModifier(BaseNode):
         super(ImplementsModifier, self).gen()
 
 
-
 class AccessModifier(JustStrModifier):
-    def gen(self, defaultPublic = False):
+    def gen(self, defaultPublic=False):
         if defaultPublic and self.val == None:
             self.val = 'public'
         super(AccessModifier, self).gen()
 
 
-
 class StaticModifier(JustStrModifier):
     pass
 
+
 class RefModifier(BaseNode):
     pass
-    
+
 
 class MemberFuncDecWithoutTerminator(BaseNode):
     def __init__(self, final, access, static, ref, id_, paramList):
@@ -857,6 +917,7 @@ class MemberFuncDecWithoutTerminator(BaseNode):
         self.paramList.gen()
         append(')')
 
+
 class MemberFuncDec(WithTerminatorNode):
     def __init__(self, func, returnType, terminator):
         super(MemberFuncDec, self).__init__(func, terminator)
@@ -868,6 +929,7 @@ class MemberFuncDec(WithTerminatorNode):
         append('; ')
         self.terminator.gen()
 
+
 class ReturnTypeModifierForDec(BaseNode):
     def gen(self):
         if not self.val:
@@ -875,6 +937,7 @@ class ReturnTypeModifierForDec(BaseNode):
         append(': ')
         super(ReturnTypeModifierForDec, self).gen()
         append(' ')
+
 
 class MemberFuncDef(WithTerminatorNode):
     def __init__(self, val, returnType, terminator, block):
@@ -911,12 +974,13 @@ class DataMemberDef(WithTerminatorNode):
         append('; ')
         self.terminator.gen()
 
+
 class ReturnTypeModifier(BaseNode):
     def gen(self):
         if self.val:
             append(': ')
             self.val.gen()
-            
+
 
 class FuncDef(WithTerminatorNode):
     def __init__(self, ref, id_, paramList, returnType, terminator, block):
@@ -963,6 +1027,7 @@ class Yield(BaseNode):
     def __init__(self, exp1, exp2):
         super(Yield, self).__init__(exp1)
         self.exp2 = exp2
+
     def gen(self):
         append('yield')
         self.val and append(' ')
@@ -983,28 +1048,35 @@ class GlobalVaribleList(CommaList):
         if self.list_ != None:
             self.list_.gen()
             append(', ')
-        #append('$')
+        # append('$')
         super(CommaList, self).gen()
+
 
 class Operation(BaseNode):
     pass
 
+
 class StrCat(BinaryOperationNode):
     pass
+
 
 class UMath(UnaryOperationNode):
     pass
 
+
 class BMath(BinaryOperationNode):
     pass
+
 
 class Cast(UnaryOperationNode):
     pass
 
+
 class InDecrement(UnaryOperationNode):
     def __init__(self, op, exp, back):
         super(InDecrement, self).__init__(op, exp)
-        self.back = back 
+        self.back = back
+
     def gen(self):
         if self.back == True:
             self.exp.gen()
@@ -1012,20 +1084,26 @@ class InDecrement(UnaryOperationNode):
         else:
             super(InDecrement, self).gen()
 
+
 class UBit(UnaryOperationNode):
     pass
+
 
 class BBit(BinaryOperationNode):
     pass
 
+
 class InstanceOf(BinaryOperationNode):
     pass
+
 
 class ULogic(UnaryOperationNode):
     pass
 
+
 class BLogic(BinaryOperationNode):
     pass
+
 
 class NewOrClone(BaseNode):
     def __init__(self, newOrClone, nsContentName, argList, varible):
@@ -1049,15 +1127,16 @@ class NewOrClone(BaseNode):
                 self.varible.gen()
 
 
-
 class Compare(BinaryOperationNode):
     pass
+
 
 class Ternary(BaseNode):
     def __init__(self, exp1, exp2, exp3):
         super(Ternary, self).__init__(exp1)
         self.exp2 = exp2
         self.exp3 = exp3
+
     def gen(self):
         super(Ternary, self).gen()
         append(' ? ')
@@ -1065,10 +1144,10 @@ class Ternary(BaseNode):
         append(' : ')
         self.exp3.gen()
 
+
 class At(UnaryOperationNode):
     pass
 
+
 class Ref(UnaryOperationNode):
     pass
-
-

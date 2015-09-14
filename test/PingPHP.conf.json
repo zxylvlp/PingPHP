@@ -1,10 +1,10 @@
 {
-    "ignoreFiles": [
-        "test1/*"
-    ],
+    "debug": true,
     "transFiles": [
         "test/**/*.ping"
     ],
-    "debug": true,
+    "ignoreFiles": [
+        "test1/*"
+    ],
     "destDir": "dest"
 }

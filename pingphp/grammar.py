@@ -60,6 +60,12 @@ grammar:
                | AccessObj
                | Yield
 
+    ParentExp : LPARENT Expression RPARENT
+
+    AccessObj : Expression DOT INDENTIFIER
+              | Expression LBRACKET Expression RBRACKET
+              | Expression LBRACKET RBRACKET
+
     Block : INDENT Body OUTDENT
 
 
@@ -77,6 +83,7 @@ Value and Assign:
 
     SimpleLiteral : NUMBER
                   | STRING
+                  | EXEC
 
     ArrayLiteral : LBRACKET ArrayLiteralContentList RBRACKET
 
@@ -89,6 +96,7 @@ Value and Assign:
     Varible : NsContentName
             | NsContentName SCOPEOP INDENTIFIER
             | NsContentName SCOPEOP CLASS
+            | STATIC SCOPEOP INDENTIFIER
 
     Assign : Expression AssignRightSide
 
@@ -104,6 +112,9 @@ Param and Arg
               | Param
               | ParamList COMMA Param
 
+    ThreeDotModifier :
+                     | THREEDOT
+
     Param : RefModifier INDENTIFIER ThreeDotModifier TypeModifier InitModifier
 
     TypeModifier : 
@@ -115,14 +126,13 @@ Call
     Callable : NsContentName LPARENT
              | NsContentName SCOPEOP INDENTIFIER LPARENT
              | Expression LPARENT
-             | Expression DOT INDENTIFIER LPARENT
-             | Expression 
              | STATIC SCOPEOP INDENTIFIER LPARENT
 
 Lambda
-    Lambda : LAMBDA ParamList UseModifier COLON Terminator Block
+    Lambda : LAMBDA LPARENT ParamList RPARENT UseModifier COLON Terminator Block
+
     UseModifier : 
-                | USE ParamList
+                | USE LPARENT ParamList RPARENT
 
 Terminator
     Terminator : INLINECOMMENT
@@ -134,7 +144,7 @@ Namespace
     UseNamespace : USE NsContentNameAsIdList
 
     DefOrConstModifier :
-                       : DEF
+                       | DEF
                        | CONST
 
     NsContentName : INDENTIFIER
@@ -152,7 +162,7 @@ Namespace
                           | NsContentNameAsIdList COMMA NsContentNameAsId
 If
     If : IfBlock
-       | IfBlock ELSE Block
+       | IfBlock ELSE COLON Terminator Block
 
     IfBlock : IF Expression COLON Terminator Block
             | IfBlock ELIF Expression COLON Terminator Block
@@ -172,15 +182,22 @@ Switch
          | DEFAULT COLON Terminator Block
 
 For
-    For : FOR RefModifier INDENTIFIER IN Expression COLON Terminator Block
-    For : FOR RefModifier INDENTIFIER COMMA RefModifier INDENTIFIER IN Expression COLON Terminator Block
- 
+    For : FOR Expression IN Expression COLON Terminator Block
+        | FOR Expression COMMA Expression IN Expression COLON Terminator Block
 
 While
     While : WHILE Expression COLON Terminator Block
 
 DoWhile
-    DoWhile : DO COLON Terminator Block WHILE Expression Terminator
+    DoWhile : DO COLON Terminator Block CommentOrEmptyLineList WHILE Expression Terminator
+
+    CommentOrEmptyLineList :
+                           | CommentOrEmptyLine
+                           | CommentOrEmptyLineList CommentOrEmptyLine 
+
+    CommentOrEmptyLine : EMPTYLINE
+                       | DOCCOMMENT
+                       | INLINECOMMENT
 
     Declare : DECLARE LPARENT INDENTIFIER ASSIGN Expression RPARENT
 
@@ -193,6 +210,8 @@ Catch :
 
 Class and Interface
     Class : AbstractModifier FinalModifier CLASS INDENTIFIER ExtendsModifier ImplementsModifier COLON Terminator ClassContent
+
+    AnonymousClass : NEW CLASS LPARENT ArgList RPARENT ExtendsModifier ImplementsModifier COLON Terminator ClassContent
 
     Trait : TRAIT INDENTIFIER COLON Terminator ClassContent
 
@@ -284,7 +303,7 @@ FuncDef
 
     GlobalDec : GLOBAL GlobalVaribleList
 
-    GlobalVaribleList : INDENTIFIER
+    GlobalVaribleList : Varible 
                       | GlobalVaribleList COMMA INDENTIFIER
 
 Operation
@@ -308,6 +327,7 @@ Operation
 
     BMath : Expression MATH1 Expression
           | Expression MATH2 Expression
+          | Expression EXPONENT Expression
 
     UMath : MATH2 Expression %prec UMATH
 
@@ -479,17 +499,19 @@ def p_Expression(p):
                | Call
                | Lambda
                | AnonymousClass
-               | AccessObj
                | ParentExp
+               | AccessObj
                | Yield
     '''
     p[0] = Expression(p[1])
+
 
 def p_ParentExp(p):
     '''
     ParentExp : LPARENT Expression RPARENT
     '''
     p[0] = ParentExp(p[2])
+
 
 def p_AccessObj(p):
     '''
@@ -642,6 +664,7 @@ def p_ParamList(p):
     else:
         p[0] = ParamList(p[1], p[3])
 
+
 def p_ThreeDotModifier(p):
     '''
     ThreeDotModifier :
@@ -658,6 +681,7 @@ def p_Param(p):
     Param : RefModifier INDENTIFIER ThreeDotModifier TypeModifier InitModifier
     '''
     p[0] = Param(p[1], p[2], p[3], p[4], p[5])
+
 
 def p_TypeModifier(p):
     '''
@@ -689,11 +713,13 @@ def p_Callable(p):
     else:
         p[0] = Callable(p[1], p[3])
 
+
 def p_Lambda(p):
     '''
     Lambda : LAMBDA LPARENT ParamList RPARENT UseModifier COLON Terminator Block
     '''
     p[0] = Lambda(p[3], p[5], p[7], p[8])
+
 
 def p_UseModifier(p):
     '''
@@ -727,6 +753,7 @@ def p_UseNamespace(p):
 
     '''
     p[0] = UseNamespace(p[2])
+
 
 def p_DefOrConstModifier(p):
     '''
@@ -834,12 +861,14 @@ def p_InSwitchDefList(p):
     else:
         p[0] = InSwitchDefList(p[1], p[2])
 
+
 def p_InSwitchDef(p):
     '''
     InSwitchDef : Case
                 | Embeded
     '''
     p[0] = InSwitchDef(p[1])
+
 
 def p_Case(p):
     '''
@@ -855,12 +884,13 @@ def p_Case(p):
 def p_For(p):
     '''
     For : FOR Expression IN Expression COLON Terminator Block
-    For : FOR Expression COMMA Expression IN Expression COLON Terminator Block
+        | FOR Expression COMMA Expression IN Expression COLON Terminator Block
     '''
     if len(p) <= 8:
         p[0] = For(p[2], None, p[4], p[6], p[7])
     else:
         p[0] = For(p[2], p[4], p[6], p[8], p[9])
+
 
 def p_While(p):
     '''
@@ -875,6 +905,7 @@ def p_DoWhile(p):
     '''
     p[0] = DoWhile(p[3], p[4], p[5], p[7], p[8])
 
+
 def p_CommentOrEmptyLineList(p):
     '''
     CommentOrEmptyLineList :
@@ -888,6 +919,7 @@ def p_CommentOrEmptyLineList(p):
     else:
         p[0] = CommentOrEmptyLineList(p[1], p[2])
 
+
 def p_CommentOrEmptyLine(p):
     '''
     CommentOrEmptyLine : EMPTYLINE
@@ -896,11 +928,13 @@ def p_CommentOrEmptyLine(p):
     '''
     p[0] = CommentOrEmptyLine(p[1])
 
+
 def p_Declare(p):
     '''
     Declare : DECLARE LPARENT INDENTIFIER ASSIGN Expression RPARENT
     '''
     p[0] = Declare(p[3], p[5])
+
 
 def p_Try(p):
     '''
@@ -911,6 +945,7 @@ def p_Try(p):
         p[0] = Try(p[3], p[4], p[5], None, None)
     else:
         p[0] = Try(p[3], p[4], p[5], p[8], p[9])
+
 
 def p_Catch(p):
     '''
@@ -929,13 +964,12 @@ def p_Class(p):
     '''
     p[0] = Class(p[1], p[2], p[4], p[5], p[6], p[8], p[9])
 
+
 def p_AnonymousClass(p):
     '''
     AnonymousClass : NEW CLASS LPARENT ArgList RPARENT ExtendsModifier ImplementsModifier COLON Terminator ClassContent
     '''
-    #p[0] = Class(p[1], p[2], p[4], p[5], p[6], p[8], p[9])
-
-
+    p[0] = AnonymousClass(p[4], p[6], p[7], p[9], p[10])
 
 
 def p_Trait(p):
@@ -950,17 +984,18 @@ def p_FinalModifier(p):
     FinalModifier : 
                   | FINAL
     '''
-    if len(p)<= 1:
+    if len(p) <= 1:
         p[0] = FinalModifier(None)
     else:
         p[0] = FinalModifier(p[1])
+
 
 def p_AbstractModifier(p):
     '''
     AbstractModifier : 
                      | ABSTRACT
     '''
-    if len(p)<=1:
+    if len(p) <= 1:
         p[0] = AbstractModifier(None)
     else:
         p[0] = AbstractModifier(None)
@@ -999,6 +1034,7 @@ def p_InClassDef(p):
     else:
         p[0] = InClassDef(p[1], p[2])
 
+
 def p_UseTrait(p):
     '''
     UseTrait : UseNamespace Terminator
@@ -1009,11 +1045,13 @@ def p_UseTrait(p):
     else:
         p[0] = UseTrait(p[1], p[3], p[4])
 
+
 def p_UseTraitContent(p):
     '''
     UseTraitContent : INDENT InUseTraitDefList OUTDENT
     '''
     p[0] = UseTraitContent(p[2])
+
 
 def p_InUseTraitDefList(p):
     '''
@@ -1024,6 +1062,7 @@ def p_InUseTraitDefList(p):
         p[0] = InUseTraitDefList(None, p[1])
     else:
         p[0] = InUseTraitDefList(p[1], p[2])
+
 
 def p_InUseTraitDef(p):
     '''
@@ -1119,16 +1158,16 @@ def p_StaticModifier(p):
     else:
         p[0] = StaticModifier(None)
 
+
 def p_RefModifier(p):
     '''
     RefModifier : 
                 | ANDOP
     '''
-    if len(p)<2:
+    if len(p) < 2:
         p[0] = RefModifier(None)
     else:
         p[0] = RefModifier(p[1])
-
 
 
 def p_MemberFuncDecWithoutTerminator(p):
@@ -1143,6 +1182,7 @@ def p_MemberFuncDec(p):
     MemberFuncDec : MemberFuncDecWithoutTerminator ReturnTypeModifierForDec Terminator
     '''
     p[0] = MemberFuncDec(p[1], p[2], p[3])
+
 
 def p_ReturnTypeModifierForDec(p):
     '''
@@ -1167,8 +1207,9 @@ def p_DataMemberDef(p):
     DataMemberDef : FinalModifier AccessModifier StaticModifier RefModifier INDENTIFIER InitModifier Terminator
     '''
     if p[1].val != None:
-        raise SyntaxError 
+        raise SyntaxError
     p[0] = DataMemberDef(p[2], p[3], p[4], p[5], p[6], p[7])
+
 
 def p_ReturnTypeModifier(p):
     '''
@@ -1179,6 +1220,7 @@ def p_ReturnTypeModifier(p):
         p[0] = ReturnTypeModifier(None)
     else:
         p[0] = ReturnTypeModifier(p[1])
+
 
 def p_FuncDef(p):
     '''
@@ -1199,7 +1241,6 @@ def p_ConstDef(p):
     ConstDef : ConstDefWithoutTerminator Terminator
     '''
     p[0] = ConstDef(p[1], p[2])
-
 
 
 def p_Yield(p):
@@ -1254,12 +1295,12 @@ def p_Operation(p):
     '''
     p[0] = Operation(p[1])
 
+
 def p_StrCat(p):
     '''
     StrCat : Expression STRCAT Expression
     '''
     p[0] = StrCat(p[1], p[2], p[3])
-
 
 
 def p_BMath(p):
@@ -1269,6 +1310,7 @@ def p_BMath(p):
           | Expression EXPONENT Expression
     '''
     p[0] = BMath(p[1], p[2], p[3])
+
 
 def p_UMath(p):
     '''
@@ -1295,11 +1337,13 @@ def p_InDecrement(p):
     else:
         p[0] = InDecrement(p[2], p[1], True)
 
+
 def p_UBit(p):
     '''
     UBit : BITNOT Expression
     '''
-    p[0] =  UBit(p[1], p[2])
+    p[0] = UBit(p[1], p[2])
+
 
 def p_BBit(p):
     '''
@@ -1310,11 +1354,13 @@ def p_BBit(p):
     '''
     p[0] = BBit(p[1], p[2], p[3])
 
+
 def p_InstanceOf(p):
     '''
     InstanceOf : Expression INSTANCEOF NsContentName
     '''
     p[0] = InstanceOf(p[1], p[2], p[3])
+
 
 def p_ULogic(p):
     '''
@@ -1322,12 +1368,14 @@ def p_ULogic(p):
     '''
     p[0] = ULogic(p[1], p[2])
 
+
 def p_BLogic(p):
     '''
     BLogic : Expression AND Expression
            | Expression OR Expression
     '''
     p[0] = BLogic(p[1], p[2], p[3])
+
 
 def p_NewOrClone(p):
     '''
@@ -1362,13 +1410,15 @@ def p_At(p):
     '''
     At : AT Expression
     '''
-    p[0] = At(p[1],p[2])
+    p[0] = At(p[1], p[2])
+
 
 def p_Ref(p):
     '''
     Ref : ANDOP Expression %prec REFOP
     '''
-    p[0] = Ref(p[1],p[2])
+    p[0] = Ref(p[1], p[2])
+
 
 def p_error(p):
     from .helper import errorMsg

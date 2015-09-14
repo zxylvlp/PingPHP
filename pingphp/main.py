@@ -3,9 +3,12 @@
 PingPHP main functions
 '''
 from .helper import *
+
+
 def run():
     initLogging()
     transFiles()
+
 
 def see():
     run()
@@ -14,6 +17,7 @@ def see():
 
 def init():
     initStr = '''{
+    "destDir": "",
     "destDir": "",
     "transFiles": [
         ""
@@ -24,4 +28,3 @@ def init():
 }'''
     write('./PingPHP.conf.json', initStr)
     print('Init Done!')
-

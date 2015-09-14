@@ -16,7 +16,6 @@ class FileChangeEventHandler(FileSystemEventHandler):
         super(FileChangeEventHandler, self).on_created(event)
         if not event.src_path_ in filesNoCache():
             return
-        #doTranslate(event.src_path_)
         transFilesNoExit()
 
     def on_deleted(self, event):
