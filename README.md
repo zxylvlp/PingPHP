@@ -57,43 +57,27 @@ Generate files and observe their changes:
 $ pingsee
 ```
 
+##Grammatical Details
+* [Ping Code](https://github.com/zxylvlp/PingPHP/tree/master/test/test)
+* [Generated PHP Code](https://github.com/zxylvlp/PingPHP/tree/master/test/dest/test)
+
 ##CodeSample
 
 Input file: part of typeHinting.ping
 
 ```
 ''''''
-#如下面的类
 class MyClass:
 
-    '''
-     * 测试函数
-     * 第一个参数必须为 OtherClass 类的一个对象
-    '''
     public test(otherclass:OtherClass):
         echo otherclass.var
     
-
-
-    '''
-     * 另一个测试函数
-     * 第一个参数必须为数组 
-    ''' 
     public test_array(input_array:array):
         print_r(input_array)
     
-
-
-    '''
-     * 第一个参数必须为递归类型
-    '''
     public test_interface(iterator:Traversable):
         echo get_class(iterator)
     
-    
-    '''
-     * 第一个参数必须为回调类型
-    '''
     public test_callable(callback:callable, data):
         call_user_func(callback, data)
     
@@ -105,41 +89,21 @@ Output file: part of typeHinting.php
 
 ```
 <?php
-/****/
-//如下面的类
 class MyClass { 
     
-    /**
-     * 测试函数
-     * 第一个参数必须为 OtherClass 类的一个对象
-    **/
     public function test(OtherClass $otherclass) { 
         echo $otherclass->var; 
     }
     
-    
-    
-    /**
-     * 另一个测试函数
-     * 第一个参数必须为数组 
-    **/
     public function test_array(array $input_array) { 
         print_r($input_array); 
     }
     
-    
-    
-    /**
-     * 第一个参数必须为递归类型
-    **/
     public function test_interface(Traversable $iterator) { 
         echo get_class($iterator); 
     }
     
     
-    /**
-     * 第一个参数必须为回调类型
-    **/
     public function test_callable(callable $callback, $data) { 
         call_user_func($callback, $data); 
     }
@@ -148,14 +112,9 @@ class MyClass {
 $myclass = new MyClass(); 
 ```
 
-##Grammar
-* [Ping Code](https://github.com/zxylvlp/PingPHP/tree/master/test/test)
-* [Generated PHP Code](https://github.com/zxylvlp/PingPHP/tree/master/test/dest/test)
-
-
 ##Related
 
-* Vim Syntax highlighting plugin: [vim-PingPHP](https://github.com/PingPHP/Vim-PingPHP)
+* Vim Syntax highlighting plugin: [Vim-PingPHP](https://github.com/PingPHP/Vim-PingPHP)
 * Sublime Text Syntax highlighting plugin: (Temporarily not supported)
 
 ##Author
@@ -164,7 +123,7 @@ $myclass = new MyClass();
 
 * [Mail 937141576@qq.com](mailto:937141576@qq.com)
 
-##License (MIT)
+##License
 
 Copyright (c) 2015 zxylvlp
 
