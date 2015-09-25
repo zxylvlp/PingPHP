@@ -1,31 +1,37 @@
 <!DOCTYPE html>
-<html lang="en-us">
+<html>
+
   <head>
-    <meta charset="UTF-8">
-    <title>PingPHP by zxylvlp</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
-    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
-    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="description" content="PingPHP : A PHP code generator which use Python Like grammar">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>PingPHP</title>
   </head>
+
   <body>
-    <section class="page-header">
-      <h1 class="project-name">PingPHP</h1>
-      <h2 class="project-tagline">A PHP code generator which use Python Like grammar</h2>
-      <a href="https://github.com/zxylvlp/PingPHP" class="btn">View on GitHub</a>
-      <a href="https://github.com/zxylvlp/PingPHP/zipball/master" class="btn">Download .zip</a>
-      <a href="https://github.com/zxylvlp/PingPHP/tarball/master" class="btn">Download .tar.gz</a>
-    </section>
 
-    <section class="main-content">
-      <h1>
-<a id="pingphp" class="anchor" href="#pingphp" aria-hidden="true"><span class="octicon octicon-link"></span></a>PingPHP</h1>
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/zxylvlp/PingPHP">View on GitHub</a>
 
-<p><a href="https://travis-ci.org/zxylvlp/PingPHP"><img src="https://travis-ci.org/zxylvlp/PingPHP.svg?branch=master" alt="Build Status"></a></p>
+          <h1 id="project_title">PingPHP</h1>
+          <h2 id="project_tagline">A PHP code generator which use Python Like grammar</h2>
 
-<h3>
-<a id="a-php-code-generator-which-use-python-like-grammar" class="anchor" href="#a-php-code-generator-which-use-python-like-grammar" aria-hidden="true"><span class="octicon octicon-link"></span></a>A PHP code generator which use Python Like grammar</h3>
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/zxylvlp/PingPHP/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/zxylvlp/PingPHP/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <p><a href="https://travis-ci.org/zxylvlp/PingPHP"><img src="https://travis-ci.org/zxylvlp/PingPHP.svg?branch=master" alt="Build Status"></a></p>
 
 <h2>
 <a id="introduction" class="anchor" href="#introduction" aria-hidden="true"><span class="octicon octicon-link"></span></a>Introduction</h2>
@@ -82,42 +88,30 @@
 </code></pre>
 
 <h2>
+<a id="grammatical-details" class="anchor" href="#grammatical-details" aria-hidden="true"><span class="octicon octicon-link"></span></a>Grammatical Details</h2>
+
+<ul>
+<li><a href="https://github.com/zxylvlp/PingPHP/tree/master/test/test">Ping Code</a></li>
+<li><a href="https://github.com/zxylvlp/PingPHP/tree/master/test/dest/test">Generated PHP Code</a></li>
+</ul>
+
+<h2>
 <a id="codesample" class="anchor" href="#codesample" aria-hidden="true"><span class="octicon octicon-link"></span></a>CodeSample</h2>
 
 <p>Input file: part of typeHinting.ping</p>
 
 <pre><code>''''''
-#如下面的类
 class MyClass:
 
-    '''
-     * 测试函数
-     * 第一个参数必须为 OtherClass 类的一个对象
-    '''
     public test(otherclass:OtherClass):
         echo otherclass.var
 
-
-
-    '''
-     * 另一个测试函数
-     * 第一个参数必须为数组 
-    ''' 
     public test_array(input_array:array):
         print_r(input_array)
 
-
-
-    '''
-     * 第一个参数必须为递归类型
-    '''
     public test_interface(iterator:Traversable):
         echo get_class(iterator)
 
-
-    '''
-     * 第一个参数必须为回调类型
-    '''
     public test_callable(callback:callable, data):
         call_user_func(callback, data)
 
@@ -128,41 +122,21 @@ myclass = new MyClass()
 <p>Output file: part of typeHinting.php</p>
 
 <pre><code>&lt;?php
-/****/
-//如下面的类
 class MyClass { 
 
-    /**
-     * 测试函数
-     * 第一个参数必须为 OtherClass 类的一个对象
-    **/
     public function test(OtherClass $otherclass) { 
         echo $otherclass-&gt;var; 
     }
 
-
-
-    /**
-     * 另一个测试函数
-     * 第一个参数必须为数组 
-    **/
     public function test_array(array $input_array) { 
         print_r($input_array); 
     }
 
-
-
-    /**
-     * 第一个参数必须为递归类型
-    **/
     public function test_interface(Traversable $iterator) { 
         echo get_class($iterator); 
     }
 
 
-    /**
-     * 第一个参数必须为回调类型
-    **/
     public function test_callable(callable $callback, $data) { 
         call_user_func($callback, $data); 
     }
@@ -172,18 +146,10 @@ $myclass = new MyClass();
 </code></pre>
 
 <h2>
-<a id="grammar" class="anchor" href="#grammar" aria-hidden="true"><span class="octicon octicon-link"></span></a>Grammar</h2>
-
-<ul>
-<li><a href="https://github.com/zxylvlp/PingPHP/tree/master/test/test">Ping Code</a></li>
-<li><a href="https://github.com/zxylvlp/PingPHP/tree/master/test/dest/test">Generated PHP Code</a></li>
-</ul>
-
-<h2>
 <a id="related" class="anchor" href="#related" aria-hidden="true"><span class="octicon octicon-link"></span></a>Related</h2>
 
 <ul>
-<li>Vim Syntax highlighting plugin: <a href="https://github.com/PingPHP/Vim-PingPHP">vim-PingPHP</a>
+<li>Vim Syntax highlighting plugin: <a href="https://github.com/PingPHP/Vim-PingPHP">Vim-PingPHP</a>
 </li>
 <li>Sublime Text Syntax highlighting plugin: (Temporarily not supported)</li>
 </ul>
@@ -197,20 +163,23 @@ $myclass = new MyClass();
 </ul>
 
 <h2>
-<a id="license-mit" class="anchor" href="#license-mit" aria-hidden="true"><span class="octicon octicon-link"></span></a>License (MIT)</h2>
+<a id="license" class="anchor" href="#license" aria-hidden="true"><span class="octicon octicon-link"></span></a>License</h2>
 
 <p>Copyright (c) 2015 zxylvlp</p>
 
 <p><a href="https://github.com/zxylvlp/PingPHP/blob/master/LICENSE">MIT</a></p>
+      </section>
+    </div>
 
-      <footer class="site-footer">
-        <span class="site-footer-owner"><a href="https://github.com/zxylvlp/PingPHP">PingPHP</a> is maintained by <a href="https://github.com/zxylvlp">zxylvlp</a>.</span>
-
-        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">PingPHP maintained by <a href="https://github.com/zxylvlp">zxylvlp</a></p>
+        <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
       </footer>
+    </div>
 
-    </section>
+    
 
-  
   </body>
 </html>
