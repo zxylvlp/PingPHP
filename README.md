@@ -12,7 +12,7 @@
 - For the most of PHPer, such a large number of syntax sugar is very hard to accept. 
 - Moreover, when we work with other developers, maintaining the Ping or CS code directly would impede communication.
 
-- Ping is my wife's name. And one of the purposes of writing this library is to help PHPer to improve the work efficiency. Help us to spend more time with our family and friends.
+- And one of the purposes of writing this library is to help PHPer to improve the work efficiency. Help us to spend more time with our family and friends.
 
 ##Installation
 
